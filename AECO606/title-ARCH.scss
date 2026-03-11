@@ -1,0 +1,225 @@
+/*-- scss:defaults --*/
+
+// Only minimal defaults — do NOT override global fonts/sizes
+// All styling is scoped to .title-slide to avoid affecting other slides
+
+/*-- scss:rules --*/
+
+/* ═══════════════════════════════════════════════════════════════
+   ALL RULES SCOPED TO .title-slide ONLY
+   Other slides are completely unaffected
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Full slide layout ── */
+.reveal .slides section.title-slide {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: stretch !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #ffffff;
+  font-family: "Cambria", "Cochin", "Georgia", "Times New Roman", serif;
+  box-sizing: border-box;
+}
+
+/* ── TOP HEADER BAND ── */
+.reveal .slides section.title-slide .header-band {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 14px 40px 12px 115px;
+  border-bottom: 2.5px solid #8B0000;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.15;
+}
+
+.reveal .slides section.title-slide .logo-box {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 185px;
+  height: 245px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.reveal .slides section.title-slide .logo-box img {
+  width: 185px;
+  height: 245px;
+  object-fit: contain;
+  display: block;
+}
+
+.reveal .slides section.title-slide .logo-placeholder {
+  width: 82px;
+  height: 82px;
+  border: 2px dashed #8B0000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55em;
+  color: #8B0000;
+  text-align: center;
+  font-weight: bold;
+  line-height: 1.2;
+  font-family: "Cambria", "Georgia", serif;
+}
+
+.reveal .slides section.title-slide .inst-block {
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reveal .slides section.title-slide .university-name {
+  font-size: 1.30em;
+  font-weight: bold;
+  color: #8B0000;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  font-family: "Cambria", "Georgia", serif;
+}
+
+.reveal .slides section.title-slide .college-name {
+  font-size: 1.02em;
+  font-weight: bold;
+  color: #006400;
+  line-height: 1.15;
+  font-family: "Cambria", "Georgia", serif;
+}
+
+.reveal .slides section.title-slide .dept-name {
+  font-size: 0.95em;
+  font-weight: bold;
+  font-style: italic;
+  color: #006400;
+  line-height: 1.15;
+  font-family: "Cambria", "Georgia", serif;
+}
+
+/* ── MIDDLE CONTENT ── */
+.reveal .slides section.title-slide .mid-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 60px;
+  text-align: center;
+  gap: 18px;
+}
+
+.reveal .slides section.title-slide .course-label {
+  font-size: 1.25em;
+  font-weight: bold;
+  color: #6A0DAD;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  line-height: 1.2;
+  font-family: "Cambria", "Georgia", serif;
+}
+
+.reveal .slides section.title-slide .main-title {
+  font-size: 1.85em;
+  font-weight: bold;
+  color: #1a1a1a;
+  line-height: 1.25;
+  font-family: "Cambria", "Georgia", serif;
+  text-align: center;
+  max-width: 90%;
+}
+
+/* ── BOTTOM FOOTER BAND ── */
+.reveal .slides section.title-slide .footer-band {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 14px 60px 16px 60px;
+  border-top: 2.5px solid #8B0000;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.reveal .slides section.title-slide .presenter-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 220px;
+  text-align: center;
+  align-items: center;
+}
+
+.reveal .slides section.title-slide .role-label {
+  font-size: 0.82em;
+  font-weight: bold;
+  color: #8B0000;
+  font-family: "Cambria", "Georgia", serif;
+  line-height: 1.2;
+}
+
+.reveal .slides section.title-slide .person-name {
+  font-size: 0.95em;
+  font-weight: bold;
+  color: #8B0000;
+  font-family: "Cambria", "Georgia", serif;
+  line-height: 1.2;
+}
+
+.reveal .slides section.title-slide .person-detail {
+  font-size: 0.82em;
+  font-weight: bold;
+  color: #8B0000;
+  font-family: "Cambria", "Georgia", serif;
+  line-height: 1.2;
+}
+
+/* ── HIDE QUARTO DEFAULT TITLE ELEMENTS inside title-slide ── */
+.reveal .slides section.title-slide h1.title,
+.reveal .slides section.title-slide .subtitle,
+.reveal .slides section.title-slide .author,
+.reveal .slides section.title-slide .date,
+.reveal .slides section.title-slide p.author,
+.reveal .slides section.title-slide p.date,
+.reveal .slides section.title-slide .quarto-title-block {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXPLICITLY RESET OTHER SLIDES — prevent any bleed
+   ═══════════════════════════════════════════════════════════════ */
+
+.reveal .slides section:not(.title-slide) {
+  font-family: inherit;
+  background: inherit;
+  color: inherit;
+}
+
+.reveal .slides section:not(.title-slide) h1,
+.reveal .slides section:not(.title-slide) h2,
+.reveal .slides section:not(.title-slide) h3 {
+  font-family: inherit;
+  color: inherit;
+  border-bottom: none;
+  text-transform: none;
+  letter-spacing: normal;
+}
+/* Center all H1 section title slides */
+.reveal .slides section.stack > section:first-child,
+.reveal .slides section[data-layout="center"] {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}

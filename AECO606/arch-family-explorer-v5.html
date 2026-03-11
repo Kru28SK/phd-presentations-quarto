@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCH Family Explorer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg:      #0d0f14;
+  --surface: #13161e;
+  --panel:   #1a1e2a;
+  --border:  #2a2f3f;
+  --border2: #363d52;
+  --dim:     #3a4158;
+  --muted:   #5a6480;
+  --text:    #c8cfe0;
+  --bright:  #e8edf8;
+  --accent:  #4fa3e0;
+  --gold:    #c8a840;
+  --rust:    #d05030;
+  --green:   #4ab870;
+  --purple:  #c060d0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { width: 1080px; height: 620px; overflow: hidden; }
+
+body {
+  width: 1080px;
+  height: 620px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Oxanium', sans-serif;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 3px,
+    rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);
+}
+
+/* ── All zones absolutely placed ──────────────────────────
+   TBAR:   top:0    h:60
+   TREE:   top:61   h:449   (620 - 60 - 110 - 1px border = 449)
+   INFO:   top:510  h:110
+   Total:  60+449+1+110 = 620 ✓
+─────────────────────────────────────────────────────────── */
+
+
+
+.toggle-bar {
+  position: absolute;
+  top: 0; left: 0; width: 1080px; height: 60px;
+  display: flex; align-items: stretch;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 10px; gap: 4px;
+  z-index: 10;
+}
+.tbar-label {
+  display: flex; align-items: center;
+  font-size: 0.56em; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); padding-right: 10px;
+  border-right: 1px solid var(--border); margin-right: 4px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.tog {
+  display: flex; flex-direction: column; justify-content: center;
+  gap: 3px; padding: 6px 10px; border-radius: 3px;
+  border: 1px solid transparent; cursor: pointer; transition: all 0.18s;
+  flex: 1; min-width: 0; position: relative; user-select: none; overflow: hidden;
+}
+.tog:hover:not(.locked) { background: rgba(79,163,224,0.06); border-color: var(--border2); }
+.tog.active             { background: rgba(79,163,224,0.09); border-color: rgba(79,163,224,0.35); }
+.tog.locked             { opacity: 0.32; cursor: not-allowed; }
+.tog-top { display: flex; align-items: center; gap: 7px; }
+.pill {
+  width: 26px; height: 13px; background: var(--border2); border-radius: 7px;
+  position: relative; flex-shrink: 0; border: 1px solid var(--dim); transition: background 0.18s;
+}
+.pill::after {
+  content:''; position: absolute; width: 8px; height: 8px;
+  border-radius: 50%; background: var(--muted); top: 1.5px; left: 2px; transition: all 0.18s;
+}
+.tog.active .pill { background: rgba(79,163,224,0.3); border-color: var(--accent); }
+.tog.active .pill::after { left: 14px; background: var(--accent); box-shadow: 0 0 4px rgba(79,163,224,0.8); }
+.tog-name {
+  font-size: 0.72em; font-weight: 600; color: var(--text);
+  line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tog.active .tog-name { color: var(--accent); }
+.tog.locked .tog-name { color: var(--muted); }
+.tog-math {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.63em;
+  color: var(--gold); line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tog.locked .tog-math { color: var(--dim); }
+.tog-req {
+  font-size: 0.57em; color: var(--rust); opacity: 0.85; font-style: italic;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tog:not(.locked) .tog-req { display: none; }
+
+/* Tree zone — explicit pixel height, no flex */
+.tree-wrap {
+  position: absolute;
+  top: 61px; left: 0;
+  width: 1080px;
+  height: 449px;
+  overflow: hidden;
+  background: var(--bg);
+}
+#tree-svg {
+  display: block;
+  width: 1080px;
+  height: 449px;
+}
+
+.info-strip {
+  position: absolute;
+  top: 510px; left: 0;   /* 97 + 413 = 510 */
+  width: 1080px; height: 110px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: 185px 1fr 1fr;
+  overflow: hidden;
+  z-index: 10;
+}
+.info-cell {
+  padding: 9px 14px; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 3px;
+  overflow: hidden; min-width: 0;
+}
+.info-cell:last-child { border-right: none; }
+.ic-label {
+  font-size: 0.56em; letter-spacing: 0.17em; text-transform: uppercase;
+  color: var(--muted); flex-shrink: 0;
+}
+.ic-model-name {
+  font-size: 1.1em; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.03em; line-height: 1.1; transition: color 0.3s; white-space: nowrap;
+}
+.ic-meta { font-family: 'Share Tech Mono', monospace; font-size: 0.62em; color: var(--gold); }
+.ic-author {
+  font-size: 0.62em; color: var(--muted); font-style: italic;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+.chip {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.57em;
+  padding: 1px 5px; border-radius: 2px;
+  border: 1px solid var(--border2); color: var(--muted);
+  background: var(--panel); transition: all 0.2s; white-space: nowrap;
+}
+.chip.on { border-color: var(--accent); color: var(--accent); background: rgba(79,163,224,0.1); }
+.eq-box {
+  background: var(--panel); border-left: 2px solid var(--accent);
+  padding: 7px 9px; border-radius: 0 3px 3px 0; flex: 1; overflow: hidden;
+}
+.eq-text {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.7em;
+  color: var(--bright); line-height: 1.7; white-space: pre-wrap;
+}
+.eq-text .hl     { color: var(--gold); }
+.eq-text .hl-new { color: var(--accent); font-weight: bold; }
+.note-text {
+  font-size: 0.68em; color: var(--muted); line-height: 1.5; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+}
+.note-text strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+
+
+<div class="toggle-bar">
+  <div class="tbar-label">Features</div>
+  <div class="tog active" data-feat="garch_lags" id="tog-garch_lags">
+    <div class="tog-top"><div class="pill"></div><div class="tog-name">Lagged Variance Terms</div></div>
+    <div class="tog-math">p ≥ 1  →  +Σβⱼσ²ₜ₋ⱼ</div>
+    <div class="tog-req">—</div>
+  </div>
+  <div class="tog" data-feat="integrated" id="tog-integrated" data-requires="garch_lags">
+    <div class="tog-top"><div class="pill"></div><div class="tog-name">Unit Root in Variance</div></div>
+    <div class="tog-math">Σαᵢ + Σβⱼ = 1</div>
+    <div class="tog-req">needs: lagged variance</div>
+  </div>
+  <div class="tog" data-feat="in_mean" id="tog-in_mean">
+    <div class="tog-top"><div class="pill"></div><div class="tog-name">Variance-in-Mean</div></div>
+    <div class="tog-math">δ ≠ 0  →  μₜ = β + δ·hₜ</div>
+    <div class="tog-req">—</div>
+  </div>
+  <div class="tog" data-feat="asymmetric" id="tog-asymmetric" data-requires="garch_lags">
+    <div class="tog-top"><div class="pill"></div><div class="tog-name">Asymmetric Shocks</div></div>
+    <div class="tog-math">γ ≠ 0  (leverage effect)</div>
+    <div class="tog-req">needs: lagged variance</div>
+  </div>
+  <div class="tog" data-feat="log_form" id="tog-log_form" data-requires="asymmetric">
+    <div class="tog-top"><div class="pill"></div><div class="tog-name">Log-Variance Form</div></div>
+    <div class="tog-math">ln σ²ₜ  (no sign constraints)</div>
+    <div class="tog-req">needs: asymmetric shocks</div>
+  </div>
+  <div class="tog" data-feat="multivariate" id="tog-multivariate">
+    <div class="tog-top"><div class="pill"></div><div class="tog-name">Multiple Series</div></div>
+    <div class="tog-math">N > 1  →  Hₜ ∈ ℝᴺˣᴺ</div>
+    <div class="tog-req">—</div>
+  </div>
+</div>
+
+<div class="tree-wrap">
+  <!-- viewBox matches exactly the px dimensions of this container: 1080 × 413 -->
+  <svg id="tree-svg" viewBox="0 0 1080 449" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,1 L6,3.5 L0,6 Z" fill="#2a2f3f"/>
+      </marker>
+      <marker id="arr-act" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,1 L6,3.5 L0,6 Z" fill="#4fa3e0"/>
+      </marker>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-s" x="-90%" y="-90%" width="280%" height="280%">
+        <feGaussianBlur stdDeviation="9" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+  </svg>
+</div>
+
+<div class="info-strip">
+  <div class="info-cell">
+    <div class="ic-label">Active Model</div>
+    <div class="ic-model-name" id="ic-name">ARCH(q)</div>
+    <div class="chips"      id="ic-chips"></div>
+  </div>
+  <div class="info-cell">
+    <div class="ic-label">Specification</div>
+    <div class="eq-box"><div class="eq-text" id="ic-eq">—</div></div>
+  </div>
+  <div class="info-cell">
+    <div class="ic-label">Notes</div>
+    <div class="note-text" id="ic-note">—</div>
+  </div>
+</div>
+
+<script>
+// ── Node positions ─────────────────────────────────────────────────────
+// Container: 1080 × 449px  →  viewBox matches exactly, no scaling needed
+// X columns: 80, 270, 460, 670, 900
+// Y rows:    top=90, mid=224, bot=370
+const M = {
+  ARCH:   { label:'ARCH(q)',    year:'1982',      author:'Robert F. Engle',
+            x:80,   y:224, color:'#4fa3e0',
+            eq:`yₜ = μ + εₜ\n<span class="hl">σ²ₜ = α₀ + Σαᵢε²ₜ₋ᵢ</span>`,
+            note:'<strong>Baseline.</strong> Conditional variance is a weighted sum of past squared shocks. Every model in the family extends this core equation.' },
+
+  GARCH:  { label:'GARCH(p,q)', year:'1986',      author:'Tim Bollerslev',
+            x:270,  y:224, color:'#4fa3e0',
+            eq:`yₜ = μ + εₜ\nσ²ₜ = ω + Σαᵢε²ₜ₋ᵢ\n<span class="hl-new">    + Σβⱼσ²ₜ₋ⱼ</span>`,
+            note:'<strong>GARCH(1,1)</strong> is the empirical workhorse. Lagged variance terms allow long-memory volatility with very few parameters.' },
+
+  IGARCH: { label:'IGARCH',     year:'1988',      author:'Engle & Bollerslev',
+            x:460,  y:90,  color:'#c060d0',
+            eq:`σ²ₜ = ω + Σαᵢε²ₜ₋ᵢ + Σβⱼσ²ₜ₋ⱼ\n<span class="hl-new">Σαᵢ + Σβⱼ = 1</span>  (unit root)`,
+            note:'<strong>Integrated GARCH.</strong> The unit-root constraint forces variance shocks to be permanent. Volatility never fully reverts.' },
+
+  ARCHM:  { label:'ARCH-M',     year:'1987',      author:'Engle, Lilien & Robins',
+            x:270,  y:370, color:'#c8a840',
+            eq:`<span class="hl-new">yₜ = β + δ·hₜ</span> + εₜ\nhₜ = α₀ + Σαᵢε²ₜ₋ᵢ`,
+            note:'<strong>ARCH-in-Mean.</strong> δ > 0 embeds the risk-return tradeoff: expected return rises with conditional variance.' },
+
+  GARCHM: { label:'GARCH-M',    year:'1987+',     author:'Engle, Lilien & Robins',
+            x:460,  y:370, color:'#c8a840',
+            eq:`<span class="hl-new">yₜ = β + δ·σ²ₜ</span> + εₜ\nσ²ₜ = ω + Σαᵢε²ₜ₋ᵢ + Σβⱼσ²ₜ₋ⱼ`,
+            note:'<strong>GARCH-in-Mean.</strong> Combines GARCH variance dynamics with mean-equation risk premium.' },
+
+  GJR:    { label:'GJR-GARCH',  year:'1993',      author:'Glosten, Jagannathan & Runkle',
+            x:670,  y:224, color:'#d05030',
+            eq:`σ²ₜ = ω + (α + <span class="hl-new">γ·Iₜ₋₁</span>)ε²ₜ₋₁\n    + βσ²ₜ₋₁\nIₜ = 1 if εₜ < 0`,
+            note:'<strong>Threshold asymmetry.</strong> γ > 0 amplifies variance after bad news. Simpler than EGARCH; sign constraints on α, β still required.' },
+
+  EGARCH: { label:'EGARCH',     year:'1991',      author:'Daniel B. Nelson',
+            x:900,  y:224, color:'#4ab870',
+            eq:`<span class="hl-new">ln σ²ₜ</span> = ω + Σ[αᵢ|zₜ₋ᵢ|\n         + <span class="hl-new">γᵢzₜ₋ᵢ</span>]\n       + Σβⱼ ln σ²ₜ₋ⱼ`,
+            note:'<strong>Exponential GARCH.</strong> Log-variance guarantees σ² > 0 without sign constraints. γ directly measures asymmetric news impact.' },
+
+  MGARCH: { label:'MGARCH/DCC', year:'1990–2002', author:'Bollerslev | Engle',
+            x:460,  y:224, color:'#4ab870',
+            eq:`Hₜ = Dₜ · <span class="hl-new">Rₜ</span> · Dₜ\nDₜ = diag(σ₁ₜ,…,σₙₜ)\n<span class="hl-new">Rₜ</span> = dynamic correlations`,
+            note:'<strong>Multivariate GARCH.</strong> Models the full time-varying covariance matrix. DCC (Engle, 2002) estimates univariate GARCH first, then dynamic correlations.' },
+};
+
+const EDGES = [
+  { from:'ARCH',  to:'GARCH',  label:'p ≥ 1' },
+  { from:'ARCH',  to:'ARCHM',  label:'δ ≠ 0' },
+  { from:'ARCH',  to:'MGARCH', label:'N > 1' },
+  { from:'GARCH', to:'IGARCH', label:'Σ = 1' },
+  { from:'GARCH', to:'GJR',    label:'γ ≠ 0' },
+  { from:'GARCH', to:'GARCHM', label:'δ ≠ 0' },
+  { from:'ARCHM', to:'GARCHM', label:'p ≥ 1' },
+  { from:'GJR',   to:'EGARCH', label:'ln form' },
+];
+
+const ANCESTORS = {
+  ARCH:   ['ARCH'],
+  GARCH:  ['ARCH','GARCH'],
+  IGARCH: ['ARCH','GARCH','IGARCH'],
+  ARCHM:  ['ARCH','ARCHM'],
+  GARCHM: ['ARCH','ARCHM','GARCH','GARCHM'],
+  GJR:    ['ARCH','GARCH','GJR'],
+  EGARCH: ['ARCH','GARCH','GJR','EGARCH'],
+  MGARCH: ['ARCH','MGARCH'],
+};
+
+function resolveModel(feats) {
+  const h = f => feats.includes(f);
+  if (h('multivariate'))               return 'MGARCH';
+  if (h('log_form'))                   return 'EGARCH';
+  if (h('asymmetric'))                 return 'GJR';
+  if (h('garch_lags') && h('in_mean')) return 'GARCHM';
+  if (h('integrated'))                 return 'IGARCH';
+  if (h('garch_lags'))                 return 'GARCH';
+  if (h('in_mean'))                    return 'ARCHM';
+  return 'ARCH';
+}
+
+const NS  = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('tree-svg');
+const R   = 28;
+
+function se(tag, a, p) {
+  const e = document.createElementNS(NS, tag);
+  Object.entries(a).forEach(([k,v]) => e.setAttribute(k,v));
+  if (p) p.appendChild(e);
+  return e;
+}
+
+const edgeLayer = se('g', {}, svg);
+const nodeLayer = se('g', {}, svg);
+
+const edgeEls = {};
+EDGES.forEach(ed => {
+  const f = M[ed.from], t = M[ed.to];
+  const x1 = f.x + R, y1 = f.y;
+  const x2 = t.x - R, y2 = t.y;
+  const cpx = (x1 + x2) / 2;
+
+  const path = se('path', {
+    d: `M${x1},${y1} C${cpx},${y1} ${cpx},${y2} ${x2},${y2}`,
+    fill:'none', stroke:'#252a38', 'stroke-width':'1.4',
+    'marker-end':'url(#arr)',
+  }, edgeLayer);
+
+  // no edge labels — keep tree clean
+  const lbl = se('text', { x:0, y:0, opacity:'0' }, edgeLayer);
+
+  edgeEls[`${ed.from}->${ed.to}`] = { path, lbl };
+});
+
+const nodeEls = {};
+Object.entries(M).forEach(([id, m]) => {
+  const g = se('g', { transform:`translate(${m.x},${m.y})` }, nodeLayer);
+
+  const ring = se('circle', { cx:0, cy:0, r:R+7,
+    fill:'none', stroke:m.color, 'stroke-width':'1', opacity:'0.12' }, g);
+  const circ = se('circle', { cx:0, cy:0, r:R,
+    fill:'#13161e', stroke:'#252a38', 'stroke-width':'1.5' }, g);
+
+  const raw = m.label;
+  let line1 = raw, line2 = '';
+  if (raw.includes('/')) {
+    [line1, line2] = raw.split('/'); line2 = '/' + line2;
+  } else if (raw.includes('(')) {
+    line1 = raw.split('(')[0]; line2 = '(' + raw.split('(')[1];
+  }
+
+  const t1 = se('text', {
+    x:0, y: line2 ? -8 : 1,
+    'text-anchor':'middle', 'dominant-baseline':'middle',
+    fill:'#5a6480', 'font-family':"'Oxanium',sans-serif",
+    'font-size':'9', 'font-weight':'700', 'letter-spacing':'0.02em',
+  }, g);
+  t1.textContent = line1;
+
+  const t2 = se('text', {
+    x:0, y:9, 'text-anchor':'middle', 'dominant-baseline':'middle',
+    fill:'#3a4158', 'font-family':"'Share Tech Mono',monospace", 'font-size':'7.5',
+  }, g);
+  t2.textContent = line2;
+
+  nodeEls[id] = { g, ring, circ, t1, t2 };
+});
+
+let activeFeats = [];
+
+function updateTree() {
+  const aid  = resolveModel(activeFeats);
+  const path = ANCESTORS[aid] || [aid];
+
+  Object.entries(M).forEach(([id, m]) => {
+    const ne = nodeEls[id];
+    const isAct  = id === aid;
+    const onPath = path.includes(id);
+    ne.circ.setAttribute('fill',         isAct ? m.color : onPath ? `${m.color}22` : '#13161e');
+    ne.circ.setAttribute('stroke',       onPath ? m.color : '#252a38');
+    ne.circ.setAttribute('stroke-width', isAct ? '2.5' : onPath ? '1.8' : '1.2');
+    ne.circ.setAttribute('filter',       isAct ? 'url(#glow-s)' : onPath ? 'url(#glow)' : 'none');
+    ne.ring.setAttribute('opacity',      isAct ? '0.55' : onPath ? '0.22' : '0.08');
+    ne.ring.setAttribute('r',            isAct ? R+10 : R+7);
+    ne.t1.setAttribute('fill', isAct ? '#fff' : onPath ? m.color : '#5a6480');
+    ne.t2.setAttribute('fill', isAct ? 'rgba(255,255,255,0.65)' : onPath ? `${m.color}aa` : '#3a4158');
+  });
+
+  EDGES.forEach(ed => {
+    const key = `${ed.from}->${ed.to}`;
+    const ee  = edgeEls[key];
+    const on  = path.includes(ed.from) && path.includes(ed.to);
+    ee.path.setAttribute('stroke',       on ? '#4fa3e0' : '#252a38');
+    ee.path.setAttribute('stroke-width', on ? '2' : '1.3');
+    ee.path.setAttribute('marker-end',   on ? 'url(#arr-act)' : 'url(#arr)');
+    ee.path.setAttribute('opacity',      on ? '1' : '0.28');
+    ee.lbl.setAttribute('fill',          on ? '#4fa3e0' : '#363d52');
+    ee.lbl.setAttribute('font-weight',   on ? '600' : '400');
+  });
+
+  const am = M[aid];
+  document.getElementById('ic-name').textContent   = am.label;
+  document.getElementById('ic-eq').innerHTML       = am.eq;
+  document.getElementById('ic-note').innerHTML     = am.note;
+
+  const allChips = [
+    { key:'garch_lags', label:'p ≥ 1' }, { key:'integrated', label:'Σ = 1' },
+    { key:'in_mean',    label:'δ ≠ 0' }, { key:'asymmetric',  label:'γ ≠ 0' },
+    { key:'log_form',   label:'ln σ²' }, { key:'multivariate',label:'N > 1' },
+  ];
+  const chips = document.getElementById('ic-chips');
+  chips.innerHTML = '';
+  allChips.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'chip' + (activeFeats.includes(c.key) ? ' on' : '');
+    d.textContent = c.label;
+    chips.appendChild(d);
+  });
+}
+
+function applyDeps() {
+  document.querySelectorAll('.tog').forEach(row => {
+    const req = row.dataset.requires;
+    if (!req) return;
+    if (!activeFeats.includes(req)) {
+      row.classList.add('locked'); row.classList.remove('active');
+      activeFeats = activeFeats.filter(f => f !== row.dataset.feat);
+    } else {
+      row.classList.remove('locked');
+    }
+  });
+}
+
+function syncUI() {
+  document.querySelectorAll('.tog').forEach(row => {
+    row.classList.toggle('active', activeFeats.includes(row.dataset.feat));
+  });
+}
+
+document.querySelectorAll('.tog').forEach(row => {
+  row.addEventListener('click', () => {
+    if (row.classList.contains('locked')) return;
+    const f = row.dataset.feat;
+    activeFeats = activeFeats.includes(f)
+      ? activeFeats.filter(x => x !== f)
+      : [...activeFeats, f];
+    applyDeps(); syncUI(); updateTree();
+  });
+});
+
+activeFeats = ['garch_lags'];
+applyDeps(); syncUI(); updateTree();
+</script>
+</body>
+</html>

@@ -1,0 +1,1466 @@
+---
+format:
+  revealjs:
+    title-slide-attributes:
+      data-visibility: hidden 
+    theme: [default, title-ARCH.scss]
+    margin: 0.05
+    slide-number: true
+    transition: slide
+    navigation-mode: vertical
+    width: 1280
+    height: 720
+    embed-resources: true 
+    self-contained: true
+    html-math-method: 
+      method: mathjax
+      url: "mathjax/tex-chtml.js"
+    controls: false
+mainfont: "Cambria Math"
+---
+
+```{=html}
+<section class="title-slide">
+
+  <div class="header-band">
+    <div class="logo-box">
+      <img src="angrau_logo.jpeg" alt="ANGRAU Logo">
+    </div>
+    <div class="inst-block">
+      <div class="university-name">
+        Acharya N.G. Ranga Agricultural University
+      </div>
+      <div class="college-name">
+        Agricultural College, Bapatla
+      </div>
+      <div class="dept-name">
+        Department of Statistics and Computer Applications
+      </div>
+    </div>
+  </div>
+
+  <div class="mid-content">
+    <div class="course-label">
+      AECO 606 ADVANCED AGRICULTURAL MARKETING AND PRICE ANALYSIS
+    </div>
+    <div class="main-title">
+      Autoregressive Conditional Heteroscedasticity
+    </div>
+  </div>
+
+  <div class="footer-band">
+    <div class="presenter-block">
+      <span class="role-label">Presenter</span>
+      <span class="person-name">Krupesh S (BAD/2025-25)</span>
+      <span class="person-detail">I Ph.D.(Ag.) Agricultural Statistics</span>
+    </div>
+  </div>
+
+</section>
+```
+
+## Characteristics of Economic Time Series
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 11
+#| fig-height: 5.5
+#| fig-align: "center"
+#| out-width: "90%"
+
+library(ggplot2)
+library(gridExtra)
+
+set.seed(123)
+n <- 2000
+df <- data.frame(t = 1:n)
+
+df$p1 <- cumsum(rnorm(n, mean = 0.05, sd = 1))
+
+garch_resid <- rnorm(n)
+sigma <- rep(1, n)
+for(i in 2:n) {
+  sigma[i] <- sqrt(0.1 + 0.85 * sigma[i-1]^2 + 0.1 * garch_resid[i-1]^2)
+}
+df$p2 <- garch_resid * sigma
+
+df$p3 <- as.numeric(arima.sim(model = list(ar = 0.99), n = n))
+df$p4 <- cumsum(rnorm(n, 0, 1))
+
+market_factor <- cumsum(rnorm(n, 0, 1))
+df$p5_a <- market_factor + cumsum(rnorm(n, 0, 0.5))
+df$p5_b <- market_factor + cumsum(rnorm(n, 0, 0.5)) - 20
+
+jumps <- rnorm(n, 0, 1)
+jumps[1200] <- -80
+df$p6 <- cumsum(jumps)
+
+my_theme <- theme_classic() +
+  theme(
+    axis.title       = element_text(size = 9, family = "sans"),
+    axis.text        = element_text(size = 7),
+    plot.title       = element_text(face = "bold", size = 10, family = "sans"),
+  )
+
+plot1 <- ggplot(df, aes(x=t, y=p1)) +
+  geom_line(linewidth=0.3, color="black") +
+  labs(title="Clear Trend (Drift)", x="", y="Price") + my_theme
+
+plot2 <- ggplot(df, aes(x=t, y=p2)) +
+  geom_line(linewidth=0.2, color="black") +
+  labs(title="Non-constant Volatility (Clustering)", x="", y="Returns") + my_theme
+
+plot3 <- ggplot(df, aes(x=t, y=p3)) +
+  geom_line(linewidth=0.3, color="black") +
+  labs(title="High Persistence (Long Memory)", x="", y="Deviation") + my_theme
+
+plot4 <- ggplot(df, aes(x=t, y=p4)) +
+  geom_line(linewidth=0.3, color="black") +
+  labs(title="Meandering (Random Walk)", x="", y="Price") + my_theme
+
+plot5 <- ggplot(df, aes(x=t)) +
+  geom_line(aes(y=p5_a), linewidth=0.3, color="black") +
+  geom_line(aes(y=p5_b), linewidth=0.3, color="grey50") +
+  labs(title="Comovements (Correlation)", x="Time", y="Price") + my_theme
+
+plot6 <- ggplot(df, aes(x=t, y=p6)) +
+  geom_line(linewidth=0.3, color="black") +
+  labs(title="Structural Break (Jump)", x="Time", y="Price") + my_theme
+
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol = 2)
+```
+
+# OBJECTIVE
+
+## Volatility
+Volatility means the conditional standard deviation of the underlying price return.
+
+::: {.callout-note}
+## Implied they say!
+The volatility value that, when plugged into a theoretical pricing model, reproduces the observed market price of an asset is termed as *implied volatility*
+:::
+
+## Characteristics of Volatility{.scrollable}
+
+**Unobservability**
+
+- Volatility is *not directly observable* — only one return per trading day exists
+- Implied volatility is model-dependent and often overstates true volatility
+
+**Volatility Clustering**
+
+- High volatility periods and low volatility periods tend to cluster together
+
+**Continuous Evolution**
+
+- Volatility changes smoothly over time — abrupt jumps are rare
+
+**Mean Reversion (Stationarity)**
+
+- Volatility does not diverge to $\infty$ — it fluctuates within a bounded range
+
+**Leverage Effect**
+
+- Volatility reacts *asymmetrically* to price increases vs. price drops
+
+## Why Volatility?{style="text-align: justify;"}
+The price level reveals the market's current valuation of a commodity, while volatility captures the uncertainty and risk embedded in the price discovery process that led to that equilibrium.
+
+## Homoscedastic vs Heteroscedastic Process
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 16
+#| fig-height: 8
+#| fig-align: "center"
+#| out-width: "95%"
+
+library(ggplot2)
+library(gridExtra)
+
+set.seed(101)
+N <- 500
+
+my_theme <- theme_classic() +
+  theme(
+    plot.title = element_text(face = "bold", size = 10, family = "sans"),
+    axis.title = element_text(size = 9, family = "sans"),
+    axis.text  = element_text(size = 7)
+  )
+
+# ── Series A: Homoscedastic ─────────────────────────────────────
+# Returns drawn iid Normal — constant variance by construction
+r_homo <- rnorm(N, mean = 0.0003, sd = 0.01)
+P_homo <- 100 * cumprod(1 + r_homo)
+
+fit_homo   <- arima(r_homo, order = c(1, 0, 0))
+resid_homo <- as.numeric(residuals(fit_homo))
+
+# ── Series B: Heteroscedastic ───────────────────────────────────
+# Returns with GARCH(1,1) variance — volatility clustering
+vt     <- rnorm(N)
+h      <- numeric(N)
+r_het  <- numeric(N)
+h[1]   <- 0.0001
+
+for (t in 2:N) {
+  h[t]    <- 0.00001 + 0.15 * r_het[t-1]^2 + 0.80 * h[t-1]
+  r_het[t] <- vt[t] * sqrt(h[t])
+}
+
+P_het <- 100 * cumprod(1 + r_het)
+
+fit_het   <- arima(r_het, order = c(1, 0, 0))
+resid_het <- as.numeric(residuals(fit_het))
+
+# ── Time indices ─────────────────────────────────────────────────
+t_idx <- 1:N
+
+# ── Row 1: Price series ─────────────────────────────────────────
+p1 <- ggplot(data.frame(t = t_idx, P = P_homo), aes(x = t, y = P)) +
+  geom_line(linewidth = 0.4, color = "black") +
+  labs(title = "Price Series \u2014 Homoscedastic",
+       x = "", y = expression(P[t])) +
+  my_theme
+
+p2 <- ggplot(data.frame(t = t_idx, P = P_het), aes(x = t, y = P)) +
+  geom_line(linewidth = 0.4, color = "black") +
+  labs(title = "Price Series \u2014 Heteroscedastic",
+       x = "", y = expression(P[t])) +
+  my_theme
+
+# ── Row 2: Returns ───────────────────────────────────────────────
+p3 <- ggplot(data.frame(t = t_idx, r = r_homo), aes(x = t, y = r)) +
+  geom_line(linewidth = 0.3, color = "grey30") +
+  geom_hline(yintercept = 0, linewidth = 0.3, linetype = "dashed",
+             color = "grey60") +
+  labs(title = "Returns \u2014 Homoscedastic",
+       x = "", y = expression(r[t])) +
+  my_theme
+
+p4 <- ggplot(data.frame(t = t_idx, r = r_het), aes(x = t, y = r)) +
+  geom_line(linewidth = 0.3, color = "grey30") +
+  geom_hline(yintercept = 0, linewidth = 0.3, linetype = "dashed",
+             color = "grey60") +
+  labs(title = "Returns \u2014 Heteroscedastic",
+       x = "", y = expression(r[t])) +
+  my_theme
+
+# ── Row 3: Squared residuals ────────────────────────────────────
+p5 <- ggplot(data.frame(t = t_idx, e2 = resid_homo^2), aes(x = t, y = e2)) +
+  geom_segment(aes(xend = t, yend = 0), linewidth = 0.3, color = "grey30") +
+  labs(title = expression("Squared Residuals " * hat(epsilon)[t]^2 *
+                            " \u2014 Homoscedastic"),
+       x = "Time", y = expression(hat(epsilon)[t]^2)) +
+  my_theme
+
+p6 <- ggplot(data.frame(t = t_idx, e2 = resid_het^2), aes(x = t, y = e2)) +
+  geom_segment(aes(xend = t, yend = 0), linewidth = 0.3, color = "grey30") +
+  labs(title = expression("Squared Residuals " * hat(epsilon)[t]^2 *
+                            " \u2014 Heteroscedastic"),
+       x = "Time", y = expression(hat(epsilon)[t]^2)) +
+  my_theme
+
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 2, nrow = 3)
+```
+
+
+# THE OLS SETUP
+
+## Problem
+* Many economic time series exhibit periods of unusually large volatility followed by periods of relative tranquility.
+* In such circumstances, the assumption of a constant variance (homoscedasticity) is inappropriate.
+
+## Model
+One approach to model this behaviour is to explicitly introduce an independent variable $x_i$ such that,
+$$
+y_{t+1} = \epsilon_{t+1}x_t
+$${#eq-hs}
+where,  
+$y_{t+1}$ is the dependent variable of interest;  
+$\epsilon_{t+1}$ is a white-noise disturbance term with variance $\sigma^2$;  
+$x_t$ is an independent variable that can be observed at period $t$.  
+Here,
+$$
+var(y_{t+1}|x_t) = x_t^2\sigma^2
+$${#eq-varhs}
+
+## Logarithmic Form
+Modifying the @eq-hs, we get,
+$$
+\ln(y_t) = \alpha_0 + \alpha_1 \ln(x_{t-1}) + e_t
+$${#eq-lnform}
+where,
+$e_t=\ln(\epsilon_t)$
+
+## Regression and its Limitations
+Since @eq-lnform is linear, OLS can be used to estimate the parameters $\alpha_0$ and $\alpha_1$.
+
+But,
+
+* The model forces ${x_t}$ to affect mean of $\ln(y_t)$:
+
+  &nbsp;&nbsp;&nbsp;&nbsp;It is difficult to choose one candidate for ${x_t}$ over many reasonable choices.
+    
+* Transformations are required for the series to have a constant variance.
+
+# THE ARCH PROCESS
+
+## The "Conditional" Advantage
+Consider a stationary ARMA model,
+$$y_t = a_0 + a_1y_{t-1} + \epsilon_t$$
+```{=html}
+<table style="width:100%; border-collapse:collapse; font-size:0.85em;">
+  <thead>
+    <tr style="background-color:#333333; color:white;">
+      <th style="border:1px solid #888; padding:10px 14px;text-align:center;">Expectation Type</th>
+      <th style="border:1px solid #888; padding:10px 14px;text-align:center;">Mean</th>
+      <th style="border:1px solid #888; padding:10px 14px;text-align:center;">Forecast Error Variance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color:#e8e8e8;">
+      <td style="border:1px solid #888; padding:10px 14px; font-weight:bold; color:#222222;">Conditional</td>
+      <td style="border:1px solid #888; padding:10px 14px;">\(E_t y_{t+1} = a_0 + a_1 y_t\)</td>
+      <td style="border:1px solid #888; padding:10px 14px;">\(E_t[(y_{t+1} - a_0 - a_1 y_t)^2] = E_t\epsilon_{t+1}^2 = \sigma^2\)</td>
+    </tr>
+    <tr style="background-color:#ffffff;">
+      <td style="border:1px solid #888; padding:10px 14px; font-weight:bold; color:#222222;">Unconditional</td>
+      <td style="border:1px solid #888; padding:10px 14px;">\(Ey_{t+1} = \dfrac{a_0}{1-a_1}\)</td>
+      <td style="border:1px solid #888; padding:10px 14px;">\(E\left[\left(y_{t+1} - \dfrac{a_0}{1-a_1}\right)^2\right] = \dfrac{\sigma^2}{1-a_1^2}\)</td>
+    </tr>
+  </tbody>
+</table>
+```
+The conditional forecast uses information from the past and its variance is certainly less than the unconditional counterpart. Thus conditional forecasts are preferable.
+
+## Modelling Non-constant variance
+When the conditional variance is not constant, a simple strategy is to model the conditional variance as an AR($q$) process using squares of the estimated residuals:
+$$\hat{\epsilon}_t^2 = \alpha_0 + \alpha_1\hat{\epsilon}_{t-1}^2 + \alpha_2\hat{\epsilon}_{t-2}^2 + \cdots + \alpha_q\hat{\epsilon}_{t-q}^2 + v_t$${#eq-arch}
+where $v_t$ is a white-noise process.
+
+If the values of $\alpha_1, \alpha_2, ..., \alpha_n$ all equal to zero, the estimated variance is simply the constant $\alpha_0$.
+
+::: {.callout-note}
+## ARCH ALERT
+The model in @eq-arch is the stepping stone to the ARCH process
+:::
+
+# ENGLE'S ARCH SPECIFICATION
+
+## The Flaw with additive model
+* In @eq-arch, $\hat{\epsilon}_{t}^2$ should be strictly non-negative. Also the coefficients are constrained to be non-negative to ensure the expected variance stays positive.
+* However, $\nu_t$ is a white-noise process, it can take negative values. If there is a sufficiently large negative shock on $\nu_t$, the entire right hand side of @eq-arch can become mathematically negative.
+
+## The Multiplicative Alternative
+
+In 1982, Robert. F. Engle proposed a class of multiplicative models as:
+$$\epsilon_t = v_t \sqrt{\alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2}$${#eq-multARCH}
+which is known to be the ARCH($q$) process with $\alpha_0 > 0$, $\alpha_i \geq 0$ and $\sum\alpha_i < 1$.
+
+## Deriving the Conditional Variance{.scrollable}
+
+Starting from @eq-multARCH:
+
+$$\epsilon_t = v_t\sqrt{\alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2}$$
+
+Taking $\text{Var}(\cdot \mid \mathcal{F}_{t-1})$ on both sides:
+
+$$\text{Var}(\epsilon_t \mid \mathcal{F}_{t-1}) 
+= \left(\alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2\right) 
+\cdot \underbrace{\text{Var}(v_t)}_{ = 1}$$
+
+$$\therefore \quad \boxed{\sigma_t^2 = \alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2}$${#eq-condvar}
+
+## Compact Form of ARCH($q$)
+
+Substituting $\sigma_t^2 = \alpha_0 + \displaystyle\sum_{i=1}^q \alpha_i \epsilon_{t-i}^2$ 
+back into @eq-multARCH:
+
+$$\epsilon_t = v_t\sqrt{\alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2} 
+= v_t\sqrt{\sigma_t^2} = v_t\sigma_t$${#eq-compactARCH}
+
+where $\sigma_t > 0$, since $\alpha_0 > 0$ and $\alpha_i \geq 0$.
+
+## Unconditional Variance of ARCH($q$){.scrollable}
+Since $E(\epsilon_t) = 0$, we have $\text{Var}(\epsilon_t) = E(\epsilon_t^2)$. 
+
+Applying the Law of Iterated Expectations:
+
+$$\text{Var}(\epsilon_t) = E\left[E(\epsilon_t^2 \mid \mathcal{F}_{t-1})\right] = E(\sigma_t^2) = E\left(\alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2\right)$$
+
+Under stationarity, $E(\epsilon_t^2) = E(\epsilon_{t-i}^2) = \text{Var}(\epsilon_t)$ for all $i$. 
+
+Denoting $\text{Var}(\epsilon_t) = \sigma^2$:
+
+$$\sigma^2 = \alpha_0 + \sum_{i=1}^q \alpha_i \sigma^2 \implies \sigma^2\left(1 - \sum_{i=1}^q \alpha_i\right) = \alpha_0$$
+
+$$\boxed{\sigma^2 = \dfrac{\alpha_0}{1 - \sum_{i=1}^q \alpha_i}}$${#eq-uncondvar}
+
+## Mean of the ARCH($q$) Process
+
+From @eq-compactARCH, $\epsilon_t = v_t\sigma_t$, where $\sigma_t$ is $\mathcal{F}_{t-1}$-measurable.
+
+**Conditional Mean:**
+$$E(\epsilon_t \mid \mathcal{F}_{t-1}) = \sigma_t \cdot E(v_t \mid \mathcal{F}_{t-1}) = \sigma_t \cdot 0 = 0$$
+
+since $v_t \sim \text{iid}(0,1)$ is independent of $\mathcal{F}_{t-1}$.
+
+**Unconditional Mean:**
+$$E(\epsilon_t) = E\left[E(\epsilon_t \mid \mathcal{F}_{t-1})\right] = E[0] = 0$$
+
+by the **Law of Iterated Expectations**.
+
+## Heavy Tails of the ARCH Process{style="text-align: justify;"}
+
+As long as $\alpha_i \neq 0$ for at least one $i$, $\kappa > 3$, the ARCH($q$) process has  
+**heavier tails than the normal distribution**, provided $\displaystyle\sum_{i=1}^q 3\alpha_i^2 < 1$ where $\kappa$ is the measure of kurtosis.
+
+## Testing for ARCH Effects: Engle's LM Test
+
+$\mathbf{H_0}: \alpha_1 = \alpha_2 = \cdots = \alpha_q = 0$ (no ARCH effects)
+
+*Step 1*: Fit an appropriate mean equation (ARMA or OLS regression) and obtain squared residuals $\{\hat{\epsilon}_t^2\}$.
+
+*Step 2*: Regress $\hat{\epsilon}_t^2$ on its $q$ lagged values as in @eq-arch:
+
+$$\hat{\epsilon}_t^2 = \alpha_0 + \alpha_1\hat{\epsilon}_{t-1}^2 + \alpha_2\hat{\epsilon}_{t-2}^2 + \cdots + \alpha_q\hat{\epsilon}_{t-q}^2 + v_t$$
+
+*Step 3*: Compute the test statistic. Under $H_0$:
+
+$$NR^2 \xrightarrow{d} \chi^2(q)$$
+For small samples, an $F$-test with $(q,\ N-q)$ df is preferred.
+
+## Maximum Likelihood Estimation of ARCH($q$){.scrollable}
+
+Given $N$ observations, the parameter vector is $\boldsymbol{\theta} = (\alpha_0, \alpha_1, \ldots, \alpha_q)^\top$.
+
+**Conditional Log-Likelihood:**
+
+Assuming $v_t \sim N(0,1)$, the conditional density of $\epsilon_t$ given $\mathcal{F}_{t-1}$ is:
+
+$$f(\epsilon_t \mid \mathcal{F}_{t-1}) = \frac{1}{\sqrt{2\pi\sigma_t^2}}\exp\left(-\frac{\epsilon_t^2}{2\sigma_t^2}\right)$$
+
+The conditional log-likelihood over $t = q+1, \ldots, N$ is:
+
+$$\ell(\boldsymbol{\theta}) = -\frac{1}{2}\sum_{t=q+1}^{N}\left[\log(2\pi) + \log(\sigma_t^2) + \frac{\epsilon_t^2}{\sigma_t^2}\right]$$
+
+## ML Algorithm{.scrollable}
+
+1. Initialize $\boldsymbol{\theta}^{(0)}$ — typically via OLS on $\hat{\epsilon}_t^2$ against its lags
+2. At iteration $k$, evaluate $\sigma_t^2 = \alpha_0 + \sum_{i=1}^q \alpha_i \epsilon_{t-i}^2$ recursively for $t = q+1, \ldots, N$
+3. Compute $\ell(\boldsymbol{\theta}^{(k)})$
+4. Update $\boldsymbol{\theta}^{(k+1)}$ via **BFGS** quasi-Newton optimization
+5. Repeat steps 2--4 until $\|\boldsymbol{\theta}^{(k+1)} - \boldsymbol{\theta}^{(k)}\| < \delta$
+
+::: {.callout-warning}
+## Constraints
+Optimization is subject to $\alpha_0 > 0$, $\alpha_i \geq 0$, and $\displaystyle\sum_{i=1}^q \alpha_i < 1$ to ensure positivity of $\sigma_t^2$ and second-order stationarity.
+:::
+
+
+## Effect of ARCH Coefficients
+```{=html}
+<div style="font-family: sans-serif; font-size: 13px;">
+
+  <div style="display:flex; align-items:center; gap:16px; margin-bottom:8px;">
+    <label style="font-weight:bold; white-space:nowrap;">
+      &alpha;<sub>1</sub> + &alpha;<sub>2</sub> =
+      <span id="sum_label" style="color:#8c1a1a; font-size:15px;">0.05</span>
+    </label>
+    <input type="range" id="alpha_slider" min="0" max="100" step="1" value="5"
+           style="width:60%; accent-color:#1a1a8c;">
+    <span style="font-size:11px; color:#555;">
+      &alpha;<sub>1</sub>=<span id="a1_label">—</span>,
+      &alpha;<sub>2</sub>=<span id="a2_label">—</span>
+    </span>
+  </div>
+
+  <div style="display:flex; gap:10px;">
+    <canvas id="series_canvas" width="560" height="290"
+            style="border:1px solid #ddd; background:#fff;"></canvas>
+    <canvas id="density_canvas" width="560" height="290"
+            style="border:1px solid #ddd; background:#fff;"></canvas>
+  </div>
+
+</div>
+
+<script>
+(function () {
+
+  // ── Seeded RNG (Mulberry32) ───────────────────────────────────
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function makeNormal(rng) {
+    // Box-Muller
+    const u = rng(), v = rng();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  const N = 300;
+  const rng = mulberry32(42);
+  const vt = Array.from({ length: N }, () => makeNormal(rng));
+
+  // ── ARCH(2) simulation ────────────────────────────────────────
+  function simARCH2(a1, a2) {
+    const eps = new Array(N).fill(0);
+    for (let t = 2; t < N; t++) {
+      const sig2 = Math.max(1 + a1 * eps[t-1]**2 + a2 * eps[t-2]**2, 1e-6);
+      eps[t] = vt[t] * Math.sqrt(sig2);
+    }
+    return eps;
+  }
+
+  // ── KDE ───────────────────────────────────────────────────────
+  function kde(data, xs, bw) {
+    return xs.map(x => {
+      const s = data.reduce((acc, xi) => {
+        const u = (x - xi) / bw;
+        return acc + Math.exp(-0.5 * u * u);
+      }, 0);
+      return s / (data.length * bw * Math.sqrt(2 * Math.PI));
+    });
+  }
+
+  function normalPDF(xs, mu, sd) {
+    return xs.map(x => {
+      const u = (x - mu) / sd;
+      return Math.exp(-0.5 * u * u) / (sd * Math.sqrt(2 * Math.PI));
+    });
+  }
+
+  function stdDev(arr) {
+    const m = arr.reduce((a, b) => a + b, 0) / arr.length;
+    return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length);
+  }
+
+  // ── Canvas helpers ────────────────────────────────────────────
+  const PAD = { l: 48, r: 15, t: 42, b: 32 };
+
+  function clearAndAxes(ctx, W, H, xmin, xmax, ymin, ymax,
+                         xlabel, ylabel, title, subtitle) {
+    const pw = W - PAD.l - PAD.r;
+    const ph = H - PAD.t - PAD.b;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.fillStyle = '#111';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(title, PAD.l, 16);
+
+    ctx.fillStyle = '#666';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(subtitle, PAD.l, 30);
+
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(PAD.l, PAD.t);
+    ctx.lineTo(PAD.l, PAD.t + ph);
+    ctx.lineTo(PAD.l + pw, PAD.t + ph);
+    ctx.stroke();
+
+    // y ticks
+    ctx.fillStyle = '#555';
+    ctx.font = '9px sans-serif';
+    for (let i = 0; i <= 4; i++) {
+      const v  = ymin + (ymax - ymin) * i / 4;
+      const py = PAD.t + ph - (v - ymin) / (ymax - ymin) * ph;
+      ctx.textAlign = 'right';
+      ctx.fillText(v.toFixed(1), PAD.l - 4, py + 3);
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 0.4;
+      ctx.beginPath();
+      ctx.moveTo(PAD.l + 1, py);
+      ctx.lineTo(PAD.l + pw, py);
+      ctx.stroke();
+    }
+
+    // x ticks
+    ctx.textAlign = 'center';
+    for (let i = 0; i <= 5; i++) {
+      const v  = xmin + (xmax - xmin) * i / 5;
+      const px = PAD.l + (v - xmin) / (xmax - xmin) * pw;
+      ctx.fillStyle = '#555';
+      ctx.fillText(v.toFixed(0), px, PAD.t + ph + 14);
+    }
+
+    // axis labels
+    ctx.fillStyle = '#333';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(xlabel, PAD.l + pw / 2, H - 2);
+    ctx.save();
+    ctx.translate(12, PAD.t + ph / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(ylabel, 0, 0);
+    ctx.restore();
+
+    return { pw, ph };
+  }
+
+  function px(v, vmin, vmax, size, offset) {
+    return offset + (v - vmin) / (vmax - vmin) * size;
+  }
+
+  function py(v, vmin, vmax, size, offset) {
+    return offset + size - (v - vmin) / (vmax - vmin) * size;
+  }
+
+  // ── Draw series ───────────────────────────────────────────────
+  function drawSeries(eps, sa) {
+    const cv  = document.getElementById('series_canvas');
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+    const ymin = Math.min(...eps) * 1.15;
+    const ymax = Math.max(...eps) * 1.15;
+
+    const { pw, ph } = clearAndAxes(
+      ctx, W, H, 0, N, ymin, ymax,
+      'Time', '\u03B5(t)',
+      'ARCH(2) Process',
+      '\u03B1\u2081 + \u03B1\u2082 = ' + sa.toFixed(2)
+    );
+
+    // zero line
+    const zy = py(0, ymin, ymax, ph, PAD.t);
+    ctx.strokeStyle = '#ccc'; ctx.lineWidth = 0.6;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(PAD.l, zy); ctx.lineTo(PAD.l + pw, zy);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.strokeStyle = '#1a1a8c'; ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    eps.forEach((v, i) => {
+      const x = px(i, 0, N, pw, PAD.l);
+      const y = py(v, ymin, ymax, ph, PAD.t);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+
+  // ── Draw density ──────────────────────────────────────────────
+  function drawDensity(eps, sa) {
+    const cv  = document.getElementById('density_canvas');
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+
+    const xs   = Array.from({ length: 200 }, (_, i) => -10 + i * 0.1);
+    const sd   = stdDev(eps);
+    const bw   = 1.06 * sd * Math.pow(eps.length, -0.2);
+    const arch = kde(eps, xs, bw);
+    const norm = normalPDF(xs, 0, sd);
+    const ymax = Math.max(...arch, ...norm) * 1.2;
+
+    const { pw, ph } = clearAndAxes(
+      ctx, W, H, -10, 10, 0, ymax,
+      '\u03B5(t)', 'Density',
+      'Tail Behaviour vs Normal',
+      '\u03B1\u2081 + \u03B1\u2082 = ' + sa.toFixed(2)
+    );
+
+    function curve(ys, color, dash) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash(dash || []);
+      ctx.beginPath();
+      xs.forEach((x, i) => {
+        const cx = px(x,    -10, 10,   pw, PAD.l);
+        const cy = py(ys[i], 0,  ymax, ph, PAD.t);
+        i === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    curve(norm, '#555555', [6, 4]);
+    curve(arch, '#8c1a1a');
+
+    // legend
+    const lx = PAD.l + pw - 140, ly = PAD.t + 8;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#8c1a1a'; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx+22, ly); ctx.stroke();
+    ctx.fillStyle = '#333'; ctx.font = '10px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('ARCH(2)', lx + 26, ly + 4);
+
+    ctx.strokeStyle = '#555555'; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(lx, ly+16); ctx.lineTo(lx+22, ly+16); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillText('Normal', lx + 26, ly + 20);
+  }
+
+  // ── Slider logic ──────────────────────────────────────────────
+  function update() {
+    const sa = +document.getElementById('alpha_slider').value / 100;
+    const a1 = +(sa * 0.6).toFixed(3);
+    const a2 = +(sa * 0.4).toFixed(3);
+    document.getElementById('sum_label').textContent = sa.toFixed(2);
+    document.getElementById('a1_label').textContent  = a1;
+    document.getElementById('a2_label').textContent  = a2;
+    const eps = simARCH2(a1, a2);
+    drawSeries(eps, sa);
+    drawDensity(eps, sa);
+  }
+
+  document.getElementById('alpha_slider').addEventListener('input', update);
+  update();
+
+})();
+</script>
+```
+
+::: {.callout-note}
+## Alpha dynamics
+As $\alpha_1 + \alpha_2 \to 1$, volatility clusters intensify and tails grow
+heavier — the ARCH process departs increasingly from normality.
+:::
+
+## Building an ARCH Model{.scrollable}
+
+1. **Compute Log Returns** — Transform raw price series $P_t$ to log returns $r_t = \ln(P_t/P_{t-1})$. This ensures stationarity in mean, removes trend, and stabilises scale.
+
+2. **Fit a Mean Equation** — Fit an appropriate ARMA($p$,$q$) model on $r_t$ using AIC/BIC. Extract residuals $\hat{\epsilon}_t$.
+
+3. **Test for ARCH Effects** — Run Engle's LM test on $\hat{\epsilon}_t$. Reject $H_0$ to confirm volatility clustering warrants ARCH modelling.
+
+4. **Identify Order $q$** — Examine PACF of $\hat{\epsilon}_t^2$. The lag at which PACF cuts off suggests candidate $q$.
+
+5. **Estimate ARCH($q$)** — Maximise conditional log-likelihood via BFGS. Verify $\alpha_0 > 0$, $\alpha_i \geq 0$, and $\sum\alpha_i < 1$.
+
+6. **Diagnose Residuals** — Standardise residuals as $\tilde{\epsilon}_t = \hat{\epsilon}_t/\hat{\sigma}_t$. Check:
+    - ACF of $\tilde{\epsilon}_t$ and $\tilde{\epsilon}_t^2$ for remaining structure
+    - Ljung-Box test on $\tilde{\epsilon}_t^2$
+    - QQ-plot for distributional assumption
+
+7. **Iterate if Needed** — If $\tilde{\epsilon}_t^2$ still shows significant ACF, increase $q$ or consider GARCH.
+
+8. **Forecast** — Use fitted $\hat{\sigma}_t^2$ for volatility forecasting and interval construction.
+
+# EMPIRICAL ILLUSTRATION
+## Data: Deutsch Mark / British Pound Exchange Rate Returns
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 16
+#| fig-height: 5
+
+library(rugarch)
+library(FinTS)
+library(ggplot2)
+library(gridExtra)
+library(forecast)
+library(tseries)
+
+data("dmbp", package = "rugarch")
+r <- dmbp[, 1]
+n <- length(r)
+t <- 1:n
+df <- data.frame(t = t, r = r)
+
+my_theme <- theme_classic() +
+  theme(
+    plot.title = element_text(face = "bold", size = 10),
+    axis.title = element_text(size = 9),
+    axis.text  = element_text(size = 7)
+  )
+
+p1 <- ggplot(df, aes(x = t, y = r)) +
+  geom_line(linewidth = 0.4, color = "black") +
+  labs(title = "DM/BP Exchange Rate Returns",
+       x = "Time", y = "Returns") +
+  my_theme
+
+p2 <- ggplot(df, aes(x = r)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 50, fill = "grey60",
+                 color = "white", linewidth = 0.2) +
+  stat_function(fun = dnorm,
+                args = list(mean = mean(r), sd = sd(r)),
+                color = "black", linewidth = 0.7,
+                linetype = "dashed") +
+  labs(title = "Distribution vs Normal",
+       x = "Returns", y = "Density") +
+  my_theme
+
+# Squared returns as volatility proxy
+p3 <- ggplot(df, aes(x = t, y = r^2)) +
+  geom_line(linewidth = 0.4, color = "black") +
+  labs(title = "Squared Returns (Volatility Proxy)",
+       x = "Time", y = expression(r[t]^2)) +
+  my_theme
+
+grid.arrange(p1, p2, p3, ncol = 3)
+```
+
+::: {.callout-note}
+## Data
+Deutsch Mark / British Pound exchange rate returns.  
+$N = `r n`$ observations. Canonical dataset for ARCH demonstration.
+:::
+
+## Step 1: Log Returns {auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-4"
+
+library(rugarch)
+data("dmbp", package = "rugarch")
+r <- dmbp[, 1]
+head(r)
+```
+```{r}
+#| echo: false
+head(r)
+```
+
+- Series is already in log return form: $r_t = \ln(P_t / P_{t-1})$
+- Mean close to zero, exhibits volatility clustering visually
+
+## Step 2: Stationarity Test {auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-2"
+
+library(tseries)
+adf.test(r)
+```
+```{r}
+#| echo: false
+#| warning: false
+adf.test(r)
+```
+
+- ADF test strongly rejects $H_0$ of unit root
+- Series is stationary — no differencing required
+
+## Step 3: Fit Candidate Mean Equations {.scrollable auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-17"
+
+models <- list(
+  "AR(1)"     = arima(r, order = c(1,0,0)),
+  "AR(2)"     = arima(r, order = c(2,0,0)),
+  "MA(1)"     = arima(r, order = c(0,0,1)),
+  "MA(2)"     = arima(r, order = c(0,0,2)),
+  "ARMA(1,1)" = arima(r, order = c(1,0,1)),
+  "ARMA(1,2)" = arima(r, order = c(1,0,2)),
+  "ARMA(2,1)" = arima(r, order = c(2,0,1)),
+  "ARMA(2,2)" = arima(r, order = c(2,0,2))
+)
+ic_tbl <- data.frame(
+  Model = names(models),
+  AIC   = round(sapply(models, AIC), 3),
+  BIC   = round(sapply(models, BIC), 3)
+)
+ic_tbl
+```
+```{r}
+#| echo: false
+#| warning: false
+
+models <- list(
+  "AR(1)"     = arima(r, order = c(1,0,0)),
+  "AR(2)"     = arima(r, order = c(2,0,0)),
+  "MA(1)"     = arima(r, order = c(0,0,1)),
+  "MA(2)"     = arima(r, order = c(0,0,2)),
+  "ARMA(1,1)" = arima(r, order = c(1,0,1)),
+  "ARMA(1,2)" = arima(r, order = c(1,0,2)),
+  "ARMA(2,1)" = arima(r, order = c(2,0,1)),
+  "ARMA(2,2)" = arima(r, order = c(2,0,2))
+)
+ic_tbl <- data.frame(
+  Model = names(models),
+  AIC   = round(sapply(models, AIC), 3),
+  BIC   = round(sapply(models, BIC), 3)
+)
+print(ic_tbl, row.names = FALSE)
+```
+```{r}
+#| echo: false
+best_name <- ic_tbl$Model[which.min(ic_tbl$BIC)]
+mean_fit  <- models[[best_name]]
+p_order   <- mean_fit$arma[1]
+q_order   <- mean_fit$arma[2]
+resid     <- residuals(mean_fit)
+```
+
+- Best mean equation by BIC: **`r best_name`**
+- Residuals $\hat{\epsilon}_t$ extracted for ARCH testing
+
+## Step 4: ACF and PACF of Squared Residuals {auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-6"
+
+acf_r2  <- acf(resid^2,  lag.max = 12, plot = FALSE)
+pacf_r2 <- pacf(resid^2, lag.max = 12, plot = FALSE)
+ci      <- qnorm(0.975) / sqrt(length(resid))
+
+```
+```{r}
+#| echo: false
+#| fig-height: 3.6
+#| fig-width: 10
+#| fig-align: center
+#| warning: false
+
+acf_r2  <- acf(resid^2,  lag.max = 12, plot = FALSE)
+pacf_r2 <- pacf(resid^2, lag.max = 12, plot = FALSE)
+ci      <- qnorm(0.975) / sqrt(length(resid))
+
+df_acf <- data.frame(
+  lag  = as.numeric(acf_r2$lag[-1]),
+  val  = as.numeric(acf_r2$acf[-1]),
+  type = "ACF of Squared Residuals"
+)
+df_pacf <- data.frame(
+  lag  = as.numeric(pacf_r2$lag),
+  val  = as.numeric(pacf_r2$acf),
+  type = "PACF of Squared Residuals"
+)
+df_all <- rbind(df_acf, df_pacf)
+
+# Identify significant PACF lags for annotation
+sig_pacf <- which(abs(pacf_r2$acf) > ci)
+max_lag  <- 5 
+
+ggplot(df_all, aes(x = lag, y = val)) +
+  geom_hline(yintercept = 0,
+             color = "black", linewidth = 0.4) +
+  geom_segment(aes(xend = lag, yend = 0),
+               linewidth = 0.7, color = "grey30") +
+  geom_point(aes(fill = abs(val) > ci),
+             shape = 21, size = 2,
+             color = "black") +
+  scale_fill_manual(values = c("FALSE" = "white",
+                                "TRUE"  = "black"),
+                    guide  = "none") +
+  geom_hline(yintercept =  ci, linetype = "dashed",
+             color = "black", linewidth = 0.5) +
+  geom_hline(yintercept = -ci, linetype = "dashed",
+             color = "black", linewidth = 0.5) +
+  facet_wrap(~ type, ncol = 2, scales = "free_y") +
+  scale_x_continuous(breaks = 1:12) +
+  labs(x = "Lag", y = "Value") +
+  my_theme +
+  theme(
+    strip.text       = element_text(face = "bold", size = 10),
+    strip.background = element_blank(),
+    panel.spacing    = unit(1.5, "lines")
+  )
+```
+
+- Filled points exceed the 95% confidence band — significant lags
+- PACF cuts off at lag **`r max_lag`** — suggests **ARCH(`r max_lag`)**
+
+## Step 5: Engle's LM Test {auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-2"
+
+library(FinTS)
+ArchTest(resid, lags = max_lag)
+```
+```{r}
+#| echo: false
+#| warning: false
+ArchTest(resid, lags = max_lag)
+```
+
+- $p$-value $< 0.05$ — formally confirms ARCH effects
+- Maximum lag set to **`r max_lag`** from PACF inspection
+
+## Step 6: Fit and Compare ARCH Orders {.scrollable auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-20"
+
+arch_fit <- function(q) {
+  spec <- ugarchspec(
+    variance.model     = list(model      = "sGARCH",
+                               garchOrder = c(q, 0)),
+    mean.model         = list(armaOrder    = c(p_order, q_order),
+                               include.mean = TRUE),
+    distribution.model = "norm"
+  )
+  ugarchfit(spec, data = r, solver = "hybrid")
+}
+
+q_max  <- max(max_lag, 2)
+fits   <- lapply(1:q_max, arch_fit)
+ic_mat <- sapply(fits, infocriteria)
+
+ic_tbl <- data.frame(
+  Order = paste0("ARCH(", 1:q_max, ")"),
+  AIC   = round(ic_mat[1, ], 5),
+  BIC   = round(ic_mat[2, ], 5)
+)
+ic_tbl
+```
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+# Redefine explicitly to avoid scope issues
+best_name <- ic_tbl$Model[which.min(ic_tbl$BIC)]
+mean_fit  <- models[[best_name]]
+p_order   <- mean_fit$arma[1]
+q_order   <- mean_fit$arma[2]
+
+arch_fit <- function(q) {
+  spec <- ugarchspec(
+    variance.model     = list(model      = "sGARCH",
+                               garchOrder = c(q, 0)),
+    mean.model         = list(armaOrder    = c(p_order, q_order),
+                               include.mean = TRUE),
+    distribution.model = "norm"
+  )
+  tryCatch(
+    ugarchfit(spec, data = r, solver = "hybrid"),
+    error = function(e) NULL
+  )
+}
+
+q_max  <- 5
+fits   <- lapply(1:q_max, arch_fit)
+fits   <- Filter(Negate(is.null), fits)
+ic_mat <- sapply(fits, infocriteria)
+
+ic_tbl2 <- data.frame(
+  Order = paste0("ARCH(", seq_along(fits), ")"),
+  AIC   = round(ic_mat[1, ], 5),
+  BIC   = round(ic_mat[2, ], 5)
+)
+print(ic_tbl2, row.names = FALSE)
+```
+```{r}
+#| echo: false
+best_q   <- which.min(ic_mat[2, ])
+best_fit <- fits[[best_q]]
+```
+
+- Best model by BIC: **ARCH(`r best_q`)**
+- BIC preferred for stronger parsimony penalty
+
+## Step 7: Best Model Estimates {.scrollable auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1"
+
+coef(best_fit)
+```
+```{r}
+#| echo: false
+round(coef(best_fit), 5)
+```
+```{r}
+#| echo: false
+cf <- coef(best_fit)
+a0 <- round(cf["omega"], 5)
+sa <- round(sum(cf[grep("alpha", names(cf))]), 5)
+```
+
+- $\hat{\alpha}_0 = `r a0`$ — baseline conditional variance
+- $\sum\hat{\alpha}_i = `r sa` < 1$ — **stationarity condition satisfied**
+
+## Step 8: Residual Diagnostics {.scrollable auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-4"
+
+std_resid <- residuals(best_fit, standardize = TRUE)
+ArchTest(std_resid,   lags = best_q)
+Box.test(std_resid,   lag  = best_q, type = "Ljung-Box")
+Box.test(std_resid^2, lag  = best_q, type = "Ljung-Box")
+```
+```{r}
+#| echo: false
+#| warning: false
+std_resid <- residuals(best_fit, standardize = TRUE)
+ArchTest(std_resid,   lags = best_q)
+Box.test(std_resid,   lag  = best_q, type = "Ljung-Box")
+Box.test(std_resid^2, lag  = best_q, type = "Ljung-Box")
+```
+
+- LM test on $\tilde{\epsilon}_t$: $p > 0.05$ — **no remaining ARCH effects**
+- Ljung-Box on $\tilde{\epsilon}_t$: $p > 0.05$ — **no linear autocorrelation**
+- Ljung-Box on $\tilde{\epsilon}_t^2$: $p > 0.05$ — **white noise confirmed**
+
+## Step 8: QQ-Plot {auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-6"
+
+ggplot(data.frame(r = as.numeric(std_resid)),
+       aes(sample = r)) +
+  stat_qq(size = 0.8, alpha = 0.6) +
+  stat_qq_line(color = "black", linewidth = 0.6) +
+  labs(title = "QQ-Plot: Standardised Residuals") +
+  theme_classic()
+```
+```{r}
+#| echo: false
+#| fig-height: 3.2
+#| fig-width: 5
+#| fig-align: center
+
+ggplot(data.frame(r = as.numeric(std_resid)),
+       aes(sample = r)) +
+  stat_qq(size = 0.6, alpha = 0.5, color = "grey30") +
+  stat_qq_line(color = "black", linewidth = 0.6) +
+  labs(title = "QQ-Plot: Standardised Residuals",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  my_theme
+```
+
+- Mild tail departure — Student-$t$ innovations may improve fit
+
+## Step 9: Volatility Forecast {auto-animate=true}
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-2"
+
+forc <- ugarchforecast(best_fit, n.ahead = 20)
+plot(forc, which = 3)
+```
+```{r}
+#| echo: false
+#| fig-height: 3.2
+#| fig-width: 10
+#| fig-align: center
+#| warning: false
+
+forc    <- ugarchforecast(best_fit, n.ahead = 20)
+sig_f   <- as.numeric(sigma(forc))
+sig_fit <- as.numeric(sigma(best_fit))
+n_fit   <- length(sig_fit)
+
+df_forc <- data.frame(
+  t     = c(1:n_fit, (n_fit+1):(n_fit+20)),
+  sigma = c(sig_fit, sig_f),
+  type  = c(rep("Fitted", n_fit), rep("Forecast", 20))
+)
+
+ggplot(df_forc, aes(x = t, y = sigma, color = type)) +
+  geom_line(linewidth = 0.5) +
+  scale_color_manual(values = c("Fitted"   = "grey60",
+                                "Forecast" = "black")) +
+  labs(title = "Conditional Volatility: Fitted + 20-step Forecast",
+       x = "Time",
+       y = expression(hat(sigma)[t]),
+       color = "") +
+  my_theme +
+  theme(legend.position = "top")
+```
+
+- Forecast converges toward unconditional volatility
+- Confirms mean-reverting nature of the fitted ARCH process
+
+# TIMELINE OF ARCH MODEL DEVELOPMENT{.scrollable}
+
+```{=html}
+<div style="font-family: sans-serif; font-size: 0.78em; padding: 0 10px;">
+<table style="width:100%; border-collapse:collapse;">
+  <thead>
+    <tr style="background:#333; color:#fff;">
+      <th style="padding:8px 12px; text-align:center; width:10%;">Year</th>
+      <th style="padding:8px 12px; text-align:left;  width:22%;">Model</th>
+      <th style="padding:8px 12px; text-align:left;  width:28%;">Author(s)</th>
+      <th style="padding:8px 12px; text-align:left;  width:40%;">Key Contribution</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f0f0f0;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1982</td>
+      <td style="padding:7px 12px; font-weight:bold;">ARCH(<i>q</i>)</td>
+      <td style="padding:7px 12px;">Engle</td>
+      <td style="padding:7px 12px;">Time-varying conditional variance driven by past squared shocks</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1986</td>
+      <td style="padding:7px 12px; font-weight:bold;">GARCH(<i>p,q</i>)</td>
+      <td style="padding:7px 12px;">Bollerslev</td>
+      <td style="padding:7px 12px;">Adds lagged variance terms — parsimonious long-memory volatility</td>
+    </tr>
+    <tr style="background:#f0f0f0;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1987</td>
+      <td style="padding:7px 12px; font-weight:bold;">ARCH-M</td>
+      <td style="padding:7px 12px;">Engle, Lilien &amp; Robins</td>
+      <td style="padding:7px 12px;">Volatility enters the mean equation — formalises risk-return tradeoff</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1988</td>
+      <td style="padding:7px 12px; font-weight:bold;">IGARCH</td>
+      <td style="padding:7px 12px;">Engle &amp; Bollerslev</td>
+      <td style="padding:7px 12px;">Integrated GARCH — shocks to variance are permanent</td>
+    </tr>
+    <tr style="background:#f0f0f0;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1991</td>
+      <td style="padding:7px 12px; font-weight:bold;">EGARCH</td>
+      <td style="padding:7px 12px;">Nelson</td>
+      <td style="padding:7px 12px;">Exponential form — asymmetric leverage effect, no sign constraints</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1991</td>
+      <td style="padding:7px 12px; font-weight:bold;">Semi-parametric ARCH</td>
+      <td style="padding:7px 12px;">Engle &amp; González-Rivera</td>
+      <td style="padding:7px 12px;">Non-parametric innovation distribution — relaxes normality assumption</td>
+    </tr>
+    <tr style="background:#f0f0f0;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1992</td>
+      <td style="padding:7px 12px; font-weight:bold;">GJR-GARCH</td>
+      <td style="padding:7px 12px;">Glosten, Jagannathan &amp; Runkle</td>
+      <td style="padding:7px 12px;">Threshold asymmetry — separates impact of positive and negative shocks</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1992</td>
+      <td style="padding:7px 12px; font-weight:bold;">News Impact Curve</td>
+      <td style="padding:7px 12px;">Engle &amp; Ng</td>
+      <td style="padding:7px 12px;">Measures asymmetric impact of positive vs negative news on &sigma;&#x0302;<sub>t</sub><sup>2</sup></td>
+    </tr>
+    <tr style="background:#f0f0f0;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1992</td>
+      <td style="padding:7px 12px; font-weight:bold;">Implied ARCH</td>
+      <td style="padding:7px 12px;">Engle &amp; Chowdhury</td>
+      <td style="padding:7px 12px;">Extracts volatility dynamics from options prices — links ARCH with options markets</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1992</td>
+      <td style="padding:7px 12px; font-weight:bold;">MGARCH / FACTOR-ARCH</td>
+      <td style="padding:7px 12px;">Bollerslev &nbsp;|&nbsp; Engle, Ng &amp; Rothschild</td>
+      <td style="padding:7px 12px;">Multivariate conditional covariance — factor structure for large portfolios</td>
+    </tr>
+    <tr style="background:#f0f0f0;">
+      <td style="padding:7px 12px; text-align:center; font-weight:bold;">1993</td>
+      <td style="padding:7px 12px; font-weight:bold;">Stochastic Volatility</td>
+      <td style="padding:7px 12px;">Harvey, Ruiz &amp; Shephard</td>
+      <td style="padding:7px 12px;">Latent volatility process — alternative paradigm to GARCH framework</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+```
+
+::: {.callout-note}
+## Nobel Recognition
+Robert F. Engle was awarded the **Nobel Prize in Economics in 2003** for the ARCH framework and its role in modern financial econometrics.
+:::
+
+# WEAKNESSES OF ARCH MODELS
+
+1. **Symmetric Response** — Uses $\epsilon_{t-i}^2$, so positive and negative shocks 
+have identical effects on volatility. Financial assets respond asymmetrically in practice.
+
+2. **Restrictive Constraints** — For ARCH(1), $\alpha_1^2 \leq \dfrac{1}{3}$ is required 
+for finite kurtosis. Constraints become increasingly complex at higher orders.
+
+3. **No Causal Insight** — Mechanically describes conditional variance behaviour 
+but gives no indication of what drives volatility clustering.
+
+4. **Overpredicts Volatility** — Responds slowly to large isolated shocks, 
+causing persistent overestimation of volatility after outlier events.
+
+
+# THE ARCH-M MODIFICATION
+
+## Motivation{.scrollable}
+
+Risk-averse agents demand compensation for holding a volatile asset — the risk premium itself should rise with conditional variance.
+
+**The Three-Equation System** (Engle, Lilien & Robins, 1987):
+
+$$y_t = \mu_t + \varepsilon_t \qquad \text{(Mean equation)}$${#eq-archm-mean}
+
+$$\mu_t = \beta + \delta h_t, \quad \delta > 0 \qquad \text{(Risk premium)}$${#eq-archm-rp}
+
+$$h_t = \alpha_0 + \sum_{i=1}^{q} \alpha_i \varepsilon_{t-i}^2 \qquad \text{(Variance equation)}$${#eq-archm-var}
+
+where $y_t$ is the excess return, $\mu_t$ is the time-varying risk premium, and $h_t$ is the ARCH($q$) conditional variance.
+
+::: {.callout-note}
+## Key Interpretations
+- $\delta > 0$ — higher conditional variance raises expected return (risk–return tradeoff)  
+- $\delta = 0$ — ARCH-M degenerates to standard ARCH; risk premium becomes constant $\beta$  
+- $\delta$ is estimated jointly with $\alpha_i$ via MLE — its significance is the central test
+:::
+
+## How it differs from ARCH(q)
+
+```{r}
+#| echo: false
+#| fig-width: 16
+#| fig-height: 7
+
+library(ggplot2)
+library(gridExtra)
+
+# ── Parameters ────────────────────────────────────────────────────
+set.seed(42)
+N      <- 300
+alpha0 <- 0.5
+alpha1 <- 0.6
+
+# ── Innovations ───────────────────────────────────────────────────
+vt    <- rnorm(N)
+eps   <- numeric(N)
+h     <- numeric(N)
+h[1]  <- alpha0 / (1 - alpha1)
+
+for (t in 2:N) {
+  h[t]   <- alpha0 + alpha1 * eps[t-1]^2
+  eps[t] <- vt[t] * sqrt(h[t])
+}
+
+# ── Processes ─────────────────────────────────────────────────────
+beta0   <- -0.3
+delta   <- 0.8
+y_arch  <- beta0 + eps
+y_archm <- beta0 + delta * h + eps
+
+# ── Data frames ───────────────────────────────────────────────────
+t_idx <- 1:N
+
+df_arch  <- data.frame(t = t_idx, y = y_arch)
+df_archm <- data.frame(t = t_idx, y = y_archm)
+
+# Squared residuals: eps^2 as volatility proxy
+# For ARCH:  eps_t = y_t - beta0
+# For ARCH-M: eps_t = y_t - beta0 - delta*h_t  →  same eps either way
+df_vol_arch <- data.frame(
+  t    = t_idx,
+  eps2 = eps^2,
+  panel = "Squared Residuals — ARCH(1):  same \u03b5\u209c drives both"
+)
+df_vol_archm <- data.frame(
+  t    = t_idx,
+  eps2 = eps^2,
+  panel = "Squared Residuals — ARCH-M(1): \u03b4\u00b7h\u209c shifts mean at these spikes"
+)
+df_vol <- rbind(df_vol_arch, df_vol_archm)
+
+my_theme <- theme_classic() +
+  theme(
+    plot.title    = element_text(face = "bold", size = 10),
+    plot.subtitle = element_text(size = 8, color = "grey30"),
+    axis.title    = element_text(size = 9),
+    axis.text     = element_text(size = 7),
+    strip.text    = element_text(face = "bold", size = 8),
+    strip.background = element_blank()
+  )
+
+# ── Row 1: ARCH series ────────────────────────────────────────────
+p1 <- ggplot(df_arch, aes(x = t, y = y)) +
+  geom_hline(yintercept = 0, linewidth = 0.3,
+             color = "grey60", linetype = "dashed") +
+  geom_line(linewidth = 0.4, color = "black") +
+  labs(
+    title    = "ARCH(1)",
+    subtitle = expression(y[t] == beta[0] + epsilon[t] ~~ "(mean stays flat)"),
+    x = "", y = expression(y[t])
+  ) +
+  my_theme
+
+# ── Row 1: ARCH-M series ──────────────────────────────────────────
+p2 <- ggplot(df_archm, aes(x = t, y = y)) +
+  geom_hline(yintercept = 0, linewidth = 0.3,
+             color = "grey60", linetype = "dashed") +
+  geom_line(linewidth = 0.4, color = "black") +
+  labs(
+    title    = "ARCH-M(1)",
+    subtitle = expression(y[t] == beta[0] + delta~h[t] + epsilon[t] ~~ "(mean rises with variance)"),
+    x = "", y = expression(y[t])
+  ) +
+  my_theme
+
+# ── Row 2: Squared residuals — two facets side by side ────────────
+p3 <- ggplot(df_vol_arch, aes(x = t, y = eps2)) +
+  geom_hline(yintercept = 0, linewidth = 0.3,
+             color = "grey60", linetype = "dashed") +
+  geom_line(linewidth = 0.35, color = "grey30") +
+  geom_area(alpha = 0.25, fill = "grey40") +
+  labs(
+    title    = expression(epsilon[t]^2 ~ "(Volatility Proxy)"),
+    subtitle = "Spikes here → flat mean in ARCH above",
+    x = "Time", y = expression(epsilon[t]^2)
+  ) +
+  my_theme
+
+p4 <- ggplot(df_vol_archm, aes(x = t, y = eps2)) +
+  geom_hline(yintercept = 0, linewidth = 0.3,
+             color = "grey60", linetype = "dashed") +
+  geom_line(linewidth = 0.35, color = "grey30") +
+  geom_area(alpha = 0.25, fill = "grey40") +
+  labs(
+    title    = expression(epsilon[t]^2 ~ "(Volatility Proxy)"),
+    subtitle = expression("Spikes here \u2192 " * delta~h[t] * " lifts mean in ARCH-M above"),
+    x = "Time", y = expression(epsilon[t]^2)
+  ) +
+  my_theme
+
+# ── Arrange: 2x2 grid ─────────────────────────────────────────────
+grid.arrange(p1, p2, p3, p4, ncol = 2, nrow = 2)
+```
+
+# ARCH FAMILY
+## ARCH Family Explorer
+```{=html}
+<iframe src="arch-family-explorer-v5.html"
+        width="1080px" height="620px"
+        style="border:none; display:block; margin:0 auto;">
+</iframe>
+```
+
+
+# REFERENCES
+
+## 
+```{=html}
+<div style="font-size: 0.82em; line-height: 2.2; font-family: 'Cambria Math', serif;">
+
+<p style="padding-left: 2em; text-indent: -2em;">
+1. Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. <em>Econometrica, 50</em>(4), 987–1007.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+2. Engle, R. F., Lilien, D. M., &amp; Robins, R. P. (1987). Estimating time varying risk premia in the term structure: The ARCH-M model. <em>Econometrica, 55</em>(2), 391–407.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+3. Enders, W. (2015). <em>Applied econometric time series</em> (4th ed.). John Wiley &amp; Sons.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+4. Tsay, R. S. (2010). <em>Analysis of financial time series</em> (3rd ed.). John Wiley &amp; Sons.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+5. Ghalanos, A. (2025). <em>rugarch: Univariate GARCH models</em> (R package version 1.5-4). 
+</p>
+
+</div>
+```
