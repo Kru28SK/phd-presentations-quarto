@@ -1,0 +1,897 @@
+---
+format:
+  revealjs:
+    title-slide-attributes:
+      data-visibility: hidden 
+    theme: [default, title_rs.scss]
+    margin: 0.05
+    slide-number: true
+    transition: slide
+    navigation-mode: vertical
+    controls: false
+    width: 1280
+    height: 720
+    embed-resources: true 
+mainfont: "Cambria Math"
+---
+
+```{=html}
+<section class="title-slide">
+
+  <div class="header-band">
+    <div class="logo-box">
+      <img src="angrau_logo.jpeg" alt="ANGRAU Logo">
+    </div>
+    <div class="inst-block">
+      <div class="university-name">
+        Acharya N.G. Ranga Agricultural University
+      </div>
+      <div class="college-name">
+        Agricultural College, Bapatla
+      </div>
+      <div class="dept-name">
+        Department of Statistics and Computer Applications
+      </div>
+    </div>
+  </div>
+
+  <div class="mid-content">
+    <div class="course-label">
+      STAT 601 Advanced Data Analytics (1+2)
+    </div>
+    <div class="main-title">
+      Robust Statistics
+    </div>
+  </div>
+
+  <div class="footer-band">
+    <div class="presenter-block">
+      <span class="role-label">Presenter</span>
+      <span class="person-name">Krupesh S (BAD/2025-25)</span>
+      <span class="person-detail">I Ph.D.(Ag.) Agricultural Statistics</span>
+    </div>
+    <div class="incharge-block">
+      <span class="role-label">Course In-charge</span>
+      <span class="person-name">Dr. B. Jyostna</span>
+      <span class="person-detail">Teaching Associate (Statistics)</span>
+    </div>
+  </div>
+
+</section>
+```
+# INTRODUCTION
+## Departure from Normality
+A contaminated normal distribution given by Tukey and Huber can be represented as,
+$$F=(1-\epsilon) G+\epsilon H$$
+where, $G = N(\mu, \sigma^2)$ and H is any distribution.
+
+# M-ESTIMATORS OF LOCATION
+## Location Model{.scrollable}
+$x_i = \mu + u_i$
+where $u_i$ $(i=1, \dots, n)$ are random variables.
+$$
+\begin{align*}
+    F(x) &= P(x_i \leq x)        && \text{Definition of CDF} & \\
+         &= P(\mu + u_i \leq x)  && \text{Substitute model } x_i = \mu + u_i & \\
+         &= P(u_i \leq x - \mu)  && \text{Rearrange to isolate } u_i & \\
+         &= F_0(x - \mu)         && \text{Apply error distribution } F_0 & \\
+    \therefore F(x) &= F_0(x - \mu) && &
+\end{align*}
+$$
+
+Here, $x_i$ are i.i.d. random variables.
+
+Also, $F_0(x) = 1 - F_0(-x)$.
+
+If $F_0 = N(0, \sigma^2)$, then,
+
+- $\text{mean}(x) \sim N(0,\, \sigma^2/n)$
+- $\text{med}(x) \approx N(0,\, 1.57 \times \sigma^2/n)$
+
+Thus, for a pure normal distribution, mean is 57% more efficient than the median.
+
+## Formulation{.scrollable}
+Consider $f_0 = F_0'$, the density of the location model. Then, the joint density
+of the model is given as,
+
+$$L(x_i;\, \mu) = \prod_{i=1}^{n} f_0(x_i - \mu)$$
+
+The MLE of $\mu$ is $\hat{\mu}$, such that,
+
+$$\hat{\mu} = \hat{\mu}(x_i) = \arg\max_{\mu}\, L(x_i;\, \mu)$$
+
+If $F_0$ is exactly known, the MLE will be the optimal. Since $F_0$ is only
+approximately known, the goal is to find "nearly optimal" estimators for,
+
+- when $F_0$ is normal
+- when $F_0$ is approximately normal
+
+## Estimation{.scrollable}
+If $f_0$ is everywhere positive, since the logarithm is an increasing function,
+$\hat{\mu}$ can be written as,
+
+$$\hat{\mu} = \arg\min_{\mu} \sum_{i=1}^{n} \rho(x_i - \mu)$$
+
+where,
+
+$$\rho = -\log f_0$$
+
+For some unknown $f_0$ and a function $\rho$, this problem can be solved using
+the implicit equation,
+
+$$\sum_{i=1}^{n} \psi(x_i - \hat{\mu}) = 0$$
+
+where,
+
+$$\psi = \rho'$$
+
+## The Weighted Mean Interpretation{.scrollable}
+The equation,
+
+$$\sum_{i=1}^{n} \psi(x_i - \hat{\mu}) = 0$$
+
+can be written as,
+
+$$\sum_{i=1}^{n} W(x_i - \hat{\mu})(x_i - \hat{\mu}) = 0$$
+
+$$\implies \sum_{i=1}^{n} W_i x_i = \sum_{i=1}^{n} W_i \hat{\mu}$$
+
+$$\implies \hat{\mu} = \frac{\sum_{i=1}^{n} W_i x_i}{\sum_{i=1}^{n} W_i}$$
+
+::: {.callout-tip}
+## Weighted Mean of Sample
+$\hat{\mu} = \dfrac{\sum_{i=1}^{n} W_i x_i}{\sum_{i=1}^{n} W_i}$ is simply a **weighted mean** of the sample.
+:::
+
+where,
+
+$$W(x) = \begin{cases} \psi(x)/x & \text{if } x \neq 0 \\ \psi'(0) & \text{if } x = 0 \end{cases}$$
+
+and,
+
+$$W_i = W(x_i - \hat{\mu})$$
+
+## Formal Definition
+A $\rho$-function will denote a function $\rho$ such that:
+
+- $\rho(x)$ is a nondecreasing function of $|x|$
+- $\rho(0) = 0$
+- $\rho(x)$ is increasing for $x > 0$ such that $\rho(x) < \rho(\infty)$
+- if $\rho$ is bounded, it is also assumed that $\rho(\infty) = 1$.
+
+A $\psi$-function will denote a function $\psi$ that is the derivative of a
+$\rho$-function, which implies in particular that
+
+- $\psi$ is odd and $\psi(x) \geq 0$ for $x \geq 0$.
+
+## Yet another interpretation
+Another intuitive way to interpret an M-estimator is,
+$$
+\hat{\mu} = \hat{\mu} + \frac{1}{n} \sum_{i=1}^{n} \psi(x_i - \hat{\mu}) = \frac{1}{n} \sum_{i=1}^{n} \zeta(x_i, \hat{\mu})
+$$
+where
+$$
+\zeta(x, \mu) = \mu + \psi(x - \mu)
+$$
+In other words, $\hat{\mu}$ may be viewed as an average of modified observations $\zeta(x_i, \hat{\mu})$, also called pseudo observations:observations in the bulk of the data remain unchanged, while those too large or too small are truncated.
+
+## Common M-Estimator Functions{.smaller .scrollable}
+
+| **Estimator** | **Objective Function** $\rho(x)$ | **Influence Function** $\psi(x)$ | **Weight Function** $W(x)$ |
+|:---|:---|:---|:---|
+| **Huber** | $\begin{cases} \frac{1}{2}x^2 & |x| \leq k \\ k|x| - \frac{1}{2}k^2 & |x| > k \end{cases}$ | $\begin{cases} x & |x| \leq k \\ k\,\text{sgn}(x) & |x| > k \end{cases}$ | $\min\left(1,\, \dfrac{k}{|x|}\right)$ |
+| **Bisquare** | $\begin{cases} \frac{k^2}{6}\left(1 - \left[1-\left(\frac{x}{k}\right)^2\right]^3\right) & |x| \leq k \\ \frac{k^2}{6} & |x| > k \end{cases}$ | $\begin{cases} x\left[1-\left(\frac{x}{k}\right)^2\right]^2 & |x| \leq k \\ 0 & |x| > k \end{cases}$ | $\begin{cases} \left[1-\left(\frac{x}{k}\right)^2\right]^2 & |x| \leq k \\ 0 & |x| > k \end{cases}$ |
+| **Hampel** | $\frac{1}{C}\begin{cases} \frac{1}{2}x^2 & |x| \leq a \\ \frac{1}{2}a^2 + a(|x|-a) & a < |x| \leq b \\ \frac{a}{2}\left(2b - a + (|x|-b)\left[1+\frac{r-|x|}{r-b}\right]\right) & b < |x| \leq r \\ C & r < |x| \end{cases}$ | $\begin{cases} x & |x| \leq a \\ a\,\text{sgn}(x) & a < |x| \leq b \\ a\,\text{sgn}(x)\dfrac{r-|x|}{r-b} & b < |x| \leq r \\ 0 & r < |x| \end{cases}$ | $\begin{cases} 1 & |x| \leq a \\ \frac{a}{|x|} & a < |x| \leq b \\ \frac{a}{|x|}\dfrac{r-|x|}{r-b} & b < |x| \leq r \\ 0 & r < |x| \end{cases}$ |
+| **Welsh** | $\dfrac{k^2}{2}\left[1 - \exp\left(-\left(\dfrac{x}{k}\right)^2\right)\right]$ | $x\exp\left(-\left(\dfrac{x}{k}\right)^2\right)$ | $\exp\left(-\left(\dfrac{x}{k}\right)^2\right)$ |
+
+\* Note for Hampel: $C = \frac{a}{2}(b - a + r)$.
+
+## Behaviour of Common M-Estimators
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 14
+#| fig-height: 5
+#| fig-align: center
+#| out-width: "100%"
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+huber_data <- function(x, k = 1.345) {
+  rho <- ifelse(abs(x) <= k, 0.5 * x^2, k * abs(x) - 0.5 * k^2)
+  psi <- ifelse(abs(x) <= k, x, k * sign(x))
+  w   <- ifelse(abs(x) <= k, 1, k / abs(x))
+  data.frame(x = x, rho = rho, psi = psi, weight = w, Estimator = "Huber")
+}
+
+bisquare_data <- function(x, k = 4.685) {
+  u <- x / k
+  rho <- ifelse(abs(x) <= k, (k^2/6) * (1 - (1 - u^2)^3), k^2/6)
+  psi <- ifelse(abs(x) <= k, x * (1 - u^2)^2, 0)
+  w   <- ifelse(abs(x) <= k, (1 - u^2)^2, 0)
+  data.frame(x = x, rho = rho, psi = psi, weight = w, Estimator = "Bisquare")
+}
+
+hampel_data <- function(x, a = 1.5, b = 3.0, r = 8.0) {
+  psi <- numeric(length(x))
+  w   <- numeric(length(x))
+  rho <- numeric(length(x))
+  for(i in seq_along(x)) {
+    val <- abs(x[i]); s <- sign(x[i])
+    if (val <= a) {
+      psi[i] <- x[i]; w[i] <- 1
+    } else if (val <= b) {
+      psi[i] <- a * s; w[i] <- a / val
+    } else if (val <= r) {
+      psi[i] <- a * ((r - val) / (r - b)) * s
+      w[i]   <- (a / val) * ((r - val) / (r - b))
+    } else {
+      psi[i] <- 0; w[i] <- 0
+    }
+  }
+  rho <- cumsum(psi) * (c(0, diff(x)))
+  rho <- rho - min(rho)
+  data.frame(x = x, rho = rho, psi = psi, weight = w, Estimator = "Hampel")
+}
+
+welsh_data <- function(x, k = 2.11) {
+  rho <- (k^2 / 2) * (1 - exp(-(x/k)^2))
+  psi <- x * exp(-(x/k)^2)
+  w   <- exp(-(x/k)^2)
+  data.frame(x = x, rho = rho, psi = psi, weight = w, Estimator = "Welsh")
+}
+
+x_seq  <- seq(-8, 8, length.out = 400)
+df_all <- rbind(huber_data(x_seq), bisquare_data(x_seq),
+                hampel_data(x_seq), welsh_data(x_seq))
+
+df_long <- df_all %>%
+  pivot_longer(cols = c(rho, psi, weight),
+               names_to = "FuncType", values_to = "Value") %>%
+  mutate(FuncType = factor(FuncType,
+                           levels = c("rho", "psi", "weight"),
+                           labels = c("Objective Function (\u03c1)",
+                                      "Influence Function (\u03c8)",
+                                      "Weight Function (W)")))
+
+my_colors <- c("Huber"    = "#D55E00",
+               "Bisquare" = "#0072B2",
+               "Hampel"   = "#009E73",
+               "Welsh"    = "#CC79A7")
+
+ggplot(df_long, aes(x = x, y = Value, color = Estimator, linetype = Estimator)) +
+  geom_line(linewidth = 1) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "gray40") +
+  facet_wrap(~ FuncType, nrow = 1, scales = "free_y") +
+  scale_color_manual(values = my_colors) +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position    = "bottom",
+    legend.key.width   = unit(1.5, "cm"),
+    strip.background   = element_rect(fill = "gray95"),
+    strip.text         = element_text(face = "bold", size = 12),
+    panel.grid.minor   = element_blank()
+  ) +
+  labs(title    = "Comparison of Robust Estimators",
+       subtitle = "Behavior of Objective, Influence, and Weight functions across outliers",
+       x        = "Standardized Residual (x)",
+       y        = NULL)
+```
+
+# TRIMMED AND WINSORIZED MEAN
+
+## Definition{.scrollable}
+
+The $\alpha$-**trimmed mean** is defined as:
+
+$$
+\bar{x}_\alpha = \frac{1}{n - 2m} \sum_{i=m+1}^{n-m} x_{(i)}
+$$
+
+The $\alpha$-**Winsorized mean** is defined as:
+
+$$
+\tilde{x}_\alpha = \frac{1}{n} \left( m x_{(m+1)} + m x_{(n-m)} + \sum_{i=m+1}^{n-m} x_{(i)} \right)
+$$
+
+where,
+
+* $n$: The total number of observations.
+* $x_{(i)}$: The order statistics of the sample, such that $x_{(1)} \leq x_{(2)} \leq \dots \leq x_{(n)}$.
+* $\alpha$: The trimming proportion, where $\alpha \in [0, 1/2)$.
+* $m$: The integer number of trimmed values, defined as $m = [n\alpha]$, where $[\cdot]$ stands for the integer part.
+
+::: {.callout-note}
+## Limiting Case
+
+* **Case $\alpha \to 0$ ($m = 0$):** No data is discarded. Both estimators reduce to the standard **Sample Mean**.
+
+* **Case $\alpha \to 0.5$ ($m \approx n/2$):** The maximum amount of data is trimmed/replaced. Both estimators converge to the **Sample Median**.
+:::
+
+# L-ESTIMATORS
+
+## Definition{.scrollable}
+
+A more general class of estimators, called *L-estimators*, is defined as linear combinations of order statistics:
+
+$$
+\hat{\mu} = \sum_{i=1}^{n} a_i x_{(i)},
+$$
+
+where the $a_i$s are given constants. For $\alpha$-trimmed means,
+
+$$
+a_i = \frac{1}{n - 2m} \text{I}(m + 1 \leq i \leq n - m),
+$$
+
+and for $\alpha$-Winsorized means
+
+$$
+a_i = \frac{1}{n} \Big( (m + 1)\text{I}(i = m + 1) + (m + 1)\text{I}(i = n - m) + \text{I}(m + 1 < i < n - m) \Big) .
+$$
+
+## Equivariance
+
+If the coefficients of an L-estimator satisfy the conditions
+
+$$
+a_i \geq 0, \quad \sum_{i=1}^{n} a_i = 1, \quad a_i = a_{n-i+1},
+$$
+
+then the estimator is shift and scale equivariant, and also fulfills the natural conditions
+
+* If $x_i \geq 0$ for all $i$, then $\hat{\mu} \geq 0$
+* If $x_i = c$ for all $i$, then $\hat{\mu} = c$
+* $\hat{\mu}(-x) = -\hat{\mu}(x)$.
+
+# M-ESTIMATORS OF SCALE
+
+## Scale Model{.scrollable}
+
+$x_i = \sigma u_i$ where $u_i \ (i = 1,\dots,n)$ are i.i.d. random variables with density $f_0$ and $\sigma > 0$.
+
+$$
+\begin{aligned}
+F(x) &= P(x_i \leq x) & &\text{Definition of CDF} \\
+&= P(\sigma u_i \leq x) & &\text{Substitute model } x_i = \sigma u_i \\
+&= P\left(u_i \leq \frac{x}{\sigma}\right) & &\text{Rearrange to isolate } u_i \\
+&= F_0\left(\frac{x}{\sigma}\right) & &\text{Apply error distribution } F_0
+\end{aligned}
+$$
+
+$\therefore F(x) = F_0\left(\frac{x}{\sigma}\right)$
+
+Differentiating the CDF with respect to $x$ yields the density (PDF):
+
+$$
+\begin{aligned}
+f(x) &= \frac{d}{dx} F(x) & &\text{Definition of PDF} \\
+&= \frac{d}{dx} F_0\left(\frac{x}{\sigma}\right) & &\text{Substitute derived CDF} \\
+&= f_0\left(\frac{x}{\sigma}\right) \cdot \frac{1}{\sigma} & &\text{Apply Chain Rule}
+\end{aligned}
+$$
+
+$\therefore f(x) = \frac{1}{\sigma} f_0\left(\frac{x}{\sigma}\right)$
+
+## Estimation{.scrollable}
+
+The MLE of $\sigma$ is found from
+
+$$
+\hat{\sigma} = \arg\max_{\sigma} \frac{1}{\sigma^n} \prod_{i=1}^{n} f_0 \left( \frac{x_i}{\sigma} \right)
+$$
+
+Taking logs and differentiating with respect to $\sigma$, yields the condition:
+
+$$
+\frac{1}{n} \sum_{i=1}^{n} \rho \left( \frac{x_i}{\sigma} \right) = 1
+$$
+
+where $\rho(t) = t\psi(t)$ and $\psi = -f'_0/f_0$. Generalizing this result, any estimator $\hat{\sigma}$ satisfying the equation
+
+$$
+\frac{1}{n} \sum_{i=1}^{n} \rho \left( \frac{x_i}{\hat{\sigma}} \right) = \delta
+$$
+
+where $\delta$ is a positive constant, is called an M-estimator of scale.
+
+## Dispersion Estimators{.scrollable}
+
+* **Median Absolute Deviation (MAD)**
+  It measures the median distance of observations from the sample median.
+
+  $$
+  \text{MAD} = \text{median}(|x_i - \text{median}(x)|)
+  $$
+
+* **Mean Absolute Deviation (MD)**
+  The arithmetic mean of the absolute differences between observations and the sample mean.
+
+  $$
+  \text{MD} = \frac{1}{n} \sum_{i=1}^{n} |x_i - \bar{x}|
+  $$
+
+* **Interquartile Range (IQR)**
+  The difference between the 75th and 25th percentiles.
+
+  $$
+  \text{IQR} = x_{(n-m+1)} - x_{(m)}
+  $$
+
+  where $m \approx n/4$.
+  
+
+## Multiples of Scale{.scrollable}
+
+If $x \sim N(\mu, \sigma^2)$, then $\text{SD}(x) = \sigma$. The other dispersion estimators are constant multiples of $\sigma$:
+
+$$
+\text{MD}(x) = c_1 \sigma \qquad \text{MAD}(x) = c_2 \sigma \qquad \text{IQR}(x) = 2c_2 \sigma
+$$
+
+Where the approximate constant values are:
+
+$$
+c_1 = 2\varphi(0) = \sqrt{\frac{2}{\pi}} \approx 0.7979 \qquad c_2 = \Phi^{-1}(0.75) \approx 0.675
+$$
+
+To create a dispersion estimator that "measures the same thing" as the standard deviation for the normal distribution, we define the Normalized MAD (MADN):
+
+$$
+\text{MADN}(x) = \frac{\text{MAD}(x)}{0.675}
+$$
+
+Likewise, we can normalize the MD and the IQR by dividing them by $c_1$ and by $2c_2$ respectively.
+
+## M-Dispersion Estimators
+
+An estimator that combines the robustness of MADN and the efficiency of SD and MD is the following:
+
+* first compute a location M-estimator $\hat{\mu}$.
+* Then apply a scale M-estimator $\hat{\sigma}$ to the centered data $x_i - \hat{\mu}$.
+* Here $\hat{\sigma}$ should be normalized as described. This $\hat{\sigma}$ can be called the *M-dispersion estimator*.
+
+## The $Q_n$ alternative{.scrollable}
+
+Unlike the SD, MD, and MAD, an estimator called the $Q_n$ estimator (Croux and Rousseeuw, 1992) does not require centering the data.
+
+* It is based strictly on the differences between data values: $d_{ij} = |x_i - x_j|$ for $i < j$.
+
+* Let $m = \binom{n}{2}$ be the number of differences, ordered as $d_{(1)} \leq \dots \leq d_{(m)}$.
+
+* Define 
+  $$
+  h = \lfloor \frac{n}{2} \rfloor + 1, \qquad k = \binom{h}{2}.
+  $$
+  The estimator is defined as the $k$-th order statistic: $Q_n = d_{(k)}$.
+
+* Since $k \approx m/4$, $Q_n$ is approximately the first quartile of the $d_{ij}$ values.
+
+# NUMERICAL ESTIMATION
+
+## Location M-Estimators {.scrollable}
+
+* **Initialization:** Start with a robust dispersion estimator ($\hat{\sigma}$) and an initial location estimator ($\hat{\mu}_0$):
+  $$\hat{\sigma} = \text{MADN}(\mathbf{x}), \quad \hat{\mu}_0 = \text{Med}(\mathbf{x})$$
+
+* **Iterative Procedure** ($k = 0, 1, 2, \dots$):
+  1. Compute the weights:
+     $$w_{k,i} = W \left( \frac{x_i - \hat{\mu}_k}{\hat{\sigma}} \right) \quad \text{for } i = 1, \dots, n$$
+  2. Update the location estimate:
+     $$\hat{\mu}_{k+1} = \frac{\sum_{i=1}^{n} w_{k,i} x_i}{\sum_{i=1}^{n} w_{k,i}}$$
+
+* **Stopping Rule:** Halt when the change falls below a tolerance parameter $\varepsilon$:
+  $$|\hat{\mu}_{k+1} - \hat{\mu}_k| < \varepsilon \hat{\sigma}$$
+
+* **Convergence Properties:**
+  * If $\psi$ is *increasing*: The solution is unique.
+  * If $\psi$ is *redescending*: Choosing a robust $\hat{\mu}_0$ ensures convergence to a valid solution.
+
+---
+
+## Scale M-Estimators {.scrollable}
+
+* **Initialization:** Start with an initial robust dispersion estimator ($\hat{\sigma}_0$):
+  $$\hat{\sigma}_0 = \text{MADN}(\mathbf{x})$$
+
+* **Iterative Procedure** ($k = 0, 1, 2, \dots$):
+  1. Compute the weights:
+     $$w_{k,i} = W \left( \frac{x_i}{\hat{\sigma}_k} \right) \quad \text{for } i = 1, \dots, n$$
+  2. Update the scale estimate:
+     $$\hat{\sigma}_{k+1} = \sqrt{ \frac{1}{n\delta} \sum_{i=1}^{n} w_{k,i} x_i^2 }$$
+
+* **Stopping Rule:** Halt when the relative change falls below a tolerance parameter $\varepsilon$:
+  $$\left| \frac{\hat{\sigma}_{k+1}}{\hat{\sigma}_k} - 1 \right| < \varepsilon$$
+
+* **Convergence Properties:**
+  * The sequence $\hat{\sigma}_k$ converges to a valid solution if $W(x)$ is:
+    * bounded
+    * even
+    * continuous
+    * nonincreasing for $x > 0$
+
+---
+
+## Simultaneous M-estimators {.scrollable}
+
+* **Initialization:** Compute robust starting values for both location and dispersion: $\hat{\mu}_0, \hat{\sigma}_0$
+
+* **Iterative Procedure** ($k = 0, 1, 2, \dots$):
+  1. Compute standardized residuals:
+     $$r_{k,i} = \frac{x_i - \hat{\mu}_k}{\hat{\sigma}_k} \quad \text{for } i = 1, \dots, n$$
+  2. Compute dual weights ($W_1$ for location, $W_2$ for scale):
+     $$w_{1k,i} = W_1(r_{k,i}), \quad w_{2k,i} = W_2(r_{k,i})$$
+  3. Update estimates simultaneously:
+     $$\hat{\mu}_{k+1} = \frac{\sum_{i=1}^{n} w_{1k,i} x_i}{\sum_{i=1}^{n} w_{1k,i}}$$
+     $$\hat{\sigma}_{k+1}^2 = \frac{\hat{\sigma}_k^2}{n\delta} \sum_{i=1}^{n} w_{2k,i} r_{k,i}^2$$
+
+* **Stopping Rule:** Halt when both estimates stabilize below a tolerance parameter $\varepsilon$:
+  $$|\hat{\mu}_{k+1} - \hat{\mu}_k| < \varepsilon \hat{\sigma}_k \quad \text{and} \quad \left| \frac{\hat{\sigma}_{k+1}}{\hat{\sigma}_k} - 1 \right| < \varepsilon$$
+  
+# MEASURES TO QUANTIFY ROBUSTNESS {.scrollable}
+
+* **Breakdown Point ($\varepsilon_n^*$):** The smallest fraction of data contamination that can cause the estimator $T$ to take on arbitrarily large values.
+
+  $$
+  \varepsilon_n^*(T, \mathbf{x}) = \min \left\{ \frac{m}{n} : \sup_{\mathbf{x}'} \|T(\mathbf{x}')\| = \infty \right\}
+  $$
+
+  *(where $\mathbf{x}'$ is obtained by replacing $m$ original points with arbitrary values)*
+
+* **Influence Function ($IF$):** Measures the asymptotic bias caused by an infinitesimal point mass $\delta_x$ at $x$ on the functional $T$ at distribution $F$.
+
+  $$
+  IF(x; T, F) = \lim_{\varepsilon \to 0} \frac{T((1 - \varepsilon)F + \varepsilon \delta_x) - T(F)}{\varepsilon}
+  $$
+
+  *(A robust estimator requires a bounded Influence Function)*
+
+* **Sensitivity Curve ($SC_n$):** The finite-sample, empirical counterpart to the Influence Function. It measures the scaled effect of adding an observation $x$ to a sample of size $n$.
+
+  $$
+  SC_n(x; T) = (n + 1) [T(x_1, \dots, x_n, x) - T(x_1, \dots, x_n)]
+  $$
+
+  *(As $n \to \infty$, $SC_n \to IF$)*
+  
+## Breakdown Points for Estimators
+
+```{=html}
+<style>
+  .gray-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8em;
+  }
+  .gray-table th {
+    background-color: #555555;
+    color: white;
+    padding: 10px;
+    border: 1px solid #333333;
+  }
+  .gray-table td {
+    padding: 10px;
+    border: 1px solid #aaaaaa;
+    color: #333333;
+  }
+  .gray-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  .gray-table tr:nth-child(odd) {
+    background-color: #e6e6e6;
+  }
+</style>
+<table class="gray-table">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Estimator</th>
+      <th>Asymptotic Breakdown Point</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Classical (Location)</strong></td>
+      <td>Sample Mean</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><strong>Classical (Scale)</strong></td>
+      <td>Standard Deviation (SD)</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><strong>Classical (Scale)</strong></td>
+      <td>Mean Absolute Deviation (MD)</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><strong>Robust (Location)</strong></td>
+      <td>Sample Median</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td><strong>Robust (Location)</strong></td>
+      <td>&alpha;-Trimmed Mean</td>
+      <td>&alpha;</td>
+    </tr>
+    <tr>
+      <td><strong>Robust (Scale)</strong></td>
+      <td>MAD / MADN</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td><strong>Robust (Scale)</strong></td>
+      <td>Q&#x2099; Estimator</td>
+      <td>0.5</td>
+    </tr>
+  </tbody>
+</table>
+```
+  
+# ILLUSTRATIONS IN R
+
+## Dataset {.scrollable}
+
+We use the `telef` dataset from `robustbase` — the classic Belgium telephone data
+(1950–1973) recording the number of telephone calls (in tens of millions) over
+24 years (Rousseeuw & Leroy, 1987). The mid-years **1964–1969** contain a known
+recording error (calls logged in minutes instead of numbers), producing
+**6 high-leverage outliers** that severely distort classical estimates.
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+
+library(robustbase)
+
+data("telef")
+
+# Two variables:
+#   Year  : last two digits of calendar year (50 = 1950, ..., 73 = 1973)
+#   Calls : number of telephone calls (tens of millions)
+cat("n =", nrow(telef), "\n")
+head(telef, 10)
+summary(telef)
+```
+
+## Belgium Telephone Data
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| fig-width: 16
+#| fig-height: 7
+#| fig-align: center
+#| out-width: "100%"
+# ── self-contained: all data prep inside this chunk ──────────────────────────
+library(robustbase)
+library(ggplot2)
+data("telef")
+# Year column is 50–73 (last two digits); convert to full year for display
+telef$FullYear <- 1900L + as.integer(telef$Year)
+# Outliers: years 1964–1969 → FullYear 1964:1969
+outliers_idx  <- which(telef$FullYear %in% 1964:1969)
+telef$group   <- ifelse(seq_len(nrow(telef)) %in% outliers_idx,
+                        "Recording error (outlier)", "Normal observation")
+telef$label   <- ifelse(seq_len(nrow(telef)) %in% outliers_idx,
+                        as.character(telef$FullYear), "")
+ggplot(telef, aes(x = FullYear, y = Calls, color = group)) +
+  geom_point(size = 2.8) +
+  geom_text(aes(label = label), vjust = -0.9, size = 3.2,
+            show.legend = FALSE) +
+  scale_color_manual(
+    values = c("Normal observation"        = "gray40",
+               "Recording error (outlier)" = "black")
+  ) +
+  scale_x_continuous(breaks = seq(1950, 1973, by = 2)) +
+  labs(
+    title    = "Belgium Telephone Data: telef",
+    subtitle = "Years 1964\u20131969 (recording error) are high-leverage outliers",
+    x        = "Year",
+    y        = "Calls (tens of millions)",
+    color    = NULL
+  ) +
+  theme_bw(base_size = 13) +
+  theme(legend.position  = "bottom",
+        panel.grid.minor = element_blank(),
+        axis.text.x      = element_text(angle = 45, hjust = 1))
+```
+
+## Location Estimators {.scrollable}
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(robustbase)
+
+data("telef")
+x <- telef$Calls   # telephone calls — contains high-leverage outliers
+
+# ----- Huber M-estimator of Location -----
+# huberM(x, k, tol, mu, s, se)
+#   x  : numeric vector
+#   k  : tuning constant — boundary between quadratic and linear loss
+#        default k = 1.5; use k = 1.345 for 95% efficiency at the Normal
+#   mu : initial location estimate, default = median(x)
+#   s  : initial scale estimate,    default = mad(x)
+#   se : logical; compute standard error? default FALSE
+huberM(x, k = 1.5)
+
+# ----- Trimmed Mean -----
+# mean(x, trim)
+#   trim : fraction (0 to 0.5) of observations dropped
+#          from each tail before computing the mean
+mean(x, trim = 0.10)     # removes bottom 10% and top 10%
+
+# ----- Winsorized Mean (base R) -----
+# Replaces the bottom and top `trim` fraction of values
+# with the nearest kept boundary value, then takes the mean
+winsor_mean <- function(x, trim = 0.10) {
+  x_s <- sort(x)
+  m   <- floor(trim * length(x_s))
+  x_s[seq_len(m)]                              <- x_s[m + 1]
+  x_s[seq(length(x_s) - m + 1, length(x_s))] <- x_s[length(x_s) - m]
+  mean(x_s)
+}
+
+winsor_mean(x, trim = 0.10)
+
+# ----- Summary -----
+cat(
+  "Mean           :", round(mean(x),               4), "\n",
+  "Huber (k = 1.5)  :", round(huberM(x, k = 1.5)$mu, 4), "\n",
+  "Trimmed  (10%)   :", round(mean(x, trim = 0.10),   4), "\n",
+  "Winsorized (10%) :", round(winsor_mean(x, 0.10),   4), "\n",
+  sep = ""
+)
+```
+
+## Scale Estimators {.scrollable}
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(robustbase)
+
+data("telef")
+x <- telef$Calls
+
+# ----- Classical -----
+sd(x)                    # Standard deviation
+IQR(x)                   # Interquartile range (Q3 - Q1)
+
+# ----- MAD and MADN -----
+# mad(x, center, constant)
+#   center   : central value, default = median(x)
+#   constant : 1      -> raw MAD
+#              1.4826 -> MADN, consistent estimator of SD at Normal (default)
+mad(x, constant = 1)     # Raw MAD
+mad(x)                   # MADN
+
+# ----- Normalized IQR -----
+IQR(x) / 1.349           # Divide by 1.349 to make consistent with SD at Normal
+
+# ----- scaleTau2 -----
+# scaleTau2(x, c1, c2, consistency, mu.too, na.rm)
+#   c1          : tuning constant for location weights (default 4.5)
+#   c2          : tuning constant for scale rho function (default 3.0)
+#   consistency : divide by asymptotic limit for consistency at Normal (default TRUE)
+#   mu.too      : if TRUE, returns named vector c(mu, sigma) instead of just sigma
+#   na.rm       : remove NAs before computing (default FALSE)
+scaleTau2(x, mu.too = TRUE)
+
+# ----- Qn estimator (Croux & Rousseeuw, 1992) -----
+# Qn(x, constant, na.rm)
+#   k-th order statistic of all pairwise |x_i - x_j|; no centering needed
+#   constant : consistency factor; default gives consistency at Normal
+#   na.rm    : remove NAs (default FALSE)
+Qn(x)
+
+# ----- Sn estimator (Rousseeuw & Croux, 1993) -----
+# Sn(x, constant, finite.corr, na.rm)
+#   median_i { median_j |x_i - x_j| }; no centering needed
+#   constant    : consistency factor; default gives consistency at Normal
+#   finite.corr : apply finite-sample bias correction (default TRUE)
+#   na.rm       : remove NAs (default FALSE)
+Sn(x)
+```
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+# ----- Summary -----
+cat(
+  "SD         :", round(sd(x),                4), "\n",
+  "MAD (raw)  :", round(mad(x, constant = 1), 4), "\n",
+  "MADN       :", round(mad(x),               4), "\n",
+  "IQR (norm) :", round(IQR(x) / 1.349,       4), "\n",
+  "scaleTau2  :", round(scaleTau2(x),          4), "\n",
+  "Qn         :", round(Qn(x),                4), "\n",
+  "Sn         :", round(Sn(x),                4), "\n",
+  sep = ""
+)
+```
+
+## Pseudo Observations via `huberize()` {.scrollable}
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(robustbase)
+
+data("telef")
+x <- telef$Calls
+
+# Step 1: obtain robust location via huberM()
+fit <- huberM(x, k = 1.5)
+cat("Huber mu :", round(fit$mu, 4), "\n")
+cat("Huber s  :", round(fit$s,  4), "\n\n")
+
+# Step 2: huberize(x, M, c, k)
+#   x : numeric vector of observations
+#   M : location center — default = huberM(x, k = k)$mu
+#   c : half-width multiplier — boundary = [M - c*Qn(x), M + c*Qn(x)]
+#       observations outside this interval are pulled to the boundary
+#       default c = k = 1.5
+#   k : tuning constant used when computing default M via huberM()
+# NOTE: scale is computed INTERNALLY as Qn(x); it is NOT a user argument
+x_pseudo <- huberize(x, M = fit$mu, c = 1.5, k = 1.5)
+
+# Step 3: identify modified (outlying) observations
+modified <- which(round(x, 8) != round(x_pseudo, 8))
+
+cat(
+  "Total observations   :", length(x), "\n",
+  "Unchanged (bulk)     :", length(x) - length(modified), "\n",
+  "Modified (truncated) :", length(modified), "\n\n")
+
+# Step 4: table of original vs pseudo for modified observations
+data.frame(
+  Year     = 1900L + as.integer(telef$Year[modified]),
+  Original = round(x[modified],        4),
+  Pseudo   = round(x_pseudo[modified], 4)
+)
+```
+
+## Pseudo-observations comparison
+```{r}
+# Load ggplot2
+library(ggplot2)
+library(tidyr)
+
+# Create a dataframe for plotting
+df_plot <- data.frame(
+  Year = 1900L + as.integer(telef$Year),
+  Original = x,
+  Huberized = x_pseudo
+)
+
+# Plot
+ggplot(df_plot, aes(x = Year)) +
+  geom_line(aes(y = Original, color = "Original"), linetype = "dashed", alpha = 0.6) +
+  geom_point(aes(y = Original, color = "Original"), size = 2) +
+  geom_line(aes(y = Huberized, color = "Huberized"), size = 1) +
+  geom_point(aes(y = Huberized, color = "Huberized"), size = 2, shape = 17) +
+  scale_color_manual(name = "Observation",
+                     values = c("Original" = "red", "Huberized" = "blue")) +
+  labs(title = "Belgian Telephone Calls: Original vs. Huberized",
+       subtitle = "Outliers (1964-1969) are pulled to the robust boundary",
+       x = "Year",
+       y = "Number of Calls (tens of millions)") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```

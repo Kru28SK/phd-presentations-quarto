@@ -1,0 +1,78 @@
+---
+format:
+  revealjs:
+    title-slide-attributes:
+      data-visibility: hidden 
+    theme: [default, title_mc.scss]
+    margin: 0.05
+    slide-number: true
+    transition: slide
+    navigation-mode: vertical
+    width: 1280
+    height: 720
+    embed-resources: true 
+    self-contained: true
+    html-math-method: 
+      method: mathjax
+      url: "mathjax/tex-chtml.js"
+    controls: false
+mainfont: "Cambria Math"
+---
+
+```{=html}
+<section class="title-slide">
+
+  <div class="header-band">
+    <div class="logo-box">
+      <img src="angrau_logo.jpeg" alt="ANGRAU Logo">
+    </div>
+    <div class="inst-block">
+      <div class="university-name">
+        Acharya N.G. Ranga Agricultural University
+      </div>
+      <div class="college-name">
+        Agricultural College, Bapatla
+      </div>
+      <div class="dept-name">
+        Department of Statistics and Computer Applications
+      </div>
+    </div>
+  </div>
+
+  <div class="mid-content">
+    <div class="course-label">
+      AECO 605 Operations Research (2+1)
+    </div>
+    <div class="main-title">
+      Monte Carlo Simulation Methods
+    </div>
+  </div>
+
+  <div class="footer-band">
+    <div class="presenter-block">
+      <span class="role-label">Presented by</span>
+      <span class="person-name">Krupesh S</span>
+      <span class="person-detail">(BAD/2025-25)</span>
+      <span class="person-detail">I Ph.D.(Ag.) Agricultural Statistics</span>
+    </div>
+    <div class="incharge-block">
+      <span class="role-label">Course In-charge</span>
+      <span class="person-name">Dr. K. Suseela</span>
+      <span class="person-detail">Professor and Head</span>
+      <span class="person-detail">(Agricultural Economics)</span>
+    </div>
+  </div>
+
+</section>
+```
+
+# Introduction
+
+## Steps in Sound Simulation Study
+```{=html}
+<iframe src="simulation_flowchart.html"
+        width="1280" height="720"
+        style="border:none; display:block; margin:0 auto;"
+        scrolling="no">
+</iframe>
+```

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Modeling Approach</title>
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:    #1a3a6b;
+  --gold:    #b8972a;
+  --purple:  #3d1f5e;
+  --crimson: #8b1c2e;
+  --cream:   #f4edd6;
+  --leaf-bg: #edf1fc;
+  --sh:      rgba(26,58,107,0.18);
+  --font:    'Poor Richard','Palatino Linotype',Palatino,Georgia,serif;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: #fff;
+  overflow: hidden;
+  font-family: var(--font);
+}
+
+/* ── STAGE: fixed 1280×720 canvas, CSS-scaled to viewport ── */
+#stage {
+  width: 1280px;
+  height: 720px;
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: top left;
+  display: flex;
+  flex-direction: row;
+}
+
+/* ══════════════════════════════════════
+   LEFT COLUMN — 70% = 896px — radial chart
+══════════════════════════════════════ */
+#left-col {
+  width: 896px;
+  height: 720px;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* SVG wires — full left-col area */
+#wire-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 896px; height: 720px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+/* ── Hub centre node ── */
+#root-node {
+  position: absolute;
+  z-index: 10;
+  cursor: pointer;
+  /* centre at (448, 360), width 320, height 72 */
+  width: auto;
+  left: 50%;
+  top:  324px;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+  color: var(--cream);
+  border: 2.5px solid var(--gold);
+  border-radius: 5px;
+  padding: 10px 14px 9px;
+  font-family: var(--font);
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 0 0 1px #b8972a44, 3px 5px 16px var(--sh),
+              inset 0 1px 0 rgba(255,255,255,0.09);
+  user-select: none;
+  line-height: 1.15;
+  transition: box-shadow 0.15s;
+}
+#root-node::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(184,151,42,0.25);
+  border-radius: 3px;
+  pointer-events: none;
+}
+#root-node:hover { box-shadow: 0 0 0 2px var(--gold), 4px 7px 22px var(--sh); }
+
+.gear {
+  display: inline-block;
+  font-size: 0.55em;
+  margin: 0 5px;
+  opacity: 0.72;
+  animation: spin 9s linear infinite;
+  vertical-align: middle;
+}
+.gear.rev { animation-direction: reverse; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Leaf nodes ── */
+.leaf-node {
+  position: absolute;
+  z-index: 10;
+  cursor: pointer;
+  background: var(--leaf-bg);
+  border-radius: 4px;
+  font-family: var(--font);
+  font-size: 21px;
+  letter-spacing: 0.02em;
+  color: var(--blue);
+  text-align: center;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px 7px;
+  line-height: 1.25;
+  transition: background 0.15s, transform 0.15s;
+  /* border drawn by animated SVG */
+  border: none;
+  outline: none;
+}
+.leaf-node .bsvg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 1;
+}
+.leaf-node .lbl { position: relative; z-index: 2; }
+.rivet {
+  position: absolute;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #c8d4e8, #8899bb);
+  border: 1px solid #5a7ab8;
+  z-index: 3;
+}
+.rivet.tl { top: 4px; left: 4px; }
+.rivet.tr { top: 4px; right: 4px; }
+.rivet.bl { bottom: 4px; left: 4px; }
+.rivet.br { bottom: 4px; right: 4px; }
+
+.leaf-node:hover { background: #dce6f8; transform: scale(1.05); }
+.leaf-node.active { background: linear-gradient(135deg,#dce6f8,#ede9f8); }
+
+/* ══════════════════════════════════════
+   RIGHT COLUMN — 30% = 384px — description
+══════════════════════════════════════ */
+#right-col {
+  width: 384px;
+  height: 620px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid rgba(26,58,107,0.12);
+  background: linear-gradient(160deg, #f8f9ff 0%, #f0f4fb 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* vertical gold rule */
+#right-col::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 10%; bottom: 10%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+  opacity: 0.4;
+}
+
+/* default "click a node" prompt */
+#desc-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 30px;
+  opacity: 1;
+  transition: opacity 0.25s;
+}
+#desc-prompt.hidden { opacity: 0; pointer-events: none; }
+
+.prompt-icon {
+  font-size: 48px;
+  color: var(--gold);
+  opacity: 0.4;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{ transform:scale(1); opacity:0.4; } 50%{ transform:scale(1.12); opacity:0.65; } }
+
+.prompt-text {
+  font-family: var(--font);
+  font-size: 26px;
+  color: rgba(26,58,107,0.4);
+  text-align: center;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+}
+
+/* ── Description card (flash in from right) ── */
+#desc-card {
+  position: absolute;
+  inset: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--blue);
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 3px 4px 20px var(--sh);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(40px) scale(0.95);
+  pointer-events: none;
+  transition: none;
+}
+#desc-card.flash-in {
+  animation: cardFlash 0.38s cubic-bezier(0.22,1,0.36,1) forwards;
+  pointer-events: auto;
+}
+#desc-card.flash-out {
+  animation: cardFade 0.22s ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes cardFlash {
+  0%   { opacity:0; transform:translateX(40px) scale(0.92); filter:brightness(2); }
+  35%  { filter:brightness(1.4); }
+  70%  { transform:translateX(-4px) scale(1.01); filter:brightness(1.05); }
+  100% { opacity:1; transform:translateX(0) scale(1); filter:brightness(1); }
+}
+@keyframes cardFade {
+  0%   { opacity:1; transform:translateX(0) scale(1); }
+  100% { opacity:0; transform:translateX(30px) scale(0.94); }
+}
+
+.desc-header {
+  background: linear-gradient(90deg, var(--blue) 0%, var(--purple) 100%);
+  border-bottom: 2px solid var(--gold);
+  padding: 9px 14px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.desc-header-icon {
+  font-family: var(--font);
+  font-size: 28px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.desc-header-title {
+  font-family: var(--font);
+  font-size: 24px;
+  color: var(--gold);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  flex: 1;
+}
+
+/* gold scanline sweep */
+.desc-header::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 45px;
+  top: 18px;
+  background: linear-gradient(to bottom, transparent, rgba(192,154,42,0.12), transparent);
+  animation: scan 2.8s linear infinite;
+  pointer-events: none;
+}
+@keyframes scan { from { top: -45px; } to { top: 105px; } }
+
+.desc-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px 12px;
+}
+.desc-body ul { list-style: none; }
+.desc-body li {
+  font-family: var(--font);
+  font-size: 36px;
+  color: #1a1a2e;
+  line-height: 1.55;
+  padding: 5px 0 5px 26px;
+  position: relative;
+  border-bottom: 1px solid rgba(26,58,107,0.06);
+}
+.desc-body li:last-child { border-bottom: none; }
+.desc-body li::before {
+  content: '\25C6';
+  position: absolute;
+  left: 0; top: 10px;
+  color: var(--crimson);
+  font-size: 0.6em;
+}
+
+/* drain bar */
+.desc-drain {
+  height: 3px;
+  background: rgba(184,151,42,0.15);
+  flex-shrink: 0;
+  position: relative;
+}
+.desc-drain-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
+  transform-origin: left;
+  transform: scaleX(1);
+}
+.desc-drain-bar.drain {
+  transition: transform 6s linear;
+  transform: scaleX(0);
+}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ═══ LEFT COLUMN ═══ -->
+  <div id="left-col">
+
+    <svg id="wire-svg" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- wire gradient blue→gold -->
+        <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#1a3a6b" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#b8972a" stop-opacity="0.8"/>
+        </linearGradient>
+        <!-- subtle glow filter -->
+        <filter id="wglow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Hub -->
+    <div id="root-node" onclick="selectNode('root')">
+      <span class="gear">&#9881;</span>MODELING APPROACH<span class="gear rev">&#9881;</span>
+    </div>
+
+    <!-- Leaves -->
+    <div class="leaf-node" id="lf-primitive" onclick="selectNode('primitive')">
+      <svg class="bsvg" id="bsvg-primitive"></svg>
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="lbl">Primitive Set</div>
+    </div>
+    <div class="leaf-node" id="lf-treesize" onclick="selectNode('treesize')">
+      <svg class="bsvg" id="bsvg-treesize"></svg>
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="lbl">Tree Size &amp;<br>Depth Limits</div>
+    </div>
+    <div class="leaf-node" id="lf-popsize" onclick="selectNode('popsize')">
+      <svg class="bsvg" id="bsvg-popsize"></svg>
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="lbl">Population Size</div>
+    </div>
+    <div class="leaf-node" id="lf-numgen" onclick="selectNode('numgen')">
+      <svg class="bsvg" id="bsvg-numgen"></svg>
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="lbl">No. of Generations</div>
+    </div>
+    <div class="leaf-node" id="lf-selection" onclick="selectNode('selection')">
+      <svg class="bsvg" id="bsvg-selection"></svg>
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="lbl">Selection Operator</div>
+    </div>
+    <div class="leaf-node" id="lf-mutation" onclick="selectNode('mutation')">
+      <svg class="bsvg" id="bsvg-mutation"></svg>
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="lbl">Mutation Operator<br>&amp; Probability</div>
+    </div>
+    <div class="leaf-node" id="lf-fitness" onclick="selectNode('fitness')">
+      <svg class="bsvg" id="bsvg-fitness"></svg>
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="lbl">Fitness Function</div>
+    </div>
+
+  </div><!-- #left-col -->
+
+  <!-- ═══ RIGHT COLUMN ═══ -->
+  <div id="right-col">
+
+    <div id="desc-prompt">
+      <div class="prompt-icon">&#9881;</div>
+      <div class="prompt-text">Click any node<br>to view details</div>
+    </div>
+
+    <div id="desc-card">
+      <div class="desc-header" style="position:relative;overflow:hidden;">
+        <span class="desc-header-icon" id="desc-icon">&#9881;</span>
+        <span class="desc-header-title" id="desc-title"></span>
+      </div>
+      <div class="desc-body"><ul id="desc-list"></ul></div>
+      <div class="desc-drain"><div class="desc-drain-bar" id="drain-bar"></div></div>
+    </div>
+
+  </div><!-- #right-col -->
+
+</div><!-- #stage -->
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+var DATA = {
+  root: {
+    icon: '&#9881;',
+    title: 'Modeling Approach',
+    items: [
+      'Symbolic Regression (SR) via Genetic Programming evolves mathematical expressions from data.',
+      'Several algorithmic decisions govern quality, speed, and complexity of the evolved model.',
+      'Click each leaf node to explore its role and parameterisation choices.'
+    ]
+  },
+  primitive: {
+    icon: '&sum;',
+    title: 'Primitive Set',
+    items: [
+      'Function set F = {+, &minus;, &times;, &divide;} expresses any rational polynomial.',
+      'Terminal set T = {constant, variable}; the sole variable here is x.',
+      'Constants generated at initialisation and refined by mutation.'
+    ]
+  },
+  treesize: {
+    icon: '&#8734;',
+    title: 'Tree Size &amp; Depth Limits',
+    items: [
+      'Larger trees may yield more accurate models at higher computational cost.',
+      'Constraining size controls bloat and prevents overfitting.'
+    ]
+  },
+  popsize: {
+    icon: '&#9636;',
+    title: 'Population Size',
+    items: [
+      'Population must be large enough for effective global search space exploration.',
+      'Larger population &rarr; better diversity and solution quality.',
+      'A population of 50 is sufficient for relatively simple problems.',
+      'Complex problems typically require hundreds to thousands of individuals.'
+    ]
+  },
+  numgen: {
+    icon: '&#8635;',
+    title: 'No. of Generations',
+    items: [
+      'Must be high enough for the population to reach stable convergence.',
+      'Convergence detected when further fitness improvements cease.',
+      'Too few risks missing better solutions; excess wastes computation.'
+    ]
+  },
+  selection: {
+    icon: '&#9820;',
+    title: 'Selection Operator',
+    items: [
+      'Determines how parents are chosen for reproduction.',
+      'Tournament selection ranks individuals by fitness; size controls pressure.',
+      'Larger tournament &rarr; higher pressure &rarr; premature convergence risk.'
+    ]
+  },
+  mutation: {
+    icon: '&#9889;',
+    title: 'Mutation Operator &amp; Probability',
+    items: [
+      'Introduces new genetic material, maintaining diversity and exploration.',
+      'Crossover is the primary exploration operator; mutation is secondary.',
+      'Probability of 10&ndash;30% is generally sufficient to boost diversity.'
+    ]
+  },
+  fitness: {
+    icon: '&rho;&#178;',
+    title: 'Fitness Function',
+    items: [
+      'Squared correlation coefficient &rho;&#178; assesses model quality (Keijzer, 2004).',
+      'Invariant to scale and offset of the model response on training data.',
+      'Removes offset/scale burden from GP &mdash; handled in post-processing.'
+    ]
+  }
+};
+
+var LEAF_KEYS = ['primitive','treesize','popsize','numgen','selection','mutation','fitness'];
+
+/* ══════════════════════════════════════
+   STAGE SCALING
+══════════════════════════════════════ */
+function scaleStage() {
+  var stage = document.getElementById('stage');
+  var sw = 1280, sh = 720;
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var s  = Math.min(vw / sw, vh / sh);
+  stage.style.transform = 'scale(' + s + ')';
+  stage.style.left = ((vw - sw * s) / 2) + 'px';
+  stage.style.top  = ((vh - sh * s) / 2) + 'px';
+}
+scaleStage();
+window.addEventListener('resize', function() { scaleStage(); setTimeout(redrawAll, 60); });
+
+/* ══════════════════════════════════════
+   LEAF POSITIONS (centres, left col 896px wide, hub at 448,360)
+   6 leaves around perimeter + 1 at top:
+   Angles from hub, distributed evenly, avoiding right side (right col)
+   We place them in an ellipse: rx=340, ry=280, hub (448,360)
+   Angles (degrees from top, CW):
+     0: -50  primitive      top-left
+     1:   0  treesize       top
+     2:  50  popsize        top-right (slightly)
+     3: 110  numgen         right (but capped so stays in left col)
+     4: 170  selection      bottom-right
+     5: 210  mutation       bottom-left
+     6: 250  fitness        left
+══════════════════════════════════════ */
+
+/* hub centre in left col */
+var HX = 448, HY = 355;
+
+/* ellipse radii */
+var RX = 320, RY = 255;
+
+/* 7 angles in degrees from top (0=up), clockwise */
+var ANGLES_DEG = [-55, 0, 55, 112, 168, 212, 258];
+
+/* leaf sizes */
+var LW = 190, LH = 82;
+
+var LEAF_CENTRES = [];
+
+function computeCentres() {
+  LEAF_CENTRES = ANGLES_DEG.map(function(deg) {
+    var rad = (deg - 90) * Math.PI / 180; /* convert to math angle (0=right) */
+    return [
+      HX + RX * Math.cos(rad),
+      HY + RY * Math.sin(rad)
+    ];
+  });
+}
+
+function positionLeaves() {
+  computeCentres();
+  LEAF_KEYS.forEach(function(key, i) {
+    var el = document.getElementById('lf-' + key);
+    if (!el) { return; }
+    var cx = LEAF_CENTRES[i][0], cy = LEAF_CENTRES[i][1];
+    el.style.width  = LW + 'px';
+    el.style.height = LH + 'px';
+    el.style.left   = (cx - LW / 2) + 'px';
+    el.style.top    = (cy - LH / 2) + 'px';
+  });
+}
+
+/* ══════════════════════════════════════
+   WIRE CONNECTORS (SVG paths, NOT dashes)
+══════════════════════════════════════ */
+
+/* Wire tube: draw two offset strokes for a 3D-cable look */
+function drawWires() {
+  var svg = document.getElementById('wire-svg');
+  /* clear everything after defs */
+  var children = Array.prototype.slice.call(svg.childNodes);
+  children.forEach(function(c) { if (c.nodeName !== 'defs') { svg.removeChild(c); } });
+
+  /* hub edge offset */
+  var HR = 58, VR = 30; /* half-width/height of hub approx */
+
+  LEAF_KEYS.forEach(function(key, i) {
+    var lc = LEAF_CENTRES[i];
+
+    /* direction unit vector */
+    var dx = lc[0] - HX, dy = lc[1] - HY;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    var ux = dx/dist, uy = dy/dist;
+
+    /* start: hub edge */
+    var x1 = HX + ux * HR, y1 = HY + uy * VR;
+    /* end: leaf edge */
+    var x2 = lc[0] - ux * (LW/2 + 3);
+    var y2 = lc[1] - uy * (LH/2 + 3);
+
+    /* slight S-curve control points */
+    var mx = (x1+x2)/2, my = (y1+y2)/2;
+    var perp = 12; /* perpendicular offset for slight curve */
+    var cpx = mx - uy * perp, cpy = my + ux * perp;
+
+    var d = 'M '+x1+','+y1+' Q '+cpx+','+cpy+' '+x2+','+y2;
+
+    /* shadow/highlight pair to fake tube */
+    /* dark underside */
+    var s1 = document.createElementNS('http://www.w3.org/2000/svg','path');
+    s1.setAttribute('d', d);
+    s1.setAttribute('fill','none');
+    s1.setAttribute('stroke','rgba(10,20,50,0.35)');
+    s1.setAttribute('stroke-width','5');
+    s1.setAttribute('stroke-linecap','round');
+    svg.appendChild(s1);
+
+    /* mid colour */
+    var s2 = document.createElementNS('http://www.w3.org/2000/svg','path');
+    s2.setAttribute('d', d);
+    s2.setAttribute('fill','none');
+    s2.setAttribute('stroke','#1a3a6b');
+    s2.setAttribute('stroke-width','3.2');
+    s2.setAttribute('stroke-linecap','round');
+    svg.appendChild(s2);
+
+    /* highlight sheen */
+    var s3 = document.createElementNS('http://www.w3.org/2000/svg','path');
+    s3.setAttribute('d', d);
+    s3.setAttribute('fill','none');
+    s3.setAttribute('stroke','rgba(180,210,255,0.55)');
+    s3.setAttribute('stroke-width','1.1');
+    s3.setAttribute('stroke-linecap','round');
+    s3.setAttribute('filter','url(#wglow)');
+    svg.appendChild(s3);
+
+    /* terminal dome at leaf end */
+    var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', x2); circle.setAttribute('cy', y2);
+    circle.setAttribute('r','5');
+    circle.setAttribute('fill','#b8972a');
+    circle.setAttribute('stroke','#1a3a6b');
+    circle.setAttribute('stroke-width','1.5');
+    svg.appendChild(circle);
+
+    /* terminal dome at hub end */
+    var cirH = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    cirH.setAttribute('cx', x1); cirH.setAttribute('cy', y1);
+    cirH.setAttribute('r','4');
+    cirH.setAttribute('fill','#b8972a');
+    cirH.setAttribute('stroke','#1a3a6b');
+    cirH.setAttribute('stroke-width','1.2');
+    svg.appendChild(cirH);
+  });
+}
+
+/* ══════════════════════════════════════
+   WIGGLING BORDERS
+══════════════════════════════════════ */
+var PHASES = [0, 0.45, 0.9, 1.35, 1.8, 2.25, 2.7];
+
+function initBorder(leafId, svgId, phaseIdx) {
+  var leaf = document.getElementById(leafId);
+  var svg  = document.getElementById(svgId);
+  if (!leaf || !svg) { return; }
+  var W = leaf.offsetWidth, H = leaf.offsetHeight;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.innerHTML = '';
+
+  function mkPoly(stroke, sw, dasharray, opacity) {
+    var p = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke', stroke);
+    p.setAttribute('stroke-width', sw);
+    p.setAttribute('stroke-linejoin','round');
+    if (dasharray) { p.setAttribute('stroke-dasharray', dasharray); }
+    if (opacity !== undefined) { p.setAttribute('opacity', opacity); }
+    svg.appendChild(p);
+    return p;
+  }
+
+  leaf._bW     = W; leaf._bH = H;
+  leaf._outer  = mkPoly('#1a3a6b','2.2', null,  '1');
+  leaf._inner  = mkPoly('rgba(26,58,107,0.18)','1','4 3', '1');
+  leaf._active = mkPoly('#8b1c2e','2.5', null,  '0');
+  leaf._phase  = PHASES[phaseIdx % PHASES.length];
+  if (leaf._raf) { cancelAnimationFrame(leaf._raf); }
+
+  (function frame(t) {
+    var a = t * 0.0011 + leaf._phase;
+    var W2 = leaf._bW, H2 = leaf._bH;
+    var pts = wobbleRect(W2, H2, a, 2.2);
+    var ipts= wobbleRect(W2-8, H2-8, a+0.55, 1.3);
+    leaf._outer.setAttribute('points',  pStr(pts));
+    leaf._inner.setAttribute('points',  pStr(ipts,4,4));
+    var act = leaf.classList.contains('active');
+    leaf._active.setAttribute('points',  pStr(pts));
+    leaf._active.setAttribute('opacity', act ? '1' : '0');
+    leaf._outer.setAttribute('opacity',  act ? '0' : '1');
+    leaf._raf = requestAnimationFrame(frame);
+  })(0);
+}
+
+function wobbleRect(W, H, a, m) {
+  var corners = [[0,0],[W/2,0],[W,0],[W,H/2],[W,H],[W/2,H],[0,H],[0,H/2]];
+  return corners.map(function(c,k) {
+    var f = 1 + k * 0.14;
+    return [c[0] + Math.sin(a*f + k*0.8)*m, c[1] + Math.cos(a*f + k*0.7+0.5)*m];
+  });
+}
+function pStr(pts, ox, oy) {
+  ox=ox||0; oy=oy||0;
+  var s = pts.map(function(p){ return (p[0]+ox)+','+(p[1]+oy); }).join(' ');
+  return s+' '+(pts[0][0]+ox)+','+(pts[0][1]+oy);
+}
+
+function initAllBorders() {
+  LEAF_KEYS.forEach(function(key,i){ initBorder('lf-'+key,'bsvg-'+key,i); });
+}
+
+/* ══════════════════════════════════════
+   DESCRIPTION PANEL
+══════════════════════════════════════ */
+var activeKey   = null;
+var drainTimer  = null;
+
+function selectNode(key) {
+  if (activeKey === key) { return; } /* already showing — ignore re-click */
+  showDesc(key);
+}
+
+function showDesc(key) {
+  if (drainTimer) { clearTimeout(drainTimer); drainTimer = null; }
+  document.querySelectorAll('.leaf-node').forEach(function(n){ n.classList.remove('active'); });
+
+  activeKey = key;
+  var d = DATA[key];
+
+  document.getElementById('desc-icon').innerHTML  = d.icon;
+  document.getElementById('desc-title').innerHTML = d.title;
+
+  var list = document.getElementById('desc-list');
+  list.innerHTML = '';
+  d.items.forEach(function(txt) {
+    var li = document.createElement('li');
+    li.innerHTML = txt;
+    list.appendChild(li);
+  });
+
+  if (key !== 'root') {
+    var el = document.getElementById('lf-' + key);
+    if (el) { el.classList.add('active'); }
+  }
+
+  /* prompt fade out */
+  document.getElementById('desc-prompt').classList.add('hidden');
+
+  /* reset drain bar */
+  var bar = document.getElementById('drain-bar');
+  bar.classList.remove('drain');
+  bar.style.transition = 'none';
+  bar.style.transform  = 'scaleX(1)';
+
+  /* trigger card flash */
+  var card = document.getElementById('desc-card');
+  card.classList.remove('flash-in','flash-out');
+  void card.offsetWidth; /* force reflow */
+  card.classList.add('flash-in');
+
+  /* keep bar full — no auto-dismiss */
+  bar.style.transform = 'scaleX(1)';
+}
+
+function dismissDesc() {
+  if (drainTimer) { clearTimeout(drainTimer); drainTimer = null; }
+  document.querySelectorAll('.leaf-node').forEach(function(n){ n.classList.remove('active'); });
+  var card = document.getElementById('desc-card');
+  card.classList.remove('flash-in');
+  card.classList.add('flash-out');
+  activeKey = null;
+  setTimeout(function() {
+    card.classList.remove('flash-out');
+    document.getElementById('desc-prompt').classList.remove('hidden');
+  }, 240);
+}
+
+/* ══════════════════════════════════════
+   BOOT
+══════════════════════════════════════ */
+function redrawAll() {
+  computeCentres();
+  positionLeaves();
+  drawWires();
+  initAllBorders();
+}
+
+function init() {
+  computeCentres();
+  positionLeaves();
+  drawWires();
+  initAllBorders();
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(init, 90);
+} else {
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(init,90); });
+}
+
+window.addEventListener('resize', function(){
+  scaleStage();
+  setTimeout(redrawAll, 70);
+});
+
+if (typeof Reveal !== 'undefined') {
+  Reveal.on('slidechanged', function(){ setTimeout(init,120); });
+  Reveal.on('resize',       function(){ scaleStage(); setTimeout(init,120); });
+}
+</script>
+</body>
+</html>

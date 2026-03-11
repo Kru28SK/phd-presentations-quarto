@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simulation Study Methodology</title>
+<style>
+#sim-fc-wrap {
+  width: 1280px;
+  height: 630px;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden;
+}
+#sim-fc-wrap * { box-sizing: border-box; margin: 0; padding: 0; }
+
+#sim-overlay {
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.58);
+  backdrop-filter: blur(2.5px);
+  z-index: 90; display: none; cursor: pointer;
+}
+#sim-overlay.sim-vis { display: block; }
+
+#sim-popup {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.93);
+  width: 680px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 16px 64px rgba(0,0,0,0.14), 0 2px 12px rgba(0,0,0,0.07);
+  border: 1px solid #d8e6f0;
+  padding: 32px 38px 28px;
+  z-index: 100;
+  display: none; opacity: 0;
+  transition: opacity .22s ease, transform .22s ease;
+  pointer-events: none;
+  font-family: 'Poor Richard', 'Palatino Linotype', 'Book Antiqua', serif;
+}
+#sim-popup.sim-vis {
+  display: block; opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: all;
+}
+#sim-close {
+  position: absolute; top: 13px; right: 15px;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid #c8d8e8; background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #7892a8; font-size: 15px;
+  transition: background .14s, color .14s;
+  font-family: Arial, sans-serif; line-height: 1;
+}
+#sim-close:hover { background: #ecf3fa; color: #1a3a5a; }
+
+#sim-pop-step {
+  font-family: 'Poor Richard', serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: #1e9a55; margin-bottom: 8px;
+}
+#sim-pop-step.sim-dec { color: #a86820; }
+
+#sim-pop-title {
+  font-family: 'Poor Richard', 'Palatino Linotype', serif;
+  font-size: 26px; color: #14263c;
+  line-height: 1.28; margin-bottom: 14px;
+}
+#sim-pop-hr { height: 1px; background: #e4eef6; margin-bottom: 14px; }
+
+#sim-pop-desc {
+  font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+  font-size: 18px; line-height: 1.72; color: #48607a;
+}
+#sim-pop-tags {
+  margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px;
+}
+.sim-tag {
+  font-family: 'Poor Richard', serif;
+  font-size: 15px; padding: 7px 22px; border-radius: 24px;
+  border: 1px solid #ccdce8; color: #5880a0; background: #f4f8fc;
+  white-space: nowrap; display: inline-block;
+}
+.sim-tag.sim-yes {
+  border-color: rgba(30,145,80,.38); color: #1e9050;
+  background: rgba(30,145,80,.07);
+}
+.sim-tag.sim-no {
+  border-color: rgba(185,45,30,.35); color: #b32d1e;
+  background: rgba(185,45,30,.06);
+}
+</style>
+</head>
+<body>
+<div id="sim-fc-wrap">
+
+<svg width="1280" height="630" viewBox="0 90 1280 630"
+     xmlns="http://www.w3.org/2000/svg"
+     style="position:absolute;inset:0;display:block;">
+<defs>
+  <marker id="sim-mG"
+          markerWidth="7" markerHeight="7"
+          refX="6" refY="3.5"
+          orient="auto"
+          markerUnits="strokeWidth">
+    <path d="M0,0.5 L6,3.5 L0,6.5 L1.5,3.5 Z" fill="#1a9a52"/>
+  </marker>
+
+  <marker id="sim-mR"
+          markerWidth="7" markerHeight="7"
+          refX="6" refY="3.5"
+          orient="auto"
+          markerUnits="strokeWidth">
+    <path d="M0,0.5 L6,3.5 L0,6.5 L1.5,3.5 Z" fill="#c02e1e"/>
+  </marker>
+
+  <filter id="sim-sh" x="-12%" y="-18%" width="124%" height="136%">
+    <feDropShadow dx="0" dy="2" stdDeviation="3.5"
+                  flood-color="rgba(8,32,80,0.09)"/>
+  </filter>
+</defs>
+
+<path d="M 290,160 L 535,160"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+
+<path d="M 650,195 C 650,230 490,215 440,255"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+
+<path d="M 298,310 C 238,310 175,338 175,395"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+<text x="222" y="338"
+      font-family="'Poor Richard','Palatino Linotype',serif"
+      font-size="14" font-weight="700" fill="#1a9a52">Yes</text>
+
+<path d="M 528,310 C 598,308 652,268 650,195"
+      stroke="#c02e1e" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mR)"/>
+<text x="634" y="272"
+      font-family="'Poor Richard','Palatino Linotype',serif"
+      font-size="14" font-weight="700" fill="#c02e1e">No</text>
+
+<path d="M 290,430 L 535,430"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+
+<path d="M 650,465 C 650,500 490,485 440,515"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+
+<path d="M 528,570 C 680,570 800,584 945,590"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+<text x="600" y="557"
+      font-family="'Poor Richard','Palatino Linotype',serif"
+      font-size="14" font-weight="700" fill="#1a9a52">Yes</text>
+
+<path d="M 298,570 C 148,570 128,380 128,280 C 128,195 320,195 535,195"
+      stroke="#c02e1e" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mR)"/>
+<text x="145" y="252"
+      font-family="'Poor Richard','Palatino Linotype',serif"
+      font-size="14" font-weight="700" fill="#c02e1e">No</text>
+
+<path d="M 1060,555 L 1060,495"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+<path d="M 1060,425 L 1060,365"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+<path d="M 1060,295 L 1060,200"
+      stroke="#1a9a52" stroke-width="1.9" fill="none"
+      marker-end="url(#sim-mG)"/>
+
+
+<g class="sim-node" data-id="1" style="cursor:pointer">
+  <rect x="60" y="125" width="230" height="70" rx="10"
+        fill="#f5f9ff" stroke="#2d68b0" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="175" y="154" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">Formulate problem</text>
+  <text x="175" y="175" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">&amp; plan the study</text>
+  <circle cx="68" cy="132" r="12" fill="#2d68b0"/>
+  <text x="68" y="136.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+</g>
+
+<g class="sim-node" data-id="2" style="cursor:pointer">
+  <rect x="535" y="125" width="230" height="70" rx="10"
+        fill="#f5f9ff" stroke="#2d68b0" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="650" y="154" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">Collect data &amp;</text>
+  <text x="650" y="175" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">define a model</text>
+  <circle cx="543" cy="132" r="12" fill="#2d68b0"/>
+  <text x="543" y="136.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+</g>
+
+<g class="sim-node" data-id="3" style="cursor:pointer">
+  <polygon points="413,238 528,310 413,382 298,310"
+           fill="#f0fdf5" stroke="#189050" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="413" y="304" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="15" fill="#103828" text-anchor="middle">Assumptions</text>
+  <text x="413" y="323" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="15" fill="#103828" text-anchor="middle">doc. valid?</text>
+  <circle cx="307" cy="246" r="12" fill="#189050"/>
+  <text x="307" y="250.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+</g>
+
+<g class="sim-node" data-id="4" style="cursor:pointer">
+  <rect x="60" y="395" width="230" height="70" rx="10"
+        fill="#f5f9ff" stroke="#2d68b0" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="175" y="424" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">Construct program</text>
+  <text x="175" y="445" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">&amp; verify</text>
+  <circle cx="68" cy="402" r="12" fill="#2d68b0"/>
+  <text x="68" y="406.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+</g>
+
+<g class="sim-node" data-id="5" style="cursor:pointer">
+  <rect x="535" y="395" width="230" height="70" rx="10"
+        fill="#f5f9ff" stroke="#2d68b0" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="650" y="424" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">Make</text>
+  <text x="650" y="445" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">pilot runs</text>
+  <circle cx="543" cy="402" r="12" fill="#2d68b0"/>
+  <text x="543" y="406.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">5</text>
+</g>
+
+<g class="sim-node" data-id="6" style="cursor:pointer">
+  <polygon points="413,498 528,570 413,642 298,570"
+           fill="#f0fdf5" stroke="#189050" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="413" y="564" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="15" fill="#103828" text-anchor="middle">Programmed</text>
+  <text x="413" y="583" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="15" fill="#103828" text-anchor="middle">model valid?</text>
+  <circle cx="307" cy="506" r="12" fill="#189050"/>
+  <text x="307" y="510.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">6</text>
+</g>
+
+<g class="sim-node" data-id="7" style="cursor:pointer">
+  <rect x="945" y="555" width="230" height="70" rx="10"
+        fill="#f5f9ff" stroke="#2d68b0" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="1060" y="584" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">Design</text>
+  <text x="1060" y="605" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">experiments</text>
+  <circle cx="953" cy="562" r="12" fill="#2d68b0"/>
+  <text x="953" y="566.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">7</text>
+</g>
+
+<g class="sim-node" data-id="8" style="cursor:pointer">
+  <rect x="945" y="425" width="230" height="70" rx="10"
+        fill="#f5f9ff" stroke="#2d68b0" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="1060" y="454" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">Make production</text>
+  <text x="1060" y="475" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">runs</text>
+  <circle cx="953" cy="432" r="12" fill="#2d68b0"/>
+  <text x="953" y="436.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">8</text>
+</g>
+
+<g class="sim-node" data-id="9" style="cursor:pointer">
+  <rect x="945" y="295" width="230" height="70" rx="10"
+        fill="#f5f9ff" stroke="#2d68b0" stroke-width="1.2" filter="url(#sim-sh)"/>
+  <text x="1060" y="324" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">Analyze</text>
+  <text x="1060" y="345" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#14263c" text-anchor="middle">output data</text>
+  <circle cx="953" cy="302" r="12" fill="#2d68b0"/>
+  <text x="953" y="306.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">9</text>
+</g>
+
+<g class="sim-node" data-id="10" style="cursor:pointer">
+  <rect x="945" y="130" width="230" height="70" rx="10"
+        fill="#ebf9f1" stroke="#189050" stroke-width="1.4" filter="url(#sim-sh)"/>
+  <text x="1060" y="159" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#103828" text-anchor="middle">Document, present</text>
+  <text x="1060" y="180" font-family="'Poor Richard','Palatino Linotype',serif"
+        font-size="16.5" fill="#103828" text-anchor="middle">&amp; use results</text>
+  <circle cx="953" cy="137" r="12" fill="#189050"/>
+  <text x="953" y="141.5" font-family="'Poor Richard',serif"
+        font-size="11" font-weight="700" fill="#fff" text-anchor="middle">10</text>
+</g>
+
+</svg>
+
+<div id="sim-overlay"></div>
+<div id="sim-popup">
+  <button id="sim-close" aria-label="Close">&#x2715;</button>
+  <div id="sim-pop-step"></div>
+  <div id="sim-pop-title"></div>
+  <div id="sim-pop-hr"></div>
+  <div id="sim-pop-desc"></div>
+  <div id="sim-pop-tags"></div>
+</div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var DATA = [
+    { id:1,  type:'rect',     label:'Formulate problem & plan the study',
+      desc:'The problem is stated by a manager, though it may not initially be in quantitative terms — iteration is often necessary. A kickoff meeting is held with the project manager, analysts, and SMEs to define study objectives, performance measures, model scope, system configurations, time frame, and required resources.',
+      conns:[{to:2,lbl:'Next'}] },
+    { id:2,  type:'rect',     label:'Collect data & define a model',
+      desc:'Collect information on system structure and operating procedures — no single person or document is sufficient. Gather data for model parameters and input distributions, and record everything in a written assumptions document. Start with a simple model and embellish as needed; excessive detail can obscure important factors.',
+      conns:[{to:3,lbl:'Next'}] },
+    { id:3,  type:'decision', label:'Assumptions doc. valid?',
+      desc:'Conduct a structured walk-through of the assumptions document before managers, analysts, and SMEs. This ensures assumptions are correct and complete, promotes team interaction and model ownership, and must occur before programming begins — avoiding costly reprogramming later.',
+      conns:[{to:4,lbl:'Yes'},{to:2,lbl:'No'}] },
+    { id:4,  type:'rect',     label:'Construct program & verify',
+      desc:'Program the model in a simulation language such as C++ or Java, or in dedicated software such as Arena, ExtendSim, or ProModel. Simulation software reduces programming time and project cost. Verify (debug) the computer program using structured techniques: modular development, test cases, and animation checks.',
+      conns:[{to:5,lbl:'Next'}] },
+    { id:5,  type:'rect',     label:'Make pilot runs',
+      desc:'Execute pilot simulation runs to generate output data for the next validation step. These preliminary runs reveal anomalous behaviour early and support sensitivity analysis to identify which model factors have a significant impact on performance measures.',
+      conns:[{to:6,lbl:'Next'}] },
+    { id:6,  type:'decision', label:'Programmed model valid?',
+      desc:'If an existing system is available, compare model and system performance measures. Analysts and SMEs should review results for correctness. Use sensitivity analyses to identify factors with significant impact. If the model is not valid, return to Step 2 to refine data collection and model assumptions.',
+      conns:[{to:7,lbl:'Yes'},{to:2,lbl:'No'}] },
+    { id:7,  type:'rect',     label:'Design experiments',
+      desc:'For each system configuration of interest, specify: the length of each simulation run, the warmup period length (if appropriate), and the number of independent runs using different random numbers — which facilitates the construction of valid confidence intervals for performance measures.',
+      conns:[{to:8,lbl:'Next'}] },
+    { id:8,  type:'rect',     label:'Make production runs',
+      desc:'Execute the full set of production runs as designed in Step 7. Each run of a stochastic model produces only estimates, so multiple independent replications using different random numbers are required to generate the output data needed for statistical analysis.',
+      conns:[{to:9,lbl:'Next'}] },
+    { id:9,  type:'rect',     label:'Analyze output data',
+      desc:'Two major objectives: (1) determine the absolute performance of certain system configurations, and (2) compare alternative configurations in a relative sense. Since simulation output is nonstationary and autocorrelated, classical IID-based statistics are not directly applicable.',
+      conns:[{to:10,lbl:'Next'}] },
+    { id:10, type:'rect',     label:'Document, present & use results',
+      desc:'Document the assumptions, computer program, and study results for use in current and future projects. Use animation to communicate the model to managers unfamiliar with its details. Discuss the validation process to promote credibility. Results enter the decision-making process only when both valid and credible.',
+      conns:[] }
+  ];
+
+  var wrap     = document.getElementById('sim-fc-wrap');
+  var popup    = document.getElementById('sim-popup');
+  var overlay  = document.getElementById('sim-overlay');
+  var closeBtn = document.getElementById('sim-close');
+  var stepEl   = document.getElementById('sim-pop-step');
+  var titleEl  = document.getElementById('sim-pop-title');
+  var descEl   = document.getElementById('sim-pop-desc');
+  var tagsEl   = document.getElementById('sim-pop-tags');
+
+  function openPopup(id) {
+    var d = DATA[id - 1];
+    var isDec = d.type === 'decision';
+    stepEl.textContent  = 'Step ' + id + (isDec ? '  ·  Decision' : '');
+    stepEl.className    = isDec ? 'sim-dec' : '';
+    titleEl.textContent = d.label;
+    descEl.textContent  = d.desc;
+    tagsEl.innerHTML    = '';
+    if (!d.conns.length) {
+      var s = document.createElement('span');
+      s.className = 'sim-tag'; s.textContent = 'End of process';
+      tagsEl.appendChild(s);
+    } else {
+      d.conns.forEach(function (c) {
+        var s  = document.createElement('span');
+        var lc = c.lbl.toLowerCase();
+        s.className   = 'sim-tag' + (lc==='yes' ? ' sim-yes' : lc==='no' ? ' sim-no' : '');
+        s.textContent = c.lbl + ' \u2192 Step ' + c.to;
+        tagsEl.appendChild(s);
+      });
+    }
+    overlay.classList.add('sim-vis');
+    popup.style.display = 'block';
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { popup.classList.add('sim-vis'); });
+    });
+  }
+
+  function closePopup() {
+    popup.classList.remove('sim-vis');
+    overlay.classList.remove('sim-vis');
+    setTimeout(function () { popup.style.display = 'none'; }, 230);
+  }
+
+  wrap.querySelectorAll('.sim-node').forEach(function (g) {
+    g.addEventListener('click', function (e) {
+      e.stopPropagation();
+      openPopup(parseInt(g.getAttribute('data-id'), 10));
+    });
+  });
+  closeBtn.addEventListener('click', closePopup);
+  overlay.addEventListener('click',  closePopup);
+}());
+</script>
+</body>
+</html>

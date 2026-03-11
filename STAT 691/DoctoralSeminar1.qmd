@@ -1,0 +1,80 @@
+---
+format:
+  revealjs:
+    title-slide-attributes:
+      data-visibility: hidden 
+    theme: [default, title_sta691.scss]
+    margin: 0.05
+    slide-number: true
+    transition: slide
+    navigation-mode: vertical
+    controls: false
+    width: 1280
+    height: 720
+    embed-resources: true 
+---
+
+```{=html}
+<section class="title-slide">
+
+  <div class="header-band">
+    <div class="logo-box">
+      <img src="angrau_logo.jpeg" alt="ANGRAU Logo">
+    </div>
+    <div class="inst-block">
+      <div class="university-name">
+        Acharya N.G. Ranga Agricultural University
+      </div>
+      <div class="college-name">
+        Agricultural College, Bapatla
+      </div>
+      <div class="dept-name">
+        Department of Statistics and Computer Applications
+      </div>
+    </div>
+  </div>
+
+  <div class="mid-content">
+    <div class="course-label">
+      STAT 691 DOCTORAL SEMINAR I
+    </div>
+    <div class="main-title">
+      SYMBOLIC REGRESSION
+    </div>
+  </div>
+
+  <div class="footer-band">
+    <div class="presenter-block">
+      <span class="role-label">Presented by</span>
+      <span class="person-name">Krupesh S</span>
+      <span class="person-detail">(BAD/2025-25)</span>
+      <span class="person-detail">I Ph.D.(Ag.) Agricultural Statistics</span>
+    </div>
+    <div class="incharge-block">
+      <span class="role-label">Course In-charge</span>
+      <span class="person-name">Dr. B. Ravindra Reddy</span>
+      <span class="person-detail">Professor (Statistics)</span>
+    </div>
+  </div>
+
+</section>
+```
+
+# INTRODUCTION 
+
+## What is Symbolic Regression?{style="text-align: justify;"}
+
+**Symbolic Regression** is a type of regression analysis that:
+
+* **Searches** the space of mathematical expressions to find a symbolic function that best fits a given dataset. 
+* **Optimizes** simultaneously over the structure of the expression and the values of its parameters.
+* **Operates** without assuming a fixed model class in advance.
+
+## Modeling Approach
+
+```{=html}
+<iframe src="modeling-approach-chart.html"
+        width="1280" height="620"
+        style="border:none; display:block;">
+</iframe>
+```
