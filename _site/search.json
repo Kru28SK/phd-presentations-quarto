@@ -1,0 +1,555 @@
+[
+  {
+    "objectID": "STAT601/Robust_Statistics.html#departure-from-normality",
+    "href": "STAT601/Robust_Statistics.html#departure-from-normality",
+    "title": "PhD Presentations",
+    "section": "Departure from Normality",
+    "text": "Departure from Normality\nA contaminated normal distribution given by Tukey and Huber can be represented as, \\[F=(1-\\epsilon) G+\\epsilon H\\] where, \\(G = N(\\mu, \\sigma^2)\\) and H is any distribution."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#location-model",
+    "href": "STAT601/Robust_Statistics.html#location-model",
+    "title": "PhD Presentations",
+    "section": "Location Model",
+    "text": "Location Model\n\\(x_i = \\mu + u_i\\) where \\(u_i\\) \\((i=1, \\dots, n)\\) are random variables. \\[\n\\begin{align*}\n    F(x) &= P(x_i \\leq x)        && \\text{Definition of CDF} & \\\\\n         &= P(\\mu + u_i \\leq x)  && \\text{Substitute model } x_i = \\mu + u_i & \\\\\n         &= P(u_i \\leq x - \\mu)  && \\text{Rearrange to isolate } u_i & \\\\\n         &= F_0(x - \\mu)         && \\text{Apply error distribution } F_0 & \\\\\n    \\therefore F(x) &= F_0(x - \\mu) && &\n\\end{align*}\n\\]\nHere, \\(x_i\\) are i.i.d. random variables.\nAlso, \\(F_0(x) = 1 - F_0(-x)\\).\nIf \\(F_0 = N(0, \\sigma^2)\\), then,\n\n\\(\\text{mean}(x) \\sim N(0,\\, \\sigma^2/n)\\)\n\\(\\text{med}(x) \\approx N(0,\\, 1.57 \\times \\sigma^2/n)\\)\n\nThus, for a pure normal distribution, mean is 57% more efficient than the median."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#formulation",
+    "href": "STAT601/Robust_Statistics.html#formulation",
+    "title": "PhD Presentations",
+    "section": "Formulation",
+    "text": "Formulation\nConsider \\(f_0 = F_0'\\), the density of the location model. Then, the joint density of the model is given as,\n\\[L(x_i;\\, \\mu) = \\prod_{i=1}^{n} f_0(x_i - \\mu)\\]\nThe MLE of \\(\\mu\\) is \\(\\hat{\\mu}\\), such that,\n\\[\\hat{\\mu} = \\hat{\\mu}(x_i) = \\arg\\max_{\\mu}\\, L(x_i;\\, \\mu)\\]\nIf \\(F_0\\) is exactly known, the MLE will be the optimal. Since \\(F_0\\) is only approximately known, the goal is to find “nearly optimal” estimators for,\n\nwhen \\(F_0\\) is normal\nwhen \\(F_0\\) is approximately normal"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#estimation",
+    "href": "STAT601/Robust_Statistics.html#estimation",
+    "title": "PhD Presentations",
+    "section": "Estimation",
+    "text": "Estimation\nIf \\(f_0\\) is everywhere positive, since the logarithm is an increasing function, \\(\\hat{\\mu}\\) can be written as,\n\\[\\hat{\\mu} = \\arg\\min_{\\mu} \\sum_{i=1}^{n} \\rho(x_i - \\mu)\\]\nwhere,\n\\[\\rho = -\\log f_0\\]\nFor some unknown \\(f_0\\) and a function \\(\\rho\\), this problem can be solved using the implicit equation,\n\\[\\sum_{i=1}^{n} \\psi(x_i - \\hat{\\mu}) = 0\\]\nwhere,\n\\[\\psi = \\rho'\\]"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#the-weighted-mean-interpretation",
+    "href": "STAT601/Robust_Statistics.html#the-weighted-mean-interpretation",
+    "title": "PhD Presentations",
+    "section": "The Weighted Mean Interpretation",
+    "text": "The Weighted Mean Interpretation\nThe equation,\n\\[\\sum_{i=1}^{n} \\psi(x_i - \\hat{\\mu}) = 0\\]\ncan be written as,\n\\[\\sum_{i=1}^{n} W(x_i - \\hat{\\mu})(x_i - \\hat{\\mu}) = 0\\]\n\\[\\implies \\sum_{i=1}^{n} W_i x_i = \\sum_{i=1}^{n} W_i \\hat{\\mu}\\]\n\\[\\implies \\hat{\\mu} = \\frac{\\sum_{i=1}^{n} W_i x_i}{\\sum_{i=1}^{n} W_i}\\]\n\n\n\n\n\n\nWeighted Mean of Sample\n\n\n\\(\\hat{\\mu} = \\dfrac{\\sum_{i=1}^{n} W_i x_i}{\\sum_{i=1}^{n} W_i}\\) is simply a weighted mean of the sample.\n\n\n\nwhere,\n\\[W(x) = \\begin{cases} \\psi(x)/x & \\text{if } x \\neq 0 \\\\ \\psi'(0) & \\text{if } x = 0 \\end{cases}\\]\nand,\n\\[W_i = W(x_i - \\hat{\\mu})\\]"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#formal-definition",
+    "href": "STAT601/Robust_Statistics.html#formal-definition",
+    "title": "PhD Presentations",
+    "section": "Formal Definition",
+    "text": "Formal Definition\nA \\(\\rho\\)-function will denote a function \\(\\rho\\) such that:\n\n\\(\\rho(x)\\) is a nondecreasing function of \\(|x|\\)\n\\(\\rho(0) = 0\\)\n\\(\\rho(x)\\) is increasing for \\(x &gt; 0\\) such that \\(\\rho(x) &lt; \\rho(\\infty)\\)\nif \\(\\rho\\) is bounded, it is also assumed that \\(\\rho(\\infty) = 1\\).\n\nA \\(\\psi\\)-function will denote a function \\(\\psi\\) that is the derivative of a \\(\\rho\\)-function, which implies in particular that\n\n\\(\\psi\\) is odd and \\(\\psi(x) \\geq 0\\) for \\(x \\geq 0\\)."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#yet-another-interpretation",
+    "href": "STAT601/Robust_Statistics.html#yet-another-interpretation",
+    "title": "PhD Presentations",
+    "section": "Yet another interpretation",
+    "text": "Yet another interpretation\nAnother intuitive way to interpret an M-estimator is, \\[\n\\hat{\\mu} = \\hat{\\mu} + \\frac{1}{n} \\sum_{i=1}^{n} \\psi(x_i - \\hat{\\mu}) = \\frac{1}{n} \\sum_{i=1}^{n} \\zeta(x_i, \\hat{\\mu})\n\\] where \\[\n\\zeta(x, \\mu) = \\mu + \\psi(x - \\mu)\n\\] In other words, \\(\\hat{\\mu}\\) may be viewed as an average of modified observations \\(\\zeta(x_i, \\hat{\\mu})\\), also called pseudo observations:observations in the bulk of the data remain unchanged, while those too large or too small are truncated."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#common-m-estimator-functions",
+    "href": "STAT601/Robust_Statistics.html#common-m-estimator-functions",
+    "title": "PhD Presentations",
+    "section": "Common M-Estimator Functions",
+    "text": "Common M-Estimator Functions\n\n\n\n\n\n\n\n\n\nEstimator\nObjective Function \\(\\rho(x)\\)\nInfluence Function \\(\\psi(x)\\)\nWeight Function \\(W(x)\\)\n\n\n\n\nHuber\n\\(\\begin{cases} \\frac{1}{2}x^2 & |x| \\leq k \\\\ k|x| - \\frac{1}{2}k^2 & |x| &gt; k \\end{cases}\\)\n\\(\\begin{cases} x & |x| \\leq k \\\\ k\\,\\text{sgn}(x) & |x| &gt; k \\end{cases}\\)\n\\(\\min\\left(1,\\, \\dfrac{k}{|x|}\\right)\\)\n\n\nBisquare\n\\(\\begin{cases} \\frac{k^2}{6}\\left(1 - \\left[1-\\left(\\frac{x}{k}\\right)^2\\right]^3\\right) & |x| \\leq k \\\\ \\frac{k^2}{6} & |x| &gt; k \\end{cases}\\)\n\\(\\begin{cases} x\\left[1-\\left(\\frac{x}{k}\\right)^2\\right]^2 & |x| \\leq k \\\\ 0 & |x| &gt; k \\end{cases}\\)\n\\(\\begin{cases} \\left[1-\\left(\\frac{x}{k}\\right)^2\\right]^2 & |x| \\leq k \\\\ 0 & |x| &gt; k \\end{cases}\\)\n\n\nHampel\n\\(\\frac{1}{C}\\begin{cases} \\frac{1}{2}x^2 & |x| \\leq a \\\\ \\frac{1}{2}a^2 + a(|x|-a) & a &lt; |x| \\leq b \\\\ \\frac{a}{2}\\left(2b - a + (|x|-b)\\left[1+\\frac{r-|x|}{r-b}\\right]\\right) & b &lt; |x| \\leq r \\\\ C & r &lt; |x| \\end{cases}\\)\n\\(\\begin{cases} x & |x| \\leq a \\\\ a\\,\\text{sgn}(x) & a &lt; |x| \\leq b \\\\ a\\,\\text{sgn}(x)\\dfrac{r-|x|}{r-b} & b &lt; |x| \\leq r \\\\ 0 & r &lt; |x| \\end{cases}\\)\n\\(\\begin{cases} 1 & |x| \\leq a \\\\ \\frac{a}{|x|} & a &lt; |x| \\leq b \\\\ \\frac{a}{|x|}\\dfrac{r-|x|}{r-b} & b &lt; |x| \\leq r \\\\ 0 & r &lt; |x| \\end{cases}\\)\n\n\nWelsh\n\\(\\dfrac{k^2}{2}\\left[1 - \\exp\\left(-\\left(\\dfrac{x}{k}\\right)^2\\right)\\right]\\)\n\\(x\\exp\\left(-\\left(\\dfrac{x}{k}\\right)^2\\right)\\)\n\\(\\exp\\left(-\\left(\\dfrac{x}{k}\\right)^2\\right)\\)\n\n\n\n* Note for Hampel: \\(C = \\frac{a}{2}(b - a + r)\\)."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#behaviour-of-common-m-estimators",
+    "href": "STAT601/Robust_Statistics.html#behaviour-of-common-m-estimators",
+    "title": "PhD Presentations",
+    "section": "Behaviour of Common M-Estimators",
+    "text": "Behaviour of Common M-Estimators"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#definition",
+    "href": "STAT601/Robust_Statistics.html#definition",
+    "title": "PhD Presentations",
+    "section": "Definition",
+    "text": "Definition\nThe \\(\\alpha\\)-trimmed mean is defined as:\n\\[\n\\bar{x}_\\alpha = \\frac{1}{n - 2m} \\sum_{i=m+1}^{n-m} x_{(i)}\n\\]\nThe \\(\\alpha\\)-Winsorized mean is defined as:\n\\[\n\\tilde{x}_\\alpha = \\frac{1}{n} \\left( m x_{(m+1)} + m x_{(n-m)} + \\sum_{i=m+1}^{n-m} x_{(i)} \\right)\n\\]\nwhere,\n\n\\(n\\): The total number of observations.\n\\(x_{(i)}\\): The order statistics of the sample, such that \\(x_{(1)} \\leq x_{(2)} \\leq \\dots \\leq x_{(n)}\\).\n\\(\\alpha\\): The trimming proportion, where \\(\\alpha \\in [0, 1/2)\\).\n\\(m\\): The integer number of trimmed values, defined as \\(m = [n\\alpha]\\), where \\([\\cdot]\\) stands for the integer part.\n\n\n\n\n\n\n\nLimiting Case\n\n\n\nCase \\(\\alpha \\to 0\\) (\\(m = 0\\)): No data is discarded. Both estimators reduce to the standard Sample Mean.\nCase \\(\\alpha \\to 0.5\\) (\\(m \\approx n/2\\)): The maximum amount of data is trimmed/replaced. Both estimators converge to the Sample Median."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#definition-1",
+    "href": "STAT601/Robust_Statistics.html#definition-1",
+    "title": "PhD Presentations",
+    "section": "Definition",
+    "text": "Definition\nA more general class of estimators, called L-estimators, is defined as linear combinations of order statistics:\n\\[\n\\hat{\\mu} = \\sum_{i=1}^{n} a_i x_{(i)},\n\\]\nwhere the \\(a_i\\)s are given constants. For \\(\\alpha\\)-trimmed means,\n\\[\na_i = \\frac{1}{n - 2m} \\text{I}(m + 1 \\leq i \\leq n - m),\n\\]\nand for \\(\\alpha\\)-Winsorized means\n\\[\na_i = \\frac{1}{n} \\Big( (m + 1)\\text{I}(i = m + 1) + (m + 1)\\text{I}(i = n - m) + \\text{I}(m + 1 &lt; i &lt; n - m) \\Big) .\n\\]"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#equivariance",
+    "href": "STAT601/Robust_Statistics.html#equivariance",
+    "title": "PhD Presentations",
+    "section": "Equivariance",
+    "text": "Equivariance\nIf the coefficients of an L-estimator satisfy the conditions\n\\[\na_i \\geq 0, \\quad \\sum_{i=1}^{n} a_i = 1, \\quad a_i = a_{n-i+1},\n\\]\nthen the estimator is shift and scale equivariant, and also fulfills the natural conditions\n\nIf \\(x_i \\geq 0\\) for all \\(i\\), then \\(\\hat{\\mu} \\geq 0\\)\nIf \\(x_i = c\\) for all \\(i\\), then \\(\\hat{\\mu} = c\\)\n\\(\\hat{\\mu}(-x) = -\\hat{\\mu}(x)\\)."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#scale-model",
+    "href": "STAT601/Robust_Statistics.html#scale-model",
+    "title": "PhD Presentations",
+    "section": "Scale Model",
+    "text": "Scale Model\n\\(x_i = \\sigma u_i\\) where \\(u_i \\ (i = 1,\\dots,n)\\) are i.i.d. random variables with density \\(f_0\\) and \\(\\sigma &gt; 0\\).\n\\[\n\\begin{aligned}\nF(x) &= P(x_i \\leq x) & &\\text{Definition of CDF} \\\\\n&= P(\\sigma u_i \\leq x) & &\\text{Substitute model } x_i = \\sigma u_i \\\\\n&= P\\left(u_i \\leq \\frac{x}{\\sigma}\\right) & &\\text{Rearrange to isolate } u_i \\\\\n&= F_0\\left(\\frac{x}{\\sigma}\\right) & &\\text{Apply error distribution } F_0\n\\end{aligned}\n\\]\n\\(\\therefore F(x) = F_0\\left(\\frac{x}{\\sigma}\\right)\\)\nDifferentiating the CDF with respect to \\(x\\) yields the density (PDF):\n\\[\n\\begin{aligned}\nf(x) &= \\frac{d}{dx} F(x) & &\\text{Definition of PDF} \\\\\n&= \\frac{d}{dx} F_0\\left(\\frac{x}{\\sigma}\\right) & &\\text{Substitute derived CDF} \\\\\n&= f_0\\left(\\frac{x}{\\sigma}\\right) \\cdot \\frac{1}{\\sigma} & &\\text{Apply Chain Rule}\n\\end{aligned}\n\\]\n\\(\\therefore f(x) = \\frac{1}{\\sigma} f_0\\left(\\frac{x}{\\sigma}\\right)\\)"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#estimation-1",
+    "href": "STAT601/Robust_Statistics.html#estimation-1",
+    "title": "PhD Presentations",
+    "section": "Estimation",
+    "text": "Estimation\nThe MLE of \\(\\sigma\\) is found from\n\\[\n\\hat{\\sigma} = \\arg\\max_{\\sigma} \\frac{1}{\\sigma^n} \\prod_{i=1}^{n} f_0 \\left( \\frac{x_i}{\\sigma} \\right)\n\\]\nTaking logs and differentiating with respect to \\(\\sigma\\), yields the condition:\n\\[\n\\frac{1}{n} \\sum_{i=1}^{n} \\rho \\left( \\frac{x_i}{\\sigma} \\right) = 1\n\\]\nwhere \\(\\rho(t) = t\\psi(t)\\) and \\(\\psi = -f'_0/f_0\\). Generalizing this result, any estimator \\(\\hat{\\sigma}\\) satisfying the equation\n\\[\n\\frac{1}{n} \\sum_{i=1}^{n} \\rho \\left( \\frac{x_i}{\\hat{\\sigma}} \\right) = \\delta\n\\]\nwhere \\(\\delta\\) is a positive constant, is called an M-estimator of scale."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#dispersion-estimators",
+    "href": "STAT601/Robust_Statistics.html#dispersion-estimators",
+    "title": "PhD Presentations",
+    "section": "Dispersion Estimators",
+    "text": "Dispersion Estimators\n\nMedian Absolute Deviation (MAD) It measures the median distance of observations from the sample median.\n\\[\n\\text{MAD} = \\text{median}(|x_i - \\text{median}(x)|)\n\\]\nMean Absolute Deviation (MD) The arithmetic mean of the absolute differences between observations and the sample mean.\n\\[\n\\text{MD} = \\frac{1}{n} \\sum_{i=1}^{n} |x_i - \\bar{x}|\n\\]\nInterquartile Range (IQR) The difference between the 75th and 25th percentiles.\n\\[\n\\text{IQR} = x_{(n-m+1)} - x_{(m)}\n\\]\nwhere \\(m \\approx n/4\\)."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#multiples-of-scale",
+    "href": "STAT601/Robust_Statistics.html#multiples-of-scale",
+    "title": "PhD Presentations",
+    "section": "Multiples of Scale",
+    "text": "Multiples of Scale\nIf \\(x \\sim N(\\mu, \\sigma^2)\\), then \\(\\text{SD}(x) = \\sigma\\). The other dispersion estimators are constant multiples of \\(\\sigma\\):\n\\[\n\\text{MD}(x) = c_1 \\sigma \\qquad \\text{MAD}(x) = c_2 \\sigma \\qquad \\text{IQR}(x) = 2c_2 \\sigma\n\\]\nWhere the approximate constant values are:\n\\[\nc_1 = 2\\varphi(0) = \\sqrt{\\frac{2}{\\pi}} \\approx 0.7979 \\qquad c_2 = \\Phi^{-1}(0.75) \\approx 0.675\n\\]\nTo create a dispersion estimator that “measures the same thing” as the standard deviation for the normal distribution, we define the Normalized MAD (MADN):\n\\[\n\\text{MADN}(x) = \\frac{\\text{MAD}(x)}{0.675}\n\\]\nLikewise, we can normalize the MD and the IQR by dividing them by \\(c_1\\) and by \\(2c_2\\) respectively."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#m-dispersion-estimators",
+    "href": "STAT601/Robust_Statistics.html#m-dispersion-estimators",
+    "title": "PhD Presentations",
+    "section": "M-Dispersion Estimators",
+    "text": "M-Dispersion Estimators\nAn estimator that combines the robustness of MADN and the efficiency of SD and MD is the following:\n\nfirst compute a location M-estimator \\(\\hat{\\mu}\\).\nThen apply a scale M-estimator \\(\\hat{\\sigma}\\) to the centered data \\(x_i - \\hat{\\mu}\\).\nHere \\(\\hat{\\sigma}\\) should be normalized as described. This \\(\\hat{\\sigma}\\) can be called the M-dispersion estimator."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#the-q_n-alternative",
+    "href": "STAT601/Robust_Statistics.html#the-q_n-alternative",
+    "title": "PhD Presentations",
+    "section": "The \\(Q_n\\) alternative",
+    "text": "The \\(Q_n\\) alternative\nUnlike the SD, MD, and MAD, an estimator called the \\(Q_n\\) estimator (Croux and Rousseeuw, 1992) does not require centering the data.\n\nIt is based strictly on the differences between data values: \\(d_{ij} = |x_i - x_j|\\) for \\(i &lt; j\\).\nLet \\(m = \\binom{n}{2}\\) be the number of differences, ordered as \\(d_{(1)} \\leq \\dots \\leq d_{(m)}\\).\nDefine \\[\nh = \\lfloor \\frac{n}{2} \\rfloor + 1, \\qquad k = \\binom{h}{2}.\n\\] The estimator is defined as the \\(k\\)-th order statistic: \\(Q_n = d_{(k)}\\).\nSince \\(k \\approx m/4\\), \\(Q_n\\) is approximately the first quartile of the \\(d_{ij}\\) values."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#location-m-estimators",
+    "href": "STAT601/Robust_Statistics.html#location-m-estimators",
+    "title": "PhD Presentations",
+    "section": "Location M-Estimators",
+    "text": "Location M-Estimators\n\nInitialization: Start with a robust dispersion estimator (\\(\\hat{\\sigma}\\)) and an initial location estimator (\\(\\hat{\\mu}_0\\)): \\[\\hat{\\sigma} = \\text{MADN}(\\mathbf{x}), \\quad \\hat{\\mu}_0 = \\text{Med}(\\mathbf{x})\\]\nIterative Procedure (\\(k = 0, 1, 2, \\dots\\)):\n\nCompute the weights: \\[w_{k,i} = W \\left( \\frac{x_i - \\hat{\\mu}_k}{\\hat{\\sigma}} \\right) \\quad \\text{for } i = 1, \\dots, n\\]\nUpdate the location estimate: \\[\\hat{\\mu}_{k+1} = \\frac{\\sum_{i=1}^{n} w_{k,i} x_i}{\\sum_{i=1}^{n} w_{k,i}}\\]\n\nStopping Rule: Halt when the change falls below a tolerance parameter \\(\\varepsilon\\): \\[|\\hat{\\mu}_{k+1} - \\hat{\\mu}_k| &lt; \\varepsilon \\hat{\\sigma}\\]\nConvergence Properties:\n\nIf \\(\\psi\\) is increasing: The solution is unique.\nIf \\(\\psi\\) is redescending: Choosing a robust \\(\\hat{\\mu}_0\\) ensures convergence to a valid solution."
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#scale-m-estimators",
+    "href": "STAT601/Robust_Statistics.html#scale-m-estimators",
+    "title": "PhD Presentations",
+    "section": "Scale M-Estimators",
+    "text": "Scale M-Estimators\n\nInitialization: Start with an initial robust dispersion estimator (\\(\\hat{\\sigma}_0\\)): \\[\\hat{\\sigma}_0 = \\text{MADN}(\\mathbf{x})\\]\nIterative Procedure (\\(k = 0, 1, 2, \\dots\\)):\n\nCompute the weights: \\[w_{k,i} = W \\left( \\frac{x_i}{\\hat{\\sigma}_k} \\right) \\quad \\text{for } i = 1, \\dots, n\\]\nUpdate the scale estimate: \\[\\hat{\\sigma}_{k+1} = \\sqrt{ \\frac{1}{n\\delta} \\sum_{i=1}^{n} w_{k,i} x_i^2 }\\]\n\nStopping Rule: Halt when the relative change falls below a tolerance parameter \\(\\varepsilon\\): \\[\\left| \\frac{\\hat{\\sigma}_{k+1}}{\\hat{\\sigma}_k} - 1 \\right| &lt; \\varepsilon\\]\nConvergence Properties:\n\nThe sequence \\(\\hat{\\sigma}_k\\) converges to a valid solution if \\(W(x)\\) is:\n\nbounded\neven\ncontinuous\nnonincreasing for \\(x &gt; 0\\)"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#simultaneous-m-estimators",
+    "href": "STAT601/Robust_Statistics.html#simultaneous-m-estimators",
+    "title": "PhD Presentations",
+    "section": "Simultaneous M-estimators",
+    "text": "Simultaneous M-estimators\n\nInitialization: Compute robust starting values for both location and dispersion: \\(\\hat{\\mu}_0, \\hat{\\sigma}_0\\)\nIterative Procedure (\\(k = 0, 1, 2, \\dots\\)):\n\nCompute standardized residuals: \\[r_{k,i} = \\frac{x_i - \\hat{\\mu}_k}{\\hat{\\sigma}_k} \\quad \\text{for } i = 1, \\dots, n\\]\nCompute dual weights (\\(W_1\\) for location, \\(W_2\\) for scale): \\[w_{1k,i} = W_1(r_{k,i}), \\quad w_{2k,i} = W_2(r_{k,i})\\]\nUpdate estimates simultaneously: \\[\\hat{\\mu}_{k+1} = \\frac{\\sum_{i=1}^{n} w_{1k,i} x_i}{\\sum_{i=1}^{n} w_{1k,i}}\\] \\[\\hat{\\sigma}_{k+1}^2 = \\frac{\\hat{\\sigma}_k^2}{n\\delta} \\sum_{i=1}^{n} w_{2k,i} r_{k,i}^2\\]\n\nStopping Rule: Halt when both estimates stabilize below a tolerance parameter \\(\\varepsilon\\): \\[|\\hat{\\mu}_{k+1} - \\hat{\\mu}_k| &lt; \\varepsilon \\hat{\\sigma}_k \\quad \\text{and} \\quad \\left| \\frac{\\hat{\\sigma}_{k+1}}{\\hat{\\sigma}_k} - 1 \\right| &lt; \\varepsilon\\]"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#breakdown-points-for-estimators",
+    "href": "STAT601/Robust_Statistics.html#breakdown-points-for-estimators",
+    "title": "PhD Presentations",
+    "section": "Breakdown Points for Estimators",
+    "text": "Breakdown Points for Estimators\n\n\n\n\n\nCategory\nEstimator\nAsymptotic Breakdown Point\n\n\n\n\nClassical (Location)\nSample Mean\n0\n\n\nClassical (Scale)\nStandard Deviation (SD)\n0\n\n\nClassical (Scale)\nMean Absolute Deviation (MD)\n0\n\n\nRobust (Location)\nSample Median\n0.5\n\n\nRobust (Location)\nα-Trimmed Mean\nα\n\n\nRobust (Scale)\nMAD / MADN\n0.5\n\n\nRobust (Scale)\nQₙ Estimator\n0.5"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#dataset",
+    "href": "STAT601/Robust_Statistics.html#dataset",
+    "title": "PhD Presentations",
+    "section": "Dataset",
+    "text": "Dataset\nWe use the telef dataset from robustbase — the classic Belgium telephone data (1950–1973) recording the number of telephone calls (in tens of millions) over 24 years (Rousseeuw & Leroy, 1987). The mid-years 1964–1969 contain a known recording error (calls logged in minutes instead of numbers), producing 6 high-leverage outliers that severely distort classical estimates.\n\n\nn = 24 \n\n\n   Year Calls\n1    50  0.44\n2    51  0.47\n3    52  0.47\n4    53  0.59\n5    54  0.66\n6    55  0.73\n7    56  0.81\n8    57  0.88\n9    58  1.06\n10   59  1.20\n\n\n      Year           Calls       \n Min.   :50.00   Min.   : 0.440  \n 1st Qu.:55.75   1st Qu.: 0.790  \n Median :61.50   Median : 1.550  \n Mean   :61.50   Mean   : 4.999  \n 3rd Qu.:67.25   3rd Qu.: 6.200  \n Max.   :73.00   Max.   :21.200"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#belgium-telephone-data",
+    "href": "STAT601/Robust_Statistics.html#belgium-telephone-data",
+    "title": "PhD Presentations",
+    "section": "Belgium Telephone Data",
+    "text": "Belgium Telephone Data"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#location-estimators",
+    "href": "STAT601/Robust_Statistics.html#location-estimators",
+    "title": "PhD Presentations",
+    "section": "Location Estimators",
+    "text": "Location Estimators\n\nlibrary(robustbase)\n\ndata(\"telef\")\nx &lt;- telef$Calls   # telephone calls — contains high-leverage outliers\n\n# ----- Huber M-estimator of Location -----\n# huberM(x, k, tol, mu, s, se)\n#   x  : numeric vector\n#   k  : tuning constant — boundary between quadratic and linear loss\n#        default k = 1.5; use k = 1.345 for 95% efficiency at the Normal\n#   mu : initial location estimate, default = median(x)\n#   s  : initial scale estimate,    default = mad(x)\n#   se : logical; compute standard error? default FALSE\nhuberM(x, k = 1.5)\n\n$mu\n[1] 2.21057\n\n$s\n[1] 1.512252\n\n$it\n[1] 11\n\n$SE\n[1] NA\n\n# ----- Trimmed Mean -----\n# mean(x, trim)\n#   trim : fraction (0 to 0.5) of observations dropped\n#          from each tail before computing the mean\nmean(x, trim = 0.10)     # removes bottom 10% and top 10%\n\n[1] 3.9835\n\n# ----- Winsorized Mean (base R) -----\n# Replaces the bottom and top `trim` fraction of values\n# with the nearest kept boundary value, then takes the mean\nwinsor_mean &lt;- function(x, trim = 0.10) {\n  x_s &lt;- sort(x)\n  m   &lt;- floor(trim * length(x_s))\n  x_s[seq_len(m)]                              &lt;- x_s[m + 1]\n  x_s[seq(length(x_s) - m + 1, length(x_s))] &lt;- x_s[length(x_s) - m]\n  mean(x_s)\n}\n\nwinsor_mean(x, trim = 0.10)\n\n[1] 4.68375\n\n# ----- Summary -----\ncat(\n  \"Mean           :\", round(mean(x),               4), \"\\n\",\n  \"Huber (k = 1.5)  :\", round(huberM(x, k = 1.5)$mu, 4), \"\\n\",\n  \"Trimmed  (10%)   :\", round(mean(x, trim = 0.10),   4), \"\\n\",\n  \"Winsorized (10%) :\", round(winsor_mean(x, 0.10),   4), \"\\n\",\n  sep = \"\"\n)\n\nMean           :4.9992\nHuber (k = 1.5)  :2.2106\nTrimmed  (10%)   :3.9835\nWinsorized (10%) :4.6838"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#scale-estimators",
+    "href": "STAT601/Robust_Statistics.html#scale-estimators",
+    "title": "PhD Presentations",
+    "section": "Scale Estimators",
+    "text": "Scale Estimators\n\nlibrary(robustbase)\n\ndata(\"telef\")\nx &lt;- telef$Calls\n\n# ----- Classical -----\nsd(x)                    # Standard deviation\n\n[1] 6.553211\n\nIQR(x)                   # Interquartile range (Q3 - Q1)\n\n[1] 5.41\n\n# ----- MAD and MADN -----\n# mad(x, center, constant)\n#   center   : central value, default = median(x)\n#   constant : 1      -&gt; raw MAD\n#              1.4826 -&gt; MADN, consistent estimator of SD at Normal (default)\nmad(x, constant = 1)     # Raw MAD\n\n[1] 1.02\n\nmad(x)                   # MADN\n\n[1] 1.512252\n\n# ----- Normalized IQR -----\nIQR(x) / 1.349           # Divide by 1.349 to make consistent with SD at Normal\n\n[1] 4.010378\n\n# ----- scaleTau2 -----\n# scaleTau2(x, c1, c2, consistency, mu.too, na.rm)\n#   c1          : tuning constant for location weights (default 4.5)\n#   c2          : tuning constant for scale rho function (default 3.0)\n#   consistency : divide by asymptotic limit for consistency at Normal (default TRUE)\n#   mu.too      : if TRUE, returns named vector c(mu, sigma) instead of just sigma\n#   na.rm       : remove NAs before computing (default FALSE)\nscaleTau2(x, mu.too = TRUE)\n\n[1] 1.357990 1.841955\n\n# ----- Qn estimator (Croux & Rousseeuw, 1992) -----\n# Qn(x, constant, na.rm)\n#   k-th order statistic of all pairwise |x_i - x_j|; no centering needed\n#   constant : consistency factor; default gives consistency at Normal\n#   na.rm    : remove NAs (default FALSE)\nQn(x)\n\n[1] 1.68809\n\n# ----- Sn estimator (Rousseeuw & Croux, 1993) -----\n# Sn(x, constant, finite.corr, na.rm)\n#   median_i { median_j |x_i - x_j| }; no centering needed\n#   constant    : consistency factor; default gives consistency at Normal\n#   finite.corr : apply finite-sample bias correction (default TRUE)\n#   na.rm       : remove NAs (default FALSE)\nSn(x)\n\n[1] 1.359564\n\n\n\n\nSD         :6.5532\nMAD (raw)  :1.02\nMADN       :1.5123\nIQR (norm) :4.0104\nscaleTau2  :1.842\nQn         :1.6881\nSn         :1.3596"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#pseudo-observations-via-huberize",
+    "href": "STAT601/Robust_Statistics.html#pseudo-observations-via-huberize",
+    "title": "PhD Presentations",
+    "section": "Pseudo Observations via huberize()",
+    "text": "Pseudo Observations via huberize()\n\nlibrary(robustbase)\n\ndata(\"telef\")\nx &lt;- telef$Calls\n\n# Step 1: obtain robust location via huberM()\nfit &lt;- huberM(x, k = 1.5)\ncat(\"Huber mu :\", round(fit$mu, 4), \"\\n\")\n\nHuber mu : 2.2106 \n\ncat(\"Huber s  :\", round(fit$s,  4), \"\\n\\n\")\n\nHuber s  : 1.5123 \n\n# Step 2: huberize(x, M, c, k)\n#   x : numeric vector of observations\n#   M : location center — default = huberM(x, k = k)$mu\n#   c : half-width multiplier — boundary = [M - c*Qn(x), M + c*Qn(x)]\n#       observations outside this interval are pulled to the boundary\n#       default c = k = 1.5\n#   k : tuning constant used when computing default M via huberM()\n# NOTE: scale is computed INTERNALLY as Qn(x); it is NOT a user argument\nx_pseudo &lt;- huberize(x, M = fit$mu, c = 1.5, k = 1.5)\n\n# Step 3: identify modified (outlying) observations\nmodified &lt;- which(round(x, 8) != round(x_pseudo, 8))\n\ncat(\n  \"Total observations   :\", length(x), \"\\n\",\n  \"Unchanged (bulk)     :\", length(x) - length(modified), \"\\n\",\n  \"Modified (truncated) :\", length(modified), \"\\n\\n\")\n\nTotal observations   : 24 \n Unchanged (bulk)     : 18 \n Modified (truncated) : 6 \n\n# Step 4: table of original vs pseudo for modified observations\ndata.frame(\n  Year     = 1900L + as.integer(telef$Year[modified]),\n  Original = round(x[modified],        4),\n  Pseudo   = round(x_pseudo[modified], 4)\n)\n\n  Year Original Pseudo\n1 1964     11.9 4.7427\n2 1965     12.4 4.7427\n3 1966     14.2 4.7427\n4 1967     15.9 4.7427\n5 1968     18.2 4.7427\n6 1969     21.2 4.7427"
+  },
+  {
+    "objectID": "STAT601/Robust_Statistics.html#pseudo-observations-comparison",
+    "href": "STAT601/Robust_Statistics.html#pseudo-observations-comparison",
+    "title": "PhD Presentations",
+    "section": "Pseudo-observations comparison",
+    "text": "Pseudo-observations comparison"
+  },
+  {
+    "objectID": "mathjax/CONTRIBUTING.html",
+    "href": "mathjax/CONTRIBUTING.html",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "You are interested in giving us a hand? That’s awesome! We’ve put together some brief guidelines that should help you get started quickly and easily.\nThere are lots and lots of ways to get involved, this document covers:\n\nreporting an issue\n\nbug reports\nfeature requests\nchange requests\n\nworking on MathJax core\n\nkey branches and tags\nsubmitting pull requests\ntesting and quality assurance\nwriting documentation\ntranslation\n\nConduct\n\n\n\nIf you’re about to raise an issue because you think you’ve found a problem with MathJax, or you’d like to make a request for a new feature in the codebase, or any other reason, please read this first.\nThe MathJax issue tracker is the preferred channel for bug reports, feature requests, change requests, and submitting pull requests, but please respect the following restrictions:\n\nPlease search for existing issues. Help us keep duplicate issues to a minimum by checking to see if someone has already reported your problem or requested your idea.\nPlease do not use the issue tracker for personal support requests (use the MathJax User Group).\nPlease be civil. Keep the discussion on topic and respect the opinions of others. See also our Conduct Guidelines\n\n\n\nA bug is a demonstrable problem that is caused by the code in the repository. Good bug reports are extremely helpful — thank you!\nGuidelines for bug reports:\n\nUse the GitHub issue search — check if the issue has already been reported.\nCheck if the issue has been fixed — look for closed issues in the current milestone or try to reproduce it using the latest develop branch. Please note that you will need to compile MathJax and make the components in order to test MathJax from the source repository.\nShare a live sample of the problem — without a live page it is usually impossible to debug problems; see also the Bug Report Template below.\nIsolate the problem — a live sample is a starting point but if you want to speed things up, create a reduced test case. Be specific about your setup (browser, OS versions, etc). Use services like jsbin, CodePen, or jsFiddle to make collaboration on minimal test cases easier for everyone.\nInclude a screenshot/cast as a last resort — Is your issue about a layout or design feature or bug that is hard to reproduce or isolate? Then please provide a screenshot or screencast. Tools like LICEcap or SauceLabs allow you to quickly and easily record a screencasts. If you make it an animated gif, you can embed it directly into your GitHub issue.\nUse the Bug Report Template below or click this link to start creating a bug report with the template automatically.\n\nA good bug report shouldn’t leave others needing to request more information from you. Be sure to include the details of your environment.\n\nTemplate Example (click to use):\nShort and descriptive example bug report title\n\n### Issue Summary\n\nA summary of the issue and the browser/OS environment in which it occurs. If\nsuitable, include the steps required to reproduce the bug.\n\n### Steps to Reproduce\n\n1. This is the first step\n2. This is the second step\n3. Further steps, etc.\n\nAny other information you want to share that is relevant to the issue\nbeing reported. Especially, why do you consider this to be a bug? What\ndo you expect to happen instead?\n\n### Technical details:\n\n* MathJax Version: 2.3 (latest commit: f3aaf3a2a3e964df2770dc4aaaa9c87ce5f47e2c)\n* Client OS: Mac OS X 10.8.4\n* Browser: Chrome 29.0.1547.57\n\n\n\nFeature requests are welcome. Before you submit one, be sure to have:\n\nUsed the GitHub search to check that the feature hasn’t already been requested.\nTake a moment to think about whether your idea fits with the scope and aims of the project, or if it might better fit being a custom extension.\nRemember, it’s up to you to make a strong case to convince the project’s leaders of the merits of this feature. Please provide as much detail and context as possible, this means explaining the use case and why it is likely to be common.\n\n\n\n\nChange requests cover both architectural and functional changes to how MathJax works. If you have an idea for a new or different dependency, a refactor, or an improvement to a feature, etc., please be sure to:\n\nUse the GitHub search to check that someone else didn’t get there first.\nTake a moment to think about the best way to make a case for, and explain what you’re thinking. Are you sure this shouldn’t really be a bug report or a feature request? Is it really one idea or is it many? What’s the context? What problem are you solving? Why is what you are suggesting better than what’s already there?\n\n\n\n\n\nYou want to contribute code? We describe how below. First, note that the MathJax source code is in the https://github.com/mathjax/MathJax-src repository, not the https://github.com/mathjax/MathJax repository, which contains the packaged component files for distribution on CDNs and the mathjax npm package (the source code is included in the mathjax-full npm package).\n\n\nMathJax uses several permanent branches in the MathJax source repository:\n\ndevelop is the development branch. All work on the next release happens here so you should generally branch off develop if you are going to submit a pull request. Do NOT use this branch for a production site.\nmaster contains the latest release of MathJax. This branch may be used in production. Do NOT use this branch to work on MathJax’s source.\n\nThese branches reflect version 3 of MathJax, which is substantially different from the version 2 codebase. Version 2 will continue to be maintained while web sites transition to version 3, with work being done using the following branches in the MathJax distribution repository:\n\nlegacy-v2-develop is the development branch for changes to the legacy version 2 code. Any pull requests for version 2 should be branched from here. Do NOT use this branch for a production site.\nlegacy-v2 is the branch that contains any updates to version 2 following the release of version 3. Do NOT use this branch to work on MathJax’s source.\n\nIn addition to these branches, MathJax uses tags to identify the various versions. These can be checked out to obtain the specified release; for example, git checkout 2.7.5 would get you the files for version 2.7.5 of MathJax.\nNote that version 3 is written in Typescript, and so must be compiled to obtain usable javascript files, and that the components need to be built once that is done. See the documentation for details. For version 2, the source javascript files are not compressed until a release is made, so you should use the copies in the unpacked directory during development.\n\n\n\nPull requests are welcome. If you’re looking to submit a PR for something that doesn’t have an open issue, please consider raising an issue that your PR can close, especially if you’re fixing a bug. This makes it more likely that there will be enough information available for your PR to be properly tested and merged.\n\n\nIf you’re not completely clear on how to submit/update/do Pull Requests, please check out our source control policies. For more insights, check the excellent in depth Git Workflow guide from Ghost, in particular\n\nGhost Workflow guide: commit messages\n\n\n\n\n\nIf you’re looking to get involved with the code base and don’t know where to start, checking out and testing a pull request is one of the most useful things you could do.\nThese are some excellent instructions on configuring your GitHub repository to allow you to checkout pull requests in the same way as branches.\n\n\n\nMathJax’s main documentation can be found at docs.mathjax.org. The source of the docs is hosted in the mathjax/MathJax-docs repo here on GitHub.\nThe documentation is generated using Sphinx-doc and hosted on Read the docs. You can clone the repo and submit pull requests following the pull-request guidelines.\n\n\n\nIf you wish to add or update translations of MathJax, please do it on TranslateWiki.net (and while you’re there you can help other open source projects, too).\nFor bug reports and other questions that don’t fit on TranslateWiki.net, head over to the mathjax/mathjax-i18n repository.\nThe translation files currently are for version 2, as localization hasn’t been added to version 3 yet.\n\n\n\n\nAs a NumFOCUS fiscally sponsored project, MathJax is governed by the NumFOCUS code of conduct, which we summarize as follows:\nWe are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, disability, ethnicity, religion, or similar personal characteristic.\nPlease be kind and courteous. There’s no need to be mean or rude. Respect that people have differences of opinion and that every design or implementation choice carries a trade-off and numerous costs. There is seldom a right answer, merely an optimal answer given a set of values and circumstances.\nPlease keep unstructured critique to a minimum. If you have solid ideas you want to experiment with, make a fork and see how it works.\nWe will exclude you from interaction if you insult, demean or harass anyone. That is not welcome behaviour. We interpret the term “harassment” as including the definition in the Unacceptable Behavior section of the NumFOCUS code of conduct; if you have any lack of clarity about what might be included in that concept, please read that definition. In particular, we don’t tolerate behavior that excludes people in socially marginalized groups.\nPrivate harassment is also unacceptable. No matter who you are, if you feel you have been or are being harassed or made uncomfortable by a community member, please contact one of the channel ops or any of the MathJax core team immediately. Whether you’re a regular contributor or a newcomer, we care about making this community a safe place for you and we’ve got your back.\nLikewise any spamming, trolling, flaming, baiting, or other attention-stealing behaviour is not welcome.\nWe also recommend that you read discourse’s rules for further suggestions on appropriate behavior.\n\n\n\n\nWe heavily borrowed from Mozilla and Ghost – thank you!\n\nhttps://github.com/TryGhost/Ghost/blob/master/CONTRIBUTING.md\nhttps://github.com/mozilla/rust/wiki/Note-development-policy\n\nhttps://github.com/jden/CONTRIBUTING.md/blob/master/CONTRIBUTING.md\nhttp://blog.discourse.org/2013/03/the-universal-rules-of-civilized-discourse/"
+  },
+  {
+    "objectID": "mathjax/CONTRIBUTING.html#reporting-an-issue",
+    "href": "mathjax/CONTRIBUTING.html#reporting-an-issue",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "If you’re about to raise an issue because you think you’ve found a problem with MathJax, or you’d like to make a request for a new feature in the codebase, or any other reason, please read this first.\nThe MathJax issue tracker is the preferred channel for bug reports, feature requests, change requests, and submitting pull requests, but please respect the following restrictions:\n\nPlease search for existing issues. Help us keep duplicate issues to a minimum by checking to see if someone has already reported your problem or requested your idea.\nPlease do not use the issue tracker for personal support requests (use the MathJax User Group).\nPlease be civil. Keep the discussion on topic and respect the opinions of others. See also our Conduct Guidelines\n\n\n\nA bug is a demonstrable problem that is caused by the code in the repository. Good bug reports are extremely helpful — thank you!\nGuidelines for bug reports:\n\nUse the GitHub issue search — check if the issue has already been reported.\nCheck if the issue has been fixed — look for closed issues in the current milestone or try to reproduce it using the latest develop branch. Please note that you will need to compile MathJax and make the components in order to test MathJax from the source repository.\nShare a live sample of the problem — without a live page it is usually impossible to debug problems; see also the Bug Report Template below.\nIsolate the problem — a live sample is a starting point but if you want to speed things up, create a reduced test case. Be specific about your setup (browser, OS versions, etc). Use services like jsbin, CodePen, or jsFiddle to make collaboration on minimal test cases easier for everyone.\nInclude a screenshot/cast as a last resort — Is your issue about a layout or design feature or bug that is hard to reproduce or isolate? Then please provide a screenshot or screencast. Tools like LICEcap or SauceLabs allow you to quickly and easily record a screencasts. If you make it an animated gif, you can embed it directly into your GitHub issue.\nUse the Bug Report Template below or click this link to start creating a bug report with the template automatically.\n\nA good bug report shouldn’t leave others needing to request more information from you. Be sure to include the details of your environment.\n\nTemplate Example (click to use):\nShort and descriptive example bug report title\n\n### Issue Summary\n\nA summary of the issue and the browser/OS environment in which it occurs. If\nsuitable, include the steps required to reproduce the bug.\n\n### Steps to Reproduce\n\n1. This is the first step\n2. This is the second step\n3. Further steps, etc.\n\nAny other information you want to share that is relevant to the issue\nbeing reported. Especially, why do you consider this to be a bug? What\ndo you expect to happen instead?\n\n### Technical details:\n\n* MathJax Version: 2.3 (latest commit: f3aaf3a2a3e964df2770dc4aaaa9c87ce5f47e2c)\n* Client OS: Mac OS X 10.8.4\n* Browser: Chrome 29.0.1547.57\n\n\n\nFeature requests are welcome. Before you submit one, be sure to have:\n\nUsed the GitHub search to check that the feature hasn’t already been requested.\nTake a moment to think about whether your idea fits with the scope and aims of the project, or if it might better fit being a custom extension.\nRemember, it’s up to you to make a strong case to convince the project’s leaders of the merits of this feature. Please provide as much detail and context as possible, this means explaining the use case and why it is likely to be common.\n\n\n\n\nChange requests cover both architectural and functional changes to how MathJax works. If you have an idea for a new or different dependency, a refactor, or an improvement to a feature, etc., please be sure to:\n\nUse the GitHub search to check that someone else didn’t get there first.\nTake a moment to think about the best way to make a case for, and explain what you’re thinking. Are you sure this shouldn’t really be a bug report or a feature request? Is it really one idea or is it many? What’s the context? What problem are you solving? Why is what you are suggesting better than what’s already there?"
+  },
+  {
+    "objectID": "mathjax/CONTRIBUTING.html#working-on-mathjax-core",
+    "href": "mathjax/CONTRIBUTING.html#working-on-mathjax-core",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "You want to contribute code? We describe how below. First, note that the MathJax source code is in the https://github.com/mathjax/MathJax-src repository, not the https://github.com/mathjax/MathJax repository, which contains the packaged component files for distribution on CDNs and the mathjax npm package (the source code is included in the mathjax-full npm package).\n\n\nMathJax uses several permanent branches in the MathJax source repository:\n\ndevelop is the development branch. All work on the next release happens here so you should generally branch off develop if you are going to submit a pull request. Do NOT use this branch for a production site.\nmaster contains the latest release of MathJax. This branch may be used in production. Do NOT use this branch to work on MathJax’s source.\n\nThese branches reflect version 3 of MathJax, which is substantially different from the version 2 codebase. Version 2 will continue to be maintained while web sites transition to version 3, with work being done using the following branches in the MathJax distribution repository:\n\nlegacy-v2-develop is the development branch for changes to the legacy version 2 code. Any pull requests for version 2 should be branched from here. Do NOT use this branch for a production site.\nlegacy-v2 is the branch that contains any updates to version 2 following the release of version 3. Do NOT use this branch to work on MathJax’s source.\n\nIn addition to these branches, MathJax uses tags to identify the various versions. These can be checked out to obtain the specified release; for example, git checkout 2.7.5 would get you the files for version 2.7.5 of MathJax.\nNote that version 3 is written in Typescript, and so must be compiled to obtain usable javascript files, and that the components need to be built once that is done. See the documentation for details. For version 2, the source javascript files are not compressed until a release is made, so you should use the copies in the unpacked directory during development.\n\n\n\nPull requests are welcome. If you’re looking to submit a PR for something that doesn’t have an open issue, please consider raising an issue that your PR can close, especially if you’re fixing a bug. This makes it more likely that there will be enough information available for your PR to be properly tested and merged.\n\n\nIf you’re not completely clear on how to submit/update/do Pull Requests, please check out our source control policies. For more insights, check the excellent in depth Git Workflow guide from Ghost, in particular\n\nGhost Workflow guide: commit messages\n\n\n\n\n\nIf you’re looking to get involved with the code base and don’t know where to start, checking out and testing a pull request is one of the most useful things you could do.\nThese are some excellent instructions on configuring your GitHub repository to allow you to checkout pull requests in the same way as branches.\n\n\n\nMathJax’s main documentation can be found at docs.mathjax.org. The source of the docs is hosted in the mathjax/MathJax-docs repo here on GitHub.\nThe documentation is generated using Sphinx-doc and hosted on Read the docs. You can clone the repo and submit pull requests following the pull-request guidelines.\n\n\n\nIf you wish to add or update translations of MathJax, please do it on TranslateWiki.net (and while you’re there you can help other open source projects, too).\nFor bug reports and other questions that don’t fit on TranslateWiki.net, head over to the mathjax/mathjax-i18n repository.\nThe translation files currently are for version 2, as localization hasn’t been added to version 3 yet."
+  },
+  {
+    "objectID": "mathjax/CONTRIBUTING.html#conduct",
+    "href": "mathjax/CONTRIBUTING.html#conduct",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "As a NumFOCUS fiscally sponsored project, MathJax is governed by the NumFOCUS code of conduct, which we summarize as follows:\nWe are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, disability, ethnicity, religion, or similar personal characteristic.\nPlease be kind and courteous. There’s no need to be mean or rude. Respect that people have differences of opinion and that every design or implementation choice carries a trade-off and numerous costs. There is seldom a right answer, merely an optimal answer given a set of values and circumstances.\nPlease keep unstructured critique to a minimum. If you have solid ideas you want to experiment with, make a fork and see how it works.\nWe will exclude you from interaction if you insult, demean or harass anyone. That is not welcome behaviour. We interpret the term “harassment” as including the definition in the Unacceptable Behavior section of the NumFOCUS code of conduct; if you have any lack of clarity about what might be included in that concept, please read that definition. In particular, we don’t tolerate behavior that excludes people in socially marginalized groups.\nPrivate harassment is also unacceptable. No matter who you are, if you feel you have been or are being harassed or made uncomfortable by a community member, please contact one of the channel ops or any of the MathJax core team immediately. Whether you’re a regular contributor or a newcomer, we care about making this community a safe place for you and we’ve got your back.\nLikewise any spamming, trolling, flaming, baiting, or other attention-stealing behaviour is not welcome.\nWe also recommend that you read discourse’s rules for further suggestions on appropriate behavior."
+  },
+  {
+    "objectID": "mathjax/CONTRIBUTING.html#references",
+    "href": "mathjax/CONTRIBUTING.html#references",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "We heavily borrowed from Mozilla and Ghost – thank you!\n\nhttps://github.com/TryGhost/Ghost/blob/master/CONTRIBUTING.md\nhttps://github.com/mozilla/rust/wiki/Note-development-policy\n\nhttps://github.com/jden/CONTRIBUTING.md/blob/master/CONTRIBUTING.md\nhttp://blog.discourse.org/2013/03/the-universal-rules-of-civilized-discourse/"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#steps-in-sound-simulation-study",
+    "href": "AECO605/mcmethods.html#steps-in-sound-simulation-study",
+    "title": "PhD Presentations",
+    "section": "Steps in Sound Simulation Study",
+    "text": "Steps in Sound Simulation Study"
+  },
+  {
+    "objectID": "AECO605/mathjax/CONTRIBUTING.html",
+    "href": "AECO605/mathjax/CONTRIBUTING.html",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "You are interested in giving us a hand? That’s awesome! We’ve put together some brief guidelines that should help you get started quickly and easily.\nThere are lots and lots of ways to get involved, this document covers:\n\nreporting an issue\n\nbug reports\nfeature requests\nchange requests\n\nworking on MathJax core\n\nkey branches and tags\nsubmitting pull requests\ntesting and quality assurance\nwriting documentation\ntranslation\n\nConduct\n\n\n\nIf you’re about to raise an issue because you think you’ve found a problem with MathJax, or you’d like to make a request for a new feature in the codebase, or any other reason, please read this first.\nThe MathJax issue tracker is the preferred channel for bug reports, feature requests, change requests, and submitting pull requests, but please respect the following restrictions:\n\nPlease search for existing issues. Help us keep duplicate issues to a minimum by checking to see if someone has already reported your problem or requested your idea.\nPlease do not use the issue tracker for personal support requests (use the MathJax User Group).\nPlease be civil. Keep the discussion on topic and respect the opinions of others. See also our Conduct Guidelines\n\n\n\nA bug is a demonstrable problem that is caused by the code in the repository. Good bug reports are extremely helpful — thank you!\nGuidelines for bug reports:\n\nUse the GitHub issue search — check if the issue has already been reported.\nCheck if the issue has been fixed — look for closed issues in the current milestone or try to reproduce it using the latest develop branch. Please note that you will need to compile MathJax and make the components in order to test MathJax from the source repository.\nShare a live sample of the problem — without a live page it is usually impossible to debug problems; see also the Bug Report Template below.\nIsolate the problem — a live sample is a starting point but if you want to speed things up, create a reduced test case. Be specific about your setup (browser, OS versions, etc). Use services like jsbin, CodePen, or jsFiddle to make collaboration on minimal test cases easier for everyone.\nInclude a screenshot/cast as a last resort — Is your issue about a layout or design feature or bug that is hard to reproduce or isolate? Then please provide a screenshot or screencast. Tools like LICEcap or SauceLabs allow you to quickly and easily record a screencasts. If you make it an animated gif, you can embed it directly into your GitHub issue.\nUse the Bug Report Template below or click this link to start creating a bug report with the template automatically.\n\nA good bug report shouldn’t leave others needing to request more information from you. Be sure to include the details of your environment.\n\nTemplate Example (click to use):\nShort and descriptive example bug report title\n\n### Issue Summary\n\nA summary of the issue and the browser/OS environment in which it occurs. If\nsuitable, include the steps required to reproduce the bug.\n\n### Steps to Reproduce\n\n1. This is the first step\n2. This is the second step\n3. Further steps, etc.\n\nAny other information you want to share that is relevant to the issue\nbeing reported. Especially, why do you consider this to be a bug? What\ndo you expect to happen instead?\n\n### Technical details:\n\n* MathJax Version: 2.3 (latest commit: f3aaf3a2a3e964df2770dc4aaaa9c87ce5f47e2c)\n* Client OS: Mac OS X 10.8.4\n* Browser: Chrome 29.0.1547.57\n\n\n\nFeature requests are welcome. Before you submit one, be sure to have:\n\nUsed the GitHub search to check that the feature hasn’t already been requested.\nTake a moment to think about whether your idea fits with the scope and aims of the project, or if it might better fit being a custom extension.\nRemember, it’s up to you to make a strong case to convince the project’s leaders of the merits of this feature. Please provide as much detail and context as possible, this means explaining the use case and why it is likely to be common.\n\n\n\n\nChange requests cover both architectural and functional changes to how MathJax works. If you have an idea for a new or different dependency, a refactor, or an improvement to a feature, etc., please be sure to:\n\nUse the GitHub search to check that someone else didn’t get there first.\nTake a moment to think about the best way to make a case for, and explain what you’re thinking. Are you sure this shouldn’t really be a bug report or a feature request? Is it really one idea or is it many? What’s the context? What problem are you solving? Why is what you are suggesting better than what’s already there?\n\n\n\n\n\nYou want to contribute code? We describe how below. First, note that the MathJax source code is in the https://github.com/mathjax/MathJax-src repository, not the https://github.com/mathjax/MathJax repository, which contains the packaged component files for distribution on CDNs and the mathjax npm package (the source code is included in the mathjax-full npm package).\n\n\nMathJax uses several permanent branches in the MathJax source repository:\n\ndevelop is the development branch. All work on the next release happens here so you should generally branch off develop if you are going to submit a pull request. Do NOT use this branch for a production site.\nmaster contains the latest release of MathJax. This branch may be used in production. Do NOT use this branch to work on MathJax’s source.\n\nThese branches reflect version 3 of MathJax, which is substantially different from the version 2 codebase. Version 2 will continue to be maintained while web sites transition to version 3, with work being done using the following branches in the MathJax distribution repository:\n\nlegacy-v2-develop is the development branch for changes to the legacy version 2 code. Any pull requests for version 2 should be branched from here. Do NOT use this branch for a production site.\nlegacy-v2 is the branch that contains any updates to version 2 following the release of version 3. Do NOT use this branch to work on MathJax’s source.\n\nIn addition to these branches, MathJax uses tags to identify the various versions. These can be checked out to obtain the specified release; for example, git checkout 2.7.5 would get you the files for version 2.7.5 of MathJax.\nNote that version 3 is written in Typescript, and so must be compiled to obtain usable javascript files, and that the components need to be built once that is done. See the documentation for details. For version 2, the source javascript files are not compressed until a release is made, so you should use the copies in the unpacked directory during development.\n\n\n\nPull requests are welcome. If you’re looking to submit a PR for something that doesn’t have an open issue, please consider raising an issue that your PR can close, especially if you’re fixing a bug. This makes it more likely that there will be enough information available for your PR to be properly tested and merged.\n\n\nIf you’re not completely clear on how to submit/update/do Pull Requests, please check out our source control policies. For more insights, check the excellent in depth Git Workflow guide from Ghost, in particular\n\nGhost Workflow guide: commit messages\n\n\n\n\n\nIf you’re looking to get involved with the code base and don’t know where to start, checking out and testing a pull request is one of the most useful things you could do.\nThese are some excellent instructions on configuring your GitHub repository to allow you to checkout pull requests in the same way as branches.\n\n\n\nMathJax’s main documentation can be found at docs.mathjax.org. The source of the docs is hosted in the mathjax/MathJax-docs repo here on GitHub.\nThe documentation is generated using Sphinx-doc and hosted on Read the docs. You can clone the repo and submit pull requests following the pull-request guidelines.\n\n\n\nIf you wish to add or update translations of MathJax, please do it on TranslateWiki.net (and while you’re there you can help other open source projects, too).\nFor bug reports and other questions that don’t fit on TranslateWiki.net, head over to the mathjax/mathjax-i18n repository.\nThe translation files currently are for version 2, as localization hasn’t been added to version 3 yet.\n\n\n\n\nAs a NumFOCUS fiscally sponsored project, MathJax is governed by the NumFOCUS code of conduct, which we summarize as follows:\nWe are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, disability, ethnicity, religion, or similar personal characteristic.\nPlease be kind and courteous. There’s no need to be mean or rude. Respect that people have differences of opinion and that every design or implementation choice carries a trade-off and numerous costs. There is seldom a right answer, merely an optimal answer given a set of values and circumstances.\nPlease keep unstructured critique to a minimum. If you have solid ideas you want to experiment with, make a fork and see how it works.\nWe will exclude you from interaction if you insult, demean or harass anyone. That is not welcome behaviour. We interpret the term “harassment” as including the definition in the Unacceptable Behavior section of the NumFOCUS code of conduct; if you have any lack of clarity about what might be included in that concept, please read that definition. In particular, we don’t tolerate behavior that excludes people in socially marginalized groups.\nPrivate harassment is also unacceptable. No matter who you are, if you feel you have been or are being harassed or made uncomfortable by a community member, please contact one of the channel ops or any of the MathJax core team immediately. Whether you’re a regular contributor or a newcomer, we care about making this community a safe place for you and we’ve got your back.\nLikewise any spamming, trolling, flaming, baiting, or other attention-stealing behaviour is not welcome.\nWe also recommend that you read discourse’s rules for further suggestions on appropriate behavior.\n\n\n\n\nWe heavily borrowed from Mozilla and Ghost – thank you!\n\nhttps://github.com/TryGhost/Ghost/blob/master/CONTRIBUTING.md\nhttps://github.com/mozilla/rust/wiki/Note-development-policy\n\nhttps://github.com/jden/CONTRIBUTING.md/blob/master/CONTRIBUTING.md\nhttp://blog.discourse.org/2013/03/the-universal-rules-of-civilized-discourse/"
+  },
+  {
+    "objectID": "AECO605/mathjax/CONTRIBUTING.html#reporting-an-issue",
+    "href": "AECO605/mathjax/CONTRIBUTING.html#reporting-an-issue",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "If you’re about to raise an issue because you think you’ve found a problem with MathJax, or you’d like to make a request for a new feature in the codebase, or any other reason, please read this first.\nThe MathJax issue tracker is the preferred channel for bug reports, feature requests, change requests, and submitting pull requests, but please respect the following restrictions:\n\nPlease search for existing issues. Help us keep duplicate issues to a minimum by checking to see if someone has already reported your problem or requested your idea.\nPlease do not use the issue tracker for personal support requests (use the MathJax User Group).\nPlease be civil. Keep the discussion on topic and respect the opinions of others. See also our Conduct Guidelines\n\n\n\nA bug is a demonstrable problem that is caused by the code in the repository. Good bug reports are extremely helpful — thank you!\nGuidelines for bug reports:\n\nUse the GitHub issue search — check if the issue has already been reported.\nCheck if the issue has been fixed — look for closed issues in the current milestone or try to reproduce it using the latest develop branch. Please note that you will need to compile MathJax and make the components in order to test MathJax from the source repository.\nShare a live sample of the problem — without a live page it is usually impossible to debug problems; see also the Bug Report Template below.\nIsolate the problem — a live sample is a starting point but if you want to speed things up, create a reduced test case. Be specific about your setup (browser, OS versions, etc). Use services like jsbin, CodePen, or jsFiddle to make collaboration on minimal test cases easier for everyone.\nInclude a screenshot/cast as a last resort — Is your issue about a layout or design feature or bug that is hard to reproduce or isolate? Then please provide a screenshot or screencast. Tools like LICEcap or SauceLabs allow you to quickly and easily record a screencasts. If you make it an animated gif, you can embed it directly into your GitHub issue.\nUse the Bug Report Template below or click this link to start creating a bug report with the template automatically.\n\nA good bug report shouldn’t leave others needing to request more information from you. Be sure to include the details of your environment.\n\nTemplate Example (click to use):\nShort and descriptive example bug report title\n\n### Issue Summary\n\nA summary of the issue and the browser/OS environment in which it occurs. If\nsuitable, include the steps required to reproduce the bug.\n\n### Steps to Reproduce\n\n1. This is the first step\n2. This is the second step\n3. Further steps, etc.\n\nAny other information you want to share that is relevant to the issue\nbeing reported. Especially, why do you consider this to be a bug? What\ndo you expect to happen instead?\n\n### Technical details:\n\n* MathJax Version: 2.3 (latest commit: f3aaf3a2a3e964df2770dc4aaaa9c87ce5f47e2c)\n* Client OS: Mac OS X 10.8.4\n* Browser: Chrome 29.0.1547.57\n\n\n\nFeature requests are welcome. Before you submit one, be sure to have:\n\nUsed the GitHub search to check that the feature hasn’t already been requested.\nTake a moment to think about whether your idea fits with the scope and aims of the project, or if it might better fit being a custom extension.\nRemember, it’s up to you to make a strong case to convince the project’s leaders of the merits of this feature. Please provide as much detail and context as possible, this means explaining the use case and why it is likely to be common.\n\n\n\n\nChange requests cover both architectural and functional changes to how MathJax works. If you have an idea for a new or different dependency, a refactor, or an improvement to a feature, etc., please be sure to:\n\nUse the GitHub search to check that someone else didn’t get there first.\nTake a moment to think about the best way to make a case for, and explain what you’re thinking. Are you sure this shouldn’t really be a bug report or a feature request? Is it really one idea or is it many? What’s the context? What problem are you solving? Why is what you are suggesting better than what’s already there?"
+  },
+  {
+    "objectID": "AECO605/mathjax/CONTRIBUTING.html#working-on-mathjax-core",
+    "href": "AECO605/mathjax/CONTRIBUTING.html#working-on-mathjax-core",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "You want to contribute code? We describe how below. First, note that the MathJax source code is in the https://github.com/mathjax/MathJax-src repository, not the https://github.com/mathjax/MathJax repository, which contains the packaged component files for distribution on CDNs and the mathjax npm package (the source code is included in the mathjax-full npm package).\n\n\nMathJax uses several permanent branches in the MathJax source repository:\n\ndevelop is the development branch. All work on the next release happens here so you should generally branch off develop if you are going to submit a pull request. Do NOT use this branch for a production site.\nmaster contains the latest release of MathJax. This branch may be used in production. Do NOT use this branch to work on MathJax’s source.\n\nThese branches reflect version 3 of MathJax, which is substantially different from the version 2 codebase. Version 2 will continue to be maintained while web sites transition to version 3, with work being done using the following branches in the MathJax distribution repository:\n\nlegacy-v2-develop is the development branch for changes to the legacy version 2 code. Any pull requests for version 2 should be branched from here. Do NOT use this branch for a production site.\nlegacy-v2 is the branch that contains any updates to version 2 following the release of version 3. Do NOT use this branch to work on MathJax’s source.\n\nIn addition to these branches, MathJax uses tags to identify the various versions. These can be checked out to obtain the specified release; for example, git checkout 2.7.5 would get you the files for version 2.7.5 of MathJax.\nNote that version 3 is written in Typescript, and so must be compiled to obtain usable javascript files, and that the components need to be built once that is done. See the documentation for details. For version 2, the source javascript files are not compressed until a release is made, so you should use the copies in the unpacked directory during development.\n\n\n\nPull requests are welcome. If you’re looking to submit a PR for something that doesn’t have an open issue, please consider raising an issue that your PR can close, especially if you’re fixing a bug. This makes it more likely that there will be enough information available for your PR to be properly tested and merged.\n\n\nIf you’re not completely clear on how to submit/update/do Pull Requests, please check out our source control policies. For more insights, check the excellent in depth Git Workflow guide from Ghost, in particular\n\nGhost Workflow guide: commit messages\n\n\n\n\n\nIf you’re looking to get involved with the code base and don’t know where to start, checking out and testing a pull request is one of the most useful things you could do.\nThese are some excellent instructions on configuring your GitHub repository to allow you to checkout pull requests in the same way as branches.\n\n\n\nMathJax’s main documentation can be found at docs.mathjax.org. The source of the docs is hosted in the mathjax/MathJax-docs repo here on GitHub.\nThe documentation is generated using Sphinx-doc and hosted on Read the docs. You can clone the repo and submit pull requests following the pull-request guidelines.\n\n\n\nIf you wish to add or update translations of MathJax, please do it on TranslateWiki.net (and while you’re there you can help other open source projects, too).\nFor bug reports and other questions that don’t fit on TranslateWiki.net, head over to the mathjax/mathjax-i18n repository.\nThe translation files currently are for version 2, as localization hasn’t been added to version 3 yet."
+  },
+  {
+    "objectID": "AECO605/mathjax/CONTRIBUTING.html#conduct",
+    "href": "AECO605/mathjax/CONTRIBUTING.html#conduct",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "As a NumFOCUS fiscally sponsored project, MathJax is governed by the NumFOCUS code of conduct, which we summarize as follows:\nWe are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, disability, ethnicity, religion, or similar personal characteristic.\nPlease be kind and courteous. There’s no need to be mean or rude. Respect that people have differences of opinion and that every design or implementation choice carries a trade-off and numerous costs. There is seldom a right answer, merely an optimal answer given a set of values and circumstances.\nPlease keep unstructured critique to a minimum. If you have solid ideas you want to experiment with, make a fork and see how it works.\nWe will exclude you from interaction if you insult, demean or harass anyone. That is not welcome behaviour. We interpret the term “harassment” as including the definition in the Unacceptable Behavior section of the NumFOCUS code of conduct; if you have any lack of clarity about what might be included in that concept, please read that definition. In particular, we don’t tolerate behavior that excludes people in socially marginalized groups.\nPrivate harassment is also unacceptable. No matter who you are, if you feel you have been or are being harassed or made uncomfortable by a community member, please contact one of the channel ops or any of the MathJax core team immediately. Whether you’re a regular contributor or a newcomer, we care about making this community a safe place for you and we’ve got your back.\nLikewise any spamming, trolling, flaming, baiting, or other attention-stealing behaviour is not welcome.\nWe also recommend that you read discourse’s rules for further suggestions on appropriate behavior."
+  },
+  {
+    "objectID": "AECO605/mathjax/CONTRIBUTING.html#references",
+    "href": "AECO605/mathjax/CONTRIBUTING.html#references",
+    "title": "Contributing to MathJax",
+    "section": "",
+    "text": "We heavily borrowed from Mozilla and Ghost – thank you!\n\nhttps://github.com/TryGhost/Ghost/blob/master/CONTRIBUTING.md\nhttps://github.com/mozilla/rust/wiki/Note-development-policy\n\nhttps://github.com/jden/CONTRIBUTING.md/blob/master/CONTRIBUTING.md\nhttp://blog.discourse.org/2013/03/the-universal-rules-of-civilized-discourse/"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#characteristics-of-economic-time-series",
+    "href": "AECO606/ARCH.html#characteristics-of-economic-time-series",
+    "title": "PhD Presentations",
+    "section": "Characteristics of Economic Time Series",
+    "text": "Characteristics of Economic Time Series"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#volatility",
+    "href": "AECO606/ARCH.html#volatility",
+    "title": "PhD Presentations",
+    "section": "Volatility",
+    "text": "Volatility\nVolatility means the conditional standard deviation of the underlying price return.\n\n\n\n\n\n\nImplied they say!\n\n\nThe volatility value that, when plugged into a theoretical pricing model, reproduces the observed market price of an asset is termed as implied volatility"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#characteristics-of-volatility",
+    "href": "AECO606/ARCH.html#characteristics-of-volatility",
+    "title": "PhD Presentations",
+    "section": "Characteristics of Volatility",
+    "text": "Characteristics of Volatility\nUnobservability\n\nVolatility is not directly observable — only one return per trading day exists\nImplied volatility is model-dependent and often overstates true volatility\n\nVolatility Clustering\n\nHigh volatility periods and low volatility periods tend to cluster together\n\nContinuous Evolution\n\nVolatility changes smoothly over time — abrupt jumps are rare\n\nMean Reversion (Stationarity)\n\nVolatility does not diverge to \\(\\infty\\) — it fluctuates within a bounded range\n\nLeverage Effect\n\nVolatility reacts asymmetrically to price increases vs. price drops"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#why-volatility",
+    "href": "AECO606/ARCH.html#why-volatility",
+    "title": "PhD Presentations",
+    "section": "Why Volatility?",
+    "text": "Why Volatility?\nThe price level reveals the market’s current valuation of a commodity, while volatility captures the uncertainty and risk embedded in the price discovery process that led to that equilibrium."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#homoscedastic-vs-heteroscedastic-process",
+    "href": "AECO606/ARCH.html#homoscedastic-vs-heteroscedastic-process",
+    "title": "PhD Presentations",
+    "section": "Homoscedastic vs Heteroscedastic Process",
+    "text": "Homoscedastic vs Heteroscedastic Process"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#problem",
+    "href": "AECO606/ARCH.html#problem",
+    "title": "PhD Presentations",
+    "section": "Problem",
+    "text": "Problem\n\nMany economic time series exhibit periods of unusually large volatility followed by periods of relative tranquility.\nIn such circumstances, the assumption of a constant variance (homoscedasticity) is inappropriate."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#model",
+    "href": "AECO606/ARCH.html#model",
+    "title": "PhD Presentations",
+    "section": "Model",
+    "text": "Model\nOne approach to model this behaviour is to explicitly introduce an independent variable \\(x_i\\) such that, \\[\ny_{t+1} = \\epsilon_{t+1}x_t\n\\tag{1}\\] where,\n\\(y_{t+1}\\) is the dependent variable of interest;\n\\(\\epsilon_{t+1}\\) is a white-noise disturbance term with variance \\(\\sigma^2\\);\n\\(x_t\\) is an independent variable that can be observed at period \\(t\\).\nHere, \\[\nvar(y_{t+1}|x_t) = x_t^2\\sigma^2\n\\tag{2}\\]"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#logarithmic-form",
+    "href": "AECO606/ARCH.html#logarithmic-form",
+    "title": "PhD Presentations",
+    "section": "Logarithmic Form",
+    "text": "Logarithmic Form\nModifying the Equation 1, we get, \\[\n\\ln(y_t) = \\alpha_0 + \\alpha_1 \\ln(x_{t-1}) + e_t\n\\tag{3}\\] where, \\(e_t=\\ln(\\epsilon_t)\\)"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#regression-and-its-limitations",
+    "href": "AECO606/ARCH.html#regression-and-its-limitations",
+    "title": "PhD Presentations",
+    "section": "Regression and its Limitations",
+    "text": "Regression and its Limitations\nSince Equation 3 is linear, OLS can be used to estimate the parameters \\(\\alpha_0\\) and \\(\\alpha_1\\).\nBut,\n\nThe model forces \\({x_t}\\) to affect mean of \\(\\ln(y_t)\\):\n    It is difficult to choose one candidate for \\({x_t}\\) over many reasonable choices.\nTransformations are required for the series to have a constant variance."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#the-conditional-advantage",
+    "href": "AECO606/ARCH.html#the-conditional-advantage",
+    "title": "PhD Presentations",
+    "section": "The “Conditional” Advantage",
+    "text": "The “Conditional” Advantage\nConsider a stationary ARMA model, \\[y_t = a_0 + a_1y_{t-1} + \\epsilon_t\\]\n\n\n\nExpectation Type\nMean\nForecast Error Variance\n\n\n\n\nConditional\n\\(E_t y_{t+1} = a_0 + a_1 y_t\\)\n\\(E_t[(y_{t+1} - a_0 - a_1 y_t)^2] = E_t\\epsilon_{t+1}^2 = \\sigma^2\\)\n\n\nUnconditional\n\\(Ey_{t+1} = \\dfrac{a_0}{1-a_1}\\)\n\\(E\\left[\\left(y_{t+1} - \\dfrac{a_0}{1-a_1}\\right)^2\\right] = \\dfrac{\\sigma^2}{1-a_1^2}\\)\n\n\n\nThe conditional forecast uses information from the past and its variance is certainly less than the unconditional counterpart. Thus conditional forecasts are preferable."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#modelling-non-constant-variance",
+    "href": "AECO606/ARCH.html#modelling-non-constant-variance",
+    "title": "PhD Presentations",
+    "section": "Modelling Non-constant variance",
+    "text": "Modelling Non-constant variance\nWhen the conditional variance is not constant, a simple strategy is to model the conditional variance as an AR(\\(q\\)) process using squares of the estimated residuals: \\[\\hat{\\epsilon}_t^2 = \\alpha_0 + \\alpha_1\\hat{\\epsilon}_{t-1}^2 + \\alpha_2\\hat{\\epsilon}_{t-2}^2 + \\cdots + \\alpha_q\\hat{\\epsilon}_{t-q}^2 + v_t \\tag{4}\\] where \\(v_t\\) is a white-noise process.\nIf the values of \\(\\alpha_1, \\alpha_2, ..., \\alpha_n\\) all equal to zero, the estimated variance is simply the constant \\(\\alpha_0\\).\n\n\n\n\n\n\nARCH ALERT\n\n\nThe model in Equation 4 is the stepping stone to the ARCH process"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#the-flaw-with-additive-model",
+    "href": "AECO606/ARCH.html#the-flaw-with-additive-model",
+    "title": "PhD Presentations",
+    "section": "The Flaw with additive model",
+    "text": "The Flaw with additive model\n\nIn Equation 4, \\(\\hat{\\epsilon}_{t}^2\\) should be strictly non-negative. Also the coefficients are constrained to be non-negative to ensure the expected variance stays positive.\nHowever, \\(\\nu_t\\) is a white-noise process, it can take negative values. If there is a sufficiently large negative shock on \\(\\nu_t\\), the entire right hand side of Equation 4 can become mathematically negative."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#the-multiplicative-alternative",
+    "href": "AECO606/ARCH.html#the-multiplicative-alternative",
+    "title": "PhD Presentations",
+    "section": "The Multiplicative Alternative",
+    "text": "The Multiplicative Alternative\nIn 1982, Robert. F. Engle proposed a class of multiplicative models as: \\[\\epsilon_t = v_t \\sqrt{\\alpha_0 + \\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2} \\tag{5}\\] which is known to be the ARCH(\\(q\\)) process with \\(\\alpha_0 &gt; 0\\), \\(\\alpha_i \\geq 0\\) and \\(\\sum\\alpha_i &lt; 1\\)."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#deriving-the-conditional-variance",
+    "href": "AECO606/ARCH.html#deriving-the-conditional-variance",
+    "title": "PhD Presentations",
+    "section": "Deriving the Conditional Variance",
+    "text": "Deriving the Conditional Variance\nStarting from Equation 5:\n\\[\\epsilon_t = v_t\\sqrt{\\alpha_0 + \\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2}\\]\nTaking \\(\\text{Var}(\\cdot \\mid \\mathcal{F}_{t-1})\\) on both sides:\n\\[\\text{Var}(\\epsilon_t \\mid \\mathcal{F}_{t-1})\n= \\left(\\alpha_0 + \\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2\\right)\n\\cdot \\underbrace{\\text{Var}(v_t)}_{ = 1}\\]\n\\[\\therefore \\quad \\boxed{\\sigma_t^2 = \\alpha_0 + \\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2} \\tag{6}\\]"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#compact-form-of-archq",
+    "href": "AECO606/ARCH.html#compact-form-of-archq",
+    "title": "PhD Presentations",
+    "section": "Compact Form of ARCH(\\(q\\))",
+    "text": "Compact Form of ARCH(\\(q\\))\nSubstituting \\(\\sigma_t^2 = \\alpha_0 + \\displaystyle\\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2\\) back into Equation 5:\n\\[\\epsilon_t = v_t\\sqrt{\\alpha_0 + \\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2}\n= v_t\\sqrt{\\sigma_t^2} = v_t\\sigma_t \\tag{7}\\]\nwhere \\(\\sigma_t &gt; 0\\), since \\(\\alpha_0 &gt; 0\\) and \\(\\alpha_i \\geq 0\\)."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#unconditional-variance-of-archq",
+    "href": "AECO606/ARCH.html#unconditional-variance-of-archq",
+    "title": "PhD Presentations",
+    "section": "Unconditional Variance of ARCH(\\(q\\))",
+    "text": "Unconditional Variance of ARCH(\\(q\\))\nSince \\(E(\\epsilon_t) = 0\\), we have \\(\\text{Var}(\\epsilon_t) = E(\\epsilon_t^2)\\).\nApplying the Law of Iterated Expectations:\n\\[\\text{Var}(\\epsilon_t) = E\\left[E(\\epsilon_t^2 \\mid \\mathcal{F}_{t-1})\\right] = E(\\sigma_t^2) = E\\left(\\alpha_0 + \\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2\\right)\\]\nUnder stationarity, \\(E(\\epsilon_t^2) = E(\\epsilon_{t-i}^2) = \\text{Var}(\\epsilon_t)\\) for all \\(i\\).\nDenoting \\(\\text{Var}(\\epsilon_t) = \\sigma^2\\):\n\\[\\sigma^2 = \\alpha_0 + \\sum_{i=1}^q \\alpha_i \\sigma^2 \\implies \\sigma^2\\left(1 - \\sum_{i=1}^q \\alpha_i\\right) = \\alpha_0\\]\n\\[\\boxed{\\sigma^2 = \\dfrac{\\alpha_0}{1 - \\sum_{i=1}^q \\alpha_i}} \\tag{8}\\]"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#mean-of-the-archq-process",
+    "href": "AECO606/ARCH.html#mean-of-the-archq-process",
+    "title": "PhD Presentations",
+    "section": "Mean of the ARCH(\\(q\\)) Process",
+    "text": "Mean of the ARCH(\\(q\\)) Process\nFrom Equation 7, \\(\\epsilon_t = v_t\\sigma_t\\), where \\(\\sigma_t\\) is \\(\\mathcal{F}_{t-1}\\)-measurable.\nConditional Mean: \\[E(\\epsilon_t \\mid \\mathcal{F}_{t-1}) = \\sigma_t \\cdot E(v_t \\mid \\mathcal{F}_{t-1}) = \\sigma_t \\cdot 0 = 0\\]\nsince \\(v_t \\sim \\text{iid}(0,1)\\) is independent of \\(\\mathcal{F}_{t-1}\\).\nUnconditional Mean: \\[E(\\epsilon_t) = E\\left[E(\\epsilon_t \\mid \\mathcal{F}_{t-1})\\right] = E[0] = 0\\]\nby the Law of Iterated Expectations."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#heavy-tails-of-the-arch-process",
+    "href": "AECO606/ARCH.html#heavy-tails-of-the-arch-process",
+    "title": "PhD Presentations",
+    "section": "Heavy Tails of the ARCH Process",
+    "text": "Heavy Tails of the ARCH Process\nAs long as \\(\\alpha_i \\neq 0\\) for at least one \\(i\\), \\(\\kappa &gt; 3\\), the ARCH(\\(q\\)) process has\nheavier tails than the normal distribution, provided \\(\\displaystyle\\sum_{i=1}^q 3\\alpha_i^2 &lt; 1\\) where \\(\\kappa\\) is the measure of kurtosis."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#testing-for-arch-effects-engles-lm-test",
+    "href": "AECO606/ARCH.html#testing-for-arch-effects-engles-lm-test",
+    "title": "PhD Presentations",
+    "section": "Testing for ARCH Effects: Engle’s LM Test",
+    "text": "Testing for ARCH Effects: Engle’s LM Test\n\\(\\mathbf{H_0}: \\alpha_1 = \\alpha_2 = \\cdots = \\alpha_q = 0\\) (no ARCH effects)\nStep 1: Fit an appropriate mean equation (ARMA or OLS regression) and obtain squared residuals \\(\\{\\hat{\\epsilon}_t^2\\}\\).\nStep 2: Regress \\(\\hat{\\epsilon}_t^2\\) on its \\(q\\) lagged values as in Equation 4:\n\\[\\hat{\\epsilon}_t^2 = \\alpha_0 + \\alpha_1\\hat{\\epsilon}_{t-1}^2 + \\alpha_2\\hat{\\epsilon}_{t-2}^2 + \\cdots + \\alpha_q\\hat{\\epsilon}_{t-q}^2 + v_t\\]\nStep 3: Compute the test statistic. Under \\(H_0\\):\n\\[NR^2 \\xrightarrow{d} \\chi^2(q)\\] For small samples, an \\(F\\)-test with \\((q,\\ N-q)\\) df is preferred."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#maximum-likelihood-estimation-of-archq",
+    "href": "AECO606/ARCH.html#maximum-likelihood-estimation-of-archq",
+    "title": "PhD Presentations",
+    "section": "Maximum Likelihood Estimation of ARCH(\\(q\\))",
+    "text": "Maximum Likelihood Estimation of ARCH(\\(q\\))\nGiven \\(N\\) observations, the parameter vector is \\(\\boldsymbol{\\theta} = (\\alpha_0, \\alpha_1, \\ldots, \\alpha_q)^\\top\\).\nConditional Log-Likelihood:\nAssuming \\(v_t \\sim N(0,1)\\), the conditional density of \\(\\epsilon_t\\) given \\(\\mathcal{F}_{t-1}\\) is:\n\\[f(\\epsilon_t \\mid \\mathcal{F}_{t-1}) = \\frac{1}{\\sqrt{2\\pi\\sigma_t^2}}\\exp\\left(-\\frac{\\epsilon_t^2}{2\\sigma_t^2}\\right)\\]\nThe conditional log-likelihood over \\(t = q+1, \\ldots, N\\) is:\n\\[\\ell(\\boldsymbol{\\theta}) = -\\frac{1}{2}\\sum_{t=q+1}^{N}\\left[\\log(2\\pi) + \\log(\\sigma_t^2) + \\frac{\\epsilon_t^2}{\\sigma_t^2}\\right]\\]"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#ml-algorithm",
+    "href": "AECO606/ARCH.html#ml-algorithm",
+    "title": "PhD Presentations",
+    "section": "ML Algorithm",
+    "text": "ML Algorithm\n\nInitialize \\(\\boldsymbol{\\theta}^{(0)}\\) — typically via OLS on \\(\\hat{\\epsilon}_t^2\\) against its lags\nAt iteration \\(k\\), evaluate \\(\\sigma_t^2 = \\alpha_0 + \\sum_{i=1}^q \\alpha_i \\epsilon_{t-i}^2\\) recursively for \\(t = q+1, \\ldots, N\\)\nCompute \\(\\ell(\\boldsymbol{\\theta}^{(k)})\\)\nUpdate \\(\\boldsymbol{\\theta}^{(k+1)}\\) via BFGS quasi-Newton optimization\nRepeat steps 2–4 until \\(\\|\\boldsymbol{\\theta}^{(k+1)} - \\boldsymbol{\\theta}^{(k)}\\| &lt; \\delta\\)\n\n\n\n\n\n\n\nConstraints\n\n\nOptimization is subject to \\(\\alpha_0 &gt; 0\\), \\(\\alpha_i \\geq 0\\), and \\(\\displaystyle\\sum_{i=1}^q \\alpha_i &lt; 1\\) to ensure positivity of \\(\\sigma_t^2\\) and second-order stationarity."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#effect-of-arch-coefficients",
+    "href": "AECO606/ARCH.html#effect-of-arch-coefficients",
+    "title": "PhD Presentations",
+    "section": "Effect of ARCH Coefficients",
+    "text": "Effect of ARCH Coefficients\n\n\n  \n    \n      α1 + α2 =\n      0.05\n    \n    \n    \n      α1=—,\n      α2=—\n    \n  \n\n  \n    \n    \n  \n\n\n\n\n\n\n\n\n\n\nAlpha dynamics\n\n\nAs \\(\\alpha_1 + \\alpha_2 \\to 1\\), volatility clusters intensify and tails grow heavier — the ARCH process departs increasingly from normality."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#building-an-arch-model",
+    "href": "AECO606/ARCH.html#building-an-arch-model",
+    "title": "PhD Presentations",
+    "section": "Building an ARCH Model",
+    "text": "Building an ARCH Model\n\nCompute Log Returns — Transform raw price series \\(P_t\\) to log returns \\(r_t = \\ln(P_t/P_{t-1})\\). This ensures stationarity in mean, removes trend, and stabilises scale.\nFit a Mean Equation — Fit an appropriate ARMA(\\(p\\),\\(q\\)) model on \\(r_t\\) using AIC/BIC. Extract residuals \\(\\hat{\\epsilon}_t\\).\nTest for ARCH Effects — Run Engle’s LM test on \\(\\hat{\\epsilon}_t\\). Reject \\(H_0\\) to confirm volatility clustering warrants ARCH modelling.\nIdentify Order \\(q\\) — Examine PACF of \\(\\hat{\\epsilon}_t^2\\). The lag at which PACF cuts off suggests candidate \\(q\\).\nEstimate ARCH(\\(q\\)) — Maximise conditional log-likelihood via BFGS. Verify \\(\\alpha_0 &gt; 0\\), \\(\\alpha_i \\geq 0\\), and \\(\\sum\\alpha_i &lt; 1\\).\nDiagnose Residuals — Standardise residuals as \\(\\tilde{\\epsilon}_t = \\hat{\\epsilon}_t/\\hat{\\sigma}_t\\). Check:\n\nACF of \\(\\tilde{\\epsilon}_t\\) and \\(\\tilde{\\epsilon}_t^2\\) for remaining structure\nLjung-Box test on \\(\\tilde{\\epsilon}_t^2\\)\nQQ-plot for distributional assumption\n\nIterate if Needed — If \\(\\tilde{\\epsilon}_t^2\\) still shows significant ACF, increase \\(q\\) or consider GARCH.\nForecast — Use fitted \\(\\hat{\\sigma}_t^2\\) for volatility forecasting and interval construction."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#data-deutsch-mark-british-pound-exchange-rate-returns",
+    "href": "AECO606/ARCH.html#data-deutsch-mark-british-pound-exchange-rate-returns",
+    "title": "PhD Presentations",
+    "section": "Data: Deutsch Mark / British Pound Exchange Rate Returns",
+    "text": "Data: Deutsch Mark / British Pound Exchange Rate Returns\n\n\n\n\n\n\n\nData\n\n\nDeutsch Mark / British Pound exchange rate returns.\n\\(N = 1974\\) observations. Canonical dataset for ARCH demonstration."
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-1-log-returns",
+    "href": "AECO606/ARCH.html#step-1-log-returns",
+    "title": "PhD Presentations",
+    "section": "Step 1: Log Returns",
+    "text": "Step 1: Log Returns\n\nlibrary(rugarch)\ndata(\"dmbp\", package = \"rugarch\")\nr &lt;- dmbp[, 1]\nhead(r)\n\n\n\n[1]  0.12533286  0.02887427  0.06346177  0.22671922 -0.21426695  0.20285367\n\n\n\nSeries is already in log return form: \\(r_t = \\ln(P_t / P_{t-1})\\)\nMean close to zero, exhibits volatility clustering visually"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-2-stationarity-test",
+    "href": "AECO606/ARCH.html#step-2-stationarity-test",
+    "title": "PhD Presentations",
+    "section": "Step 2: Stationarity Test",
+    "text": "Step 2: Stationarity Test\n\nlibrary(tseries)\nadf.test(r)\n\n\n\n\n    Augmented Dickey-Fuller Test\n\ndata:  r\nDickey-Fuller = -12.268, Lag order = 12, p-value = 0.01\nalternative hypothesis: stationary\n\n\n\nADF test strongly rejects \\(H_0\\) of unit root\nSeries is stationary — no differencing required"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-3-fit-candidate-mean-equations",
+    "href": "AECO606/ARCH.html#step-3-fit-candidate-mean-equations",
+    "title": "PhD Presentations",
+    "section": "Step 3: Fit Candidate Mean Equations",
+    "text": "Step 3: Fit Candidate Mean Equations\n\nmodels &lt;- list(\n  \"AR(1)\"     = arima(r, order = c(1,0,0)),\n  \"AR(2)\"     = arima(r, order = c(2,0,0)),\n  \"MA(1)\"     = arima(r, order = c(0,0,1)),\n  \"MA(2)\"     = arima(r, order = c(0,0,2)),\n  \"ARMA(1,1)\" = arima(r, order = c(1,0,1)),\n  \"ARMA(1,2)\" = arima(r, order = c(1,0,2)),\n  \"ARMA(2,1)\" = arima(r, order = c(2,0,1)),\n  \"ARMA(2,2)\" = arima(r, order = c(2,0,2))\n)\nic_tbl &lt;- data.frame(\n  Model = names(models),\n  AIC   = round(sapply(models, AIC), 3),\n  BIC   = round(sapply(models, BIC), 3)\n)\nic_tbl\n\n\n\n     Model      AIC      BIC\n     AR(1) 2628.020 2644.783\n     AR(2) 2628.744 2651.096\n     MA(1) 2628.010 2644.774\n     MA(2) 2628.720 2651.071\n ARMA(1,1) 2628.673 2651.025\n ARMA(1,2) 2629.725 2657.664\n ARMA(2,1) 2629.663 2657.602\n ARMA(2,2) 2631.408 2664.935\n\n\n\nBest mean equation by BIC: MA(1)\nResiduals \\(\\hat{\\epsilon}_t\\) extracted for ARCH testing"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-4-acf-and-pacf-of-squared-residuals",
+    "href": "AECO606/ARCH.html#step-4-acf-and-pacf-of-squared-residuals",
+    "title": "PhD Presentations",
+    "section": "Step 4: ACF and PACF of Squared Residuals",
+    "text": "Step 4: ACF and PACF of Squared Residuals\n\nacf_r2  &lt;- acf(resid^2,  lag.max = 12, plot = FALSE)\npacf_r2 &lt;- pacf(resid^2, lag.max = 12, plot = FALSE)\nci      &lt;- qnorm(0.975) / sqrt(length(resid))\n\n\n\nFilled points exceed the 95% confidence band — significant lags\nPACF cuts off at lag 5 — suggests ARCH(5)"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-5-engles-lm-test",
+    "href": "AECO606/ARCH.html#step-5-engles-lm-test",
+    "title": "PhD Presentations",
+    "section": "Step 5: Engle’s LM Test",
+    "text": "Step 5: Engle’s LM Test\n\nlibrary(FinTS)\nArchTest(resid, lags = max_lag)\n\n\n\n\n    ARCH LM-test; Null hypothesis: no ARCH effects\n\ndata:  resid\nChi-squared = 183.61, df = 5, p-value &lt; 2.2e-16\n\n\n\n\\(p\\)-value \\(&lt; 0.05\\) — formally confirms ARCH effects\nMaximum lag set to 5 from PACF inspection"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-6-fit-and-compare-arch-orders",
+    "href": "AECO606/ARCH.html#step-6-fit-and-compare-arch-orders",
+    "title": "PhD Presentations",
+    "section": "Step 6: Fit and Compare ARCH Orders",
+    "text": "Step 6: Fit and Compare ARCH Orders\n\narch_fit &lt;- function(q) {\n  spec &lt;- ugarchspec(\n    variance.model     = list(model      = \"sGARCH\",\n                               garchOrder = c(q, 0)),\n    mean.model         = list(armaOrder    = c(p_order, q_order),\n                               include.mean = TRUE),\n    distribution.model = \"norm\"\n  )\n  ugarchfit(spec, data = r, solver = \"hybrid\")\n}\n\nq_max  &lt;- max(max_lag, 2)\nfits   &lt;- lapply(1:q_max, arch_fit)\nic_mat &lt;- sapply(fits, infocriteria)\n\nic_tbl &lt;- data.frame(\n  Order = paste0(\"ARCH(\", 1:q_max, \")\"),\n  AIC   = round(ic_mat[1, ], 5),\n  BIC   = round(ic_mat[2, ], 5)\n)\nic_tbl\n\n\n\n   Order     AIC     BIC\n ARCH(1) 1.22652 1.23784\n ARCH(2) 1.18919 1.20334\n ARCH(3) 1.16693 1.18392\n ARCH(4) 1.15701 1.17683\n ARCH(5) 1.13999 1.16263\n\n\n\nBest model by BIC: ARCH(5)\nBIC preferred for stronger parsimony penalty"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-7-best-model-estimates",
+    "href": "AECO606/ARCH.html#step-7-best-model-estimates",
+    "title": "PhD Presentations",
+    "section": "Step 7: Best Model Estimates",
+    "text": "Step 7: Best Model Estimates\n\ncoef(best_fit)\n\n\n\n      mu      ma1    omega   alpha1   alpha2   alpha3   alpha4   alpha5 \n-0.00110  0.04105  0.07880  0.24684  0.14579  0.09226  0.08572  0.12329 \n\n\n\n\\(\\hat{\\alpha}_0 = 0.0788\\) — baseline conditional variance\n\\(\\sum\\hat{\\alpha}_i = 0.69392 &lt; 1\\) — stationarity condition satisfied"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-8-residual-diagnostics",
+    "href": "AECO606/ARCH.html#step-8-residual-diagnostics",
+    "title": "PhD Presentations",
+    "section": "Step 8: Residual Diagnostics",
+    "text": "Step 8: Residual Diagnostics\n\nstd_resid &lt;- residuals(best_fit, standardize = TRUE)\nArchTest(std_resid,   lags = best_q)\nBox.test(std_resid,   lag  = best_q, type = \"Ljung-Box\")\nBox.test(std_resid^2, lag  = best_q, type = \"Ljung-Box\")\n\n\n\n\n    ARCH LM-test; Null hypothesis: no ARCH effects\n\ndata:  std_resid\nChi-squared = 2.599, df = 5, p-value = 0.7615\n\n\n\n    Box-Ljung test\n\ndata:  std_resid\nX-squared = 3.5937, df = 5, p-value = 0.6093\n\n\n\n    Box-Ljung test\n\ndata:  std_resid^2\nX-squared = 2.5756, df = 5, p-value = 0.7651\n\n\n\nLM test on \\(\\tilde{\\epsilon}_t\\): \\(p &gt; 0.05\\) — no remaining ARCH effects\nLjung-Box on \\(\\tilde{\\epsilon}_t\\): \\(p &gt; 0.05\\) — no linear autocorrelation\nLjung-Box on \\(\\tilde{\\epsilon}_t^2\\): \\(p &gt; 0.05\\) — white noise confirmed"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-8-qq-plot",
+    "href": "AECO606/ARCH.html#step-8-qq-plot",
+    "title": "PhD Presentations",
+    "section": "Step 8: QQ-Plot",
+    "text": "Step 8: QQ-Plot\n\nggplot(data.frame(r = as.numeric(std_resid)),\n       aes(sample = r)) +\n  stat_qq(size = 0.8, alpha = 0.6) +\n  stat_qq_line(color = \"black\", linewidth = 0.6) +\n  labs(title = \"QQ-Plot: Standardised Residuals\") +\n  theme_classic()\n\n\n\nMild tail departure — Student-\\(t\\) innovations may improve fit"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#step-9-volatility-forecast",
+    "href": "AECO606/ARCH.html#step-9-volatility-forecast",
+    "title": "PhD Presentations",
+    "section": "Step 9: Volatility Forecast",
+    "text": "Step 9: Volatility Forecast\n\nforc &lt;- ugarchforecast(best_fit, n.ahead = 20)\nplot(forc, which = 3)\n\n\n\nForecast converges toward unconditional volatility\nConfirms mean-reverting nature of the fitted ARCH process"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#motivation",
+    "href": "AECO606/ARCH.html#motivation",
+    "title": "PhD Presentations",
+    "section": "Motivation",
+    "text": "Motivation\nRisk-averse agents demand compensation for holding a volatile asset — the risk premium itself should rise with conditional variance.\nThe Three-Equation System (Engle, Lilien & Robins, 1987):\n\\[y_t = \\mu_t + \\varepsilon_t \\qquad \\text{(Mean equation)} \\tag{9}\\]\n\\[\\mu_t = \\beta + \\delta h_t, \\quad \\delta &gt; 0 \\qquad \\text{(Risk premium)} \\tag{10}\\]\n\\[h_t = \\alpha_0 + \\sum_{i=1}^{q} \\alpha_i \\varepsilon_{t-i}^2 \\qquad \\text{(Variance equation)} \\tag{11}\\]\nwhere \\(y_t\\) is the excess return, \\(\\mu_t\\) is the time-varying risk premium, and \\(h_t\\) is the ARCH(\\(q\\)) conditional variance.\n\n\n\n\n\n\nKey Interpretations\n\n\n\n\\(\\delta &gt; 0\\) — higher conditional variance raises expected return (risk–return tradeoff)\n\n\\(\\delta = 0\\) — ARCH-M degenerates to standard ARCH; risk premium becomes constant \\(\\beta\\)\n\n\\(\\delta\\) is estimated jointly with \\(\\alpha_i\\) via MLE — its significance is the central test"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#how-it-differs-from-archq",
+    "href": "AECO606/ARCH.html#how-it-differs-from-archq",
+    "title": "PhD Presentations",
+    "section": "How it differs from ARCH(q)",
+    "text": "How it differs from ARCH(q)"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#arch-family-explorer",
+    "href": "AECO606/ARCH.html#arch-family-explorer",
+    "title": "PhD Presentations",
+    "section": "ARCH Family Explorer",
+    "text": "ARCH Family Explorer"
+  },
+  {
+    "objectID": "AECO606/ARCH.html#section",
+    "href": "AECO606/ARCH.html#section",
+    "title": "PhD Presentations",
+    "section": "",
+    "text": "1. Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. Econometrica, 50(4), 987–1007.\n\n\n\n2. Engle, R. F., Lilien, D. M., & Robins, R. P. (1987). Estimating time varying risk premia in the term structure: The ARCH-M model. Econometrica, 55(2), 391–407.\n\n\n\n3. Enders, W. (2015). Applied econometric time series (4th ed.). John Wiley & Sons.\n\n\n\n4. Tsay, R. S. (2010). Analysis of financial time series (3rd ed.). John Wiley & Sons.\n\n\n\n5. Ghalanos, A. (2025). rugarch: Univariate GARCH models (R package version 1.5-4)."
+  },
+  {
+    "objectID": "STAT 691/DoctoralSeminar1.html#what-is-symbolic-regression",
+    "href": "STAT 691/DoctoralSeminar1.html#what-is-symbolic-regression",
+    "title": "PhD Presentations",
+    "section": "What is Symbolic Regression?",
+    "text": "What is Symbolic Regression?\nSymbolic Regression is a type of regression analysis that:\n\nSearches the space of mathematical expressions to find a symbolic function that best fits a given dataset.\nOptimizes simultaneously over the structure of the expression and the values of its parameters.\nOperates without assuming a fixed model class in advance."
+  },
+  {
+    "objectID": "STAT 691/DoctoralSeminar1.html#modeling-approach",
+    "href": "STAT 691/DoctoralSeminar1.html#modeling-approach",
+    "title": "PhD Presentations",
+    "section": "Modeling Approach",
+    "text": "Modeling Approach"
+  }
+]

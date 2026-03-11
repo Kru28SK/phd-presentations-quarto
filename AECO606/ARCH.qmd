@@ -12,9 +12,6 @@ format:
     height: 720
     embed-resources: true 
     self-contained: true
-    html-math-method: 
-      method: mathjax
-      url: "mathjax/tex-chtml.js"
     controls: false
 mainfont: "Cambria Math"
 ---
