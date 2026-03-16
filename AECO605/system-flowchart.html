@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Types of Simulation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px 36px 0 36px;
+  overflow: hidden;
+  height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, #aaa 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+h1 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+  margin-bottom: 0;
+  position: relative;
+  z-index: 2;
+}
+
+#svg-wrap {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+#hint {
+  position: fixed;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #aaa;
+  transition: opacity 0.6s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.lbl {
+  font-family: 'Caveat', cursive;
+  font-size: 36px;
+  font-weight: 700;
+  fill: #111;
+  text-anchor: middle;
+  dominant-baseline: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.conn {
+  fill: none;
+  stroke: #222;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.conn.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="svg-wrap">
+<svg id="svg" width="980" height="560" viewBox="0 0 980 560"
+     style="display:block; overflow:visible;">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="128%" height="128%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#111" flood-opacity="1"/>
+    </filter>
+    <filter id="line-wob" x="-5%" y="-15%" width="110%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <!-- Connectors -->
+  <path id="l-sys-act" class="conn" filter="url(#line-wob)"/>
+  <path id="l-sys-mod" class="conn" filter="url(#line-wob)"/>
+  <path id="l-mod-phy" class="conn" filter="url(#line-wob)"/>
+  <path id="l-mod-mat" class="conn" filter="url(#line-wob)"/>
+  <path id="l-mat-ana" class="conn" filter="url(#line-wob)"/>
+  <path id="l-mat-sim" class="conn" filter="url(#line-wob)"/>
+
+  <!-- System (oval) -->
+  <g id="g-system" class="node clickable">
+    <ellipse rx="88" ry="44" fill="#f3f3f3" stroke="#111" stroke-width="3" filter="url(#shadow)"/>
+    <text class="lbl" y="13">System</text>
+  </g>
+
+  <!-- Level 1 -->
+  <g id="g-actual" class="node" opacity="0">
+    <rect x="-100" y="-58" width="200" height="116" rx="8" fill="#e3e3e3" stroke="#111" stroke-width="3" filter="url(#shadow)"/>
+    <text class="lbl" y="-20">Experiment</text>
+    <text class="lbl" y="16">with the</text>
+    <text class="lbl" y="52">actual system</text>
+  </g>
+  <g id="g-model" class="node" opacity="0">
+    <rect x="-100" y="-64" width="200" height="128" rx="8" fill="#e3e3e3" stroke="#111" stroke-width="3" filter="url(#shadow)"/>
+    <text class="lbl" y="-26">Experiment</text>
+    <text class="lbl" y="10">with a model</text>
+    <text class="lbl" y="46">of the system</text>
+  </g>
+
+  <!-- Level 2 -->
+  <g id="g-physical" class="node" opacity="0">
+    <rect x="-100" y="-48" width="200" height="96" rx="8" fill="#d4d4d4" stroke="#111" stroke-width="3" filter="url(#shadow)"/>
+    <text class="lbl" y="-10">Physical</text>
+    <text class="lbl" y="28">model</text>
+  </g>
+  <g id="g-math" class="node" opacity="0">
+    <rect x="-100" y="-48" width="200" height="96" rx="8" fill="#d4d4d4" stroke="#111" stroke-width="3" filter="url(#shadow)"/>
+    <text class="lbl" y="-10">Mathematical</text>
+    <text class="lbl" y="28">model</text>
+  </g>
+
+  <!-- Level 3 -->
+  <g id="g-analytical" class="node" opacity="0">
+    <rect x="-100" y="-48" width="200" height="96" rx="8" fill="#c5c5c5" stroke="#111" stroke-width="3" filter="url(#shadow)"/>
+    <text class="lbl" y="-10">Analytical</text>
+    <text class="lbl" y="28">solution</text>
+  </g>
+  <g id="g-simulation" class="node" opacity="0">
+    <rect x="-100" y="-48" width="200" height="96" rx="8" fill="#c5c5c5" stroke="#111" stroke-width="3" filter="url(#shadow)"/>
+    <text class="lbl" y="13">Simulation</text>
+  </g>
+</svg>
+</div>
+
+<div id="hint">✦ Click the bouncing node to expand ✦</div>
+
+<script>
+const POS = {
+  'g-system':     [490, 68],
+  'g-actual':     [200, 210],
+  'g-model':      [660, 210],
+  'g-physical':   [460, 370],
+  'g-math':       [740, 370],
+  'g-analytical': [580, 510],
+  'g-simulation': [820, 510],
+};
+
+const HALF_H = {
+  'g-system':     44,
+  'g-actual':     58,
+  'g-model':      64,
+  'g-physical':   48,
+  'g-math':       48,
+  'g-analytical': 48,
+  'g-simulation': 48,
+};
+
+const INIT_POS = [490, 290];
+
+const STEPS = [
+  {
+    click:  'g-system',
+    reveal: ['g-actual', 'g-model'],
+    lines:  { 'l-sys-act': ['g-system','g-actual'], 'l-sys-mod': ['g-system','g-model'] },
+    next:   'g-model',
+  },
+  {
+    click:  'g-model',
+    reveal: ['g-physical', 'g-math'],
+    lines:  { 'l-mod-phy': ['g-model','g-physical'], 'l-mod-mat': ['g-model','g-math'] },
+    next:   'g-math',
+  },
+  {
+    click:  'g-math',
+    reveal: ['g-analytical', 'g-simulation'],
+    lines:  { 'l-mat-ana': ['g-math','g-analytical'], 'l-mat-sim': ['g-math','g-simulation'] },
+    next:   null,
+  },
+];
+
+let currentStep = 0;
+
+function g(id) { return document.getElementById(id); }
+function setXY(el, x, y) { el.setAttribute('transform', `translate(${x},${y})`); }
+
+function buildPath(fId, tId) {
+  const [fx, fy] = POS[fId];
+  const [tx, ty] = POS[tId];
+  const y1 = fy + HALF_H[fId] + 2;
+  const y2 = ty - HALF_H[tId] - 4;
+  const my = (y1 + y2) / 2;
+  return `M${fx},${y1} C${fx},${my} ${tx},${my} ${tx},${y2}`;
+}
+
+function showLines(linesMap) {
+  setTimeout(() => {
+    Object.entries(linesMap).forEach(([lid, [f, t]]) => {
+      const el = g(lid);
+      el.setAttribute('d', buildPath(f, t));
+      el.classList.add('show');
+    });
+  }, 350);
+}
+
+function moveTo(el, x1, y1, x2, y2, dur, onDone) {
+  const start = performance.now();
+  function frame(now) {
+    let p = Math.min((now - start) / dur, 1);
+    const e = p < 0.5 ? 4*p*p*p : 1 - Math.pow(-2*p+2,3)/2;
+    setXY(el, x1+(x2-x1)*e, y1+(y2-y1)*e);
+    if (p < 1) requestAnimationFrame(frame);
+    else { setXY(el, x2, y2); if (onDone) onDone(); }
+  }
+  requestAnimationFrame(frame);
+}
+
+function popIn(id) {
+  const el = g(id);
+  const [cx, cy] = POS[id];
+  el.setAttribute('opacity', '1');
+  const startT = performance.now();
+  const dur = 480;
+  function frame(now) {
+    let p = Math.min((now - startT) / dur, 1);
+    let sc, ro;
+    if (p < 0.6)       { sc = 0.25 + 1.25*(p/0.6);        ro = -6*(1-p/0.6); }
+    else if (p < 0.8)  { sc = 1.25 - 0.3*((p-0.6)/0.2);   ro = 0; }
+    else                { sc = 0.95 + 0.05*((p-0.8)/0.2);  ro = 0; }
+    el.setAttribute('transform', `translate(${cx},${cy}) scale(${sc}) rotate(${ro})`);
+    if (p < 1) requestAnimationFrame(frame);
+    else setXY(el, cx, cy);
+  }
+  requestAnimationFrame(frame);
+}
+
+function startWiggle(id, baseX, baseY) {
+  const el = g(id);
+  let alive = true;
+  el._stopWiggle = () => { alive = false; };
+  let t = 0;
+  function frame() {
+    if (!alive) return;
+    t += 0.048;
+    const dy = Math.sin(t * 2) * 4;
+    const sc = 1 + Math.sin(t * 2 + 1) * 0.05;
+    const ro = Math.sin(t) * 2;
+    el.setAttribute('transform', `translate(${baseX},${baseY+dy}) scale(${sc}) rotate(${ro})`);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function stopWiggle(id, finalX, finalY) {
+  const el = g(id);
+  if (el._stopWiggle) { el._stopWiggle(); el._stopWiggle = null; }
+  setXY(el, finalX, finalY);
+}
+
+document.getElementById('svg').addEventListener('click', function(e) {
+  if (currentStep >= STEPS.length) return;
+  const step = STEPS[currentStep];
+  let target = e.target;
+  while (target && target.tagName !== 'svg') {
+    if (target.id === step.click) { executeStep(step); return; }
+    target = target.parentElement;
+  }
+});
+
+function executeStep(step) {
+  currentStep++;
+
+  if (step.click === 'g-system') {
+    stopWiggle('g-system', INIT_POS[0], INIT_POS[1]);
+    const [tx, ty] = POS['g-system'];
+    moveTo(g('g-system'), INIT_POS[0], INIT_POS[1], tx, ty, 650, null);
+  } else {
+    stopWiggle(step.click, POS[step.click][0], POS[step.click][1]);
+  }
+
+  const revealDelay = (step.click === 'g-system') ? 420 : 80;
+  setTimeout(() => {
+    step.reveal.forEach(id => popIn(id));
+    showLines(step.lines);
+  }, revealDelay);
+
+  if (step.next) {
+    setTimeout(() => {
+      const [nx, ny] = POS[step.next];
+      startWiggle(step.next, nx, ny);
+    }, revealDelay + 600);
+  } else {
+    setTimeout(() => { g('hint').style.opacity = '0'; }, 800);
+  }
+}
+
+// Init
+setXY(g('g-system'), INIT_POS[0], INIT_POS[1]);
+startWiggle('g-system', INIT_POS[0], INIT_POS[1]);
+</script>
+</body>
+</html>

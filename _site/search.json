@@ -551,5 +551,68 @@
     "title": "PhD Presentations",
     "section": "Modeling Approach",
     "text": "Modeling Approach"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#types-of-simulation",
+    "href": "AECO605/mcmethods.html#types-of-simulation",
+    "title": "PhD Presentations",
+    "section": "Types of Simulation",
+    "text": "Types of Simulation"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#the-midsquare-method",
+    "href": "AECO605/mcmethods.html#the-midsquare-method",
+    "title": "PhD Presentations",
+    "section": "The Midsquare Method",
+    "text": "The Midsquare Method\nThis is the earliest arithmetic random number generator, proposed by von Neumann and Metropolis in the 1940s. It produces a sequence of pseudo-random integers by repeatedly squaring a seed value and extracting the middle digits.\nProcedure:\n\n\n\nInput: A four-digit seed integer \\(Z_0\\)\n\n\n\n\nSquare and pad: Compute \\(Z_0^2\\), padding with leading zeros to exactly 8 digits\n\\[Z_0^2 \\;\\xrightarrow{\\text{pad}}\\; \\underbrace{d_1 d_2}_{}\\underbrace{\\boxed{d_3 d_4 d_5 d_6}}_{\\text{middle 4}}\\underbrace{d_7 d_8}_{}\\]\nExtract: Take the middle 4 digits \\(\\Rightarrow Z_1\\)\nNormalise: Set \\(\\;U_1 = \\dfrac{Z_1}{10000} \\in (0,1)\\)\nIterate: For \\(i = 1, 2, 3, \\ldots\\)\n\n\\[Z_i \\;=\\; \\text{middle four digits of } Z_{i-1}^{\\,2}\\]\n\\[U_i \\;=\\; \\frac{Z_i}{10000}\\]"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#middle-square-method-procedure",
+    "href": "AECO605/mcmethods.html#middle-square-method-procedure",
+    "title": "PhD Presentations",
+    "section": "Middle Square Method — Procedure",
+    "text": "Middle Square Method — Procedure\n\n\n\nInput: A four-digit seed integer \\(Z_0\\)\n\n\n\n\nSquare and pad: Compute \\(Z_0^2\\), padding with leading zeros to exactly 8 digits\n\\[Z_0^2 \\;\\xrightarrow{\\text{pad}}\\; \\underbrace{d_1 d_2}_{}\\underbrace{\\boxed{d_3 d_4 d_5 d_6}}_{\\text{middle 4}}\\underbrace{d_7 d_8}_{}\\]\nExtract: Take the middle 4 digits \\(\\Rightarrow Z_1\\)\nNormalise: Set \\(\\;U_1 = \\dfrac{Z_1}{10000} \\in (0,1)\\)"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#linear-congruential-generator-lcg",
+    "href": "AECO605/mcmethods.html#linear-congruential-generator-lcg",
+    "title": "PhD Presentations",
+    "section": "Linear Congruential Generator (LCG)",
+    "text": "Linear Congruential Generator (LCG)\nIntroduced by Lehmer (1951), LCGs are the most widely used class of pseudo-random number generators. They produce a sequence of integers via a simple linear recursion modulo a large integer \\(m\\).\nProcedure:\n\n\n\nInput: Seed \\(Z_0\\), multiplier \\(a\\), increment \\(c\\), modulus \\(m\\)\n\n\n\nThe recursive formula is:\n\n\\[Z_i = (a \\cdot Z_{i-1} + c) \\pmod{m}\\]\n\nThe \\(U(0,1)\\) output is \\(U_i = Z_i / m \\in [0,1)\\)."
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#lcg-properties",
+    "href": "AECO605/mcmethods.html#lcg-properties",
+    "title": "PhD Presentations",
+    "section": "LCG-Properties",
+    "text": "LCG-Properties\nThe looping behavior of the LCG is inevitable. Whenever \\(Z_i\\) takes on a value it has had previously, exactly the same sequence of values is generated, and this cycle repeats itself endlessly.\n\nThe length of such cycle is called period of a generator. For LCGs, the maximum attainable period is at most \\(m\\). If the period of a generator is \\(m\\), then the generator is said to have full period"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#period-of-a-generator",
+    "href": "AECO605/mcmethods.html#period-of-a-generator",
+    "title": "PhD Presentations",
+    "section": "Period of a Generator",
+    "text": "Period of a Generator\nThe looping behavior of the LCG is inevitable. Whenever \\(Z_i\\) takes on a value it has had previously, exactly the same sequence of values is generated, and this cycle repeats itself endlessly.\n\nThe length of such cycle is called period of a generator. For LCGs, the maximum attainable period is at most \\(m\\). If the period of a generator is \\(m\\), then the generator is said to have full period"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#choosing-lcg-with-full-period",
+    "href": "AECO605/mcmethods.html#choosing-lcg-with-full-period",
+    "title": "PhD Presentations",
+    "section": "Choosing LCG with full period",
+    "text": "Choosing LCG with full period\n\nHull-Dobell Theorem (1962)\nThe LCG has full period if and only if the following three conditions hold:\n\n\\(\\gcd(c, m) = 1\\)\n\\(p \\mid m \\implies p \\mid (a - 1) \\quad \\text{for all prime } p\\)\n\\(4 \\mid m \\implies 4 \\mid (a - 1)\\)\n\n\nChoose a higher value of \\(m \\ge 10^9\\)"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#types-of-simulation-models",
+    "href": "AECO605/mcmethods.html#types-of-simulation-models",
+    "title": "PhD Presentations",
+    "section": "Types of Simulation Models",
+    "text": "Types of Simulation Models"
+  },
+  {
+    "objectID": "AECO605/mcmethods.html#variants-of-the-lcg",
+    "href": "AECO605/mcmethods.html#variants-of-the-lcg",
+    "title": "PhD Presentations",
+    "section": "Variants of the LCG",
+    "text": "Variants of the LCG\nThe general Linear Congruential Generator recursion is:\n\n\\[Z_i = (a \\cdot Z_{i-1} + c) \\pmod{m}\\]\n\nThis is called the Mixed Congruential Generator — it uses both a multiplier \\(a\\) and a non-zero increment \\(c\\).\nBy restricting the parameters, two important special cases arise:\n\n\n\nMultiplicative Congruential Generator\n\n\nSet \\(c = 0\\): \\[Z_i = a \\cdot Z_{i-1} \\pmod{m}\\]\n\nSimpler and faster; widely used in practice\nCannot achieve full period (since \\(Z_i = 0\\) is absorbing when \\(c = 0\\))\nSeed \\(Z_0 \\neq 0\\) is required\n\n\n\n\n\n\n\nAdditive Congruential Generator\n\n\nSet \\(a = 1\\): \\[Z_i = (Z_{i-1} + c) \\pmod{m}\\]\n\nEquivalent to repeatedly adding a constant increment \\(c\\)\nPoor statistical properties; rarely used alone"
   }
 ]

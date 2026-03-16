@@ -12,10 +12,6 @@ format:
     height: 720
     embed-resources: true 
     self-contained: true
-    html-math-method: 
-      method: mathjax
-      url: "mathjax/tex-chtml.js"
-    controls: false
 mainfont: "Cambria Math"
 ---
 
@@ -44,7 +40,7 @@ mainfont: "Cambria Math"
       AECO 605 Operations Research (2+1)
     </div>
     <div class="main-title">
-      Monte Carlo Simulation Methods
+      Simulation - Random Numbers and Variables Generation, Monte Carlo Methods
     </div>
   </div>
 
@@ -66,7 +62,26 @@ mainfont: "Cambria Math"
 </section>
 ```
 
-# Introduction
+# INTRODUCTION
+
+## Types of Simulation
+```{=html}
+<iframe src="system-flowchart.html"
+        width="1280" height="720"
+        style="border:none; display:block; margin:0 auto;"
+        scrolling="no">
+</iframe>
+```
+
+## Types of Simulation Models
+```{=html}
+<iframe src="simulation-types.html"
+        width="1280" height="720"
+        style="border:none; display:block; margin:0 auto;"
+        scrolling="no">
+</iframe>
+```
+
 
 ## Steps in Sound Simulation Study
 ```{=html}
@@ -76,3 +91,122 @@ mainfont: "Cambria Math"
         scrolling="no">
 </iframe>
 ```
+
+# RANDOM NUMBER GENERATORS
+
+## The Midsquare Method{style="text-align: justify;" .scrollable}
+This is the earliest arithmetic random number generator, proposed by von Neumann and Metropolis in the 1940s. It produces a sequence of pseudo-random integers by repeatedly squaring a seed value and extracting the middle digits.
+
+**Procedure:**
+
+::: {.callout-note appearance="minimal"}
+
+**Input:** A four-digit seed integer $Z_0$
+
+:::
+
+
+1. **Square and pad:** Compute $Z_0^2$, padding with leading zeros to exactly **8 digits**
+
+   $$Z_0^2 \;\xrightarrow{\text{pad}}\; \underbrace{d_1 d_2}_{}\underbrace{\boxed{d_3 d_4 d_5 d_6}}_{\text{middle 4}}\underbrace{d_7 d_8}_{}$$
+
+2. **Extract:** Take the **middle 4 digits** $\Rightarrow Z_1$
+
+3. **Normalise:** Set $\;U_1 = \dfrac{Z_1}{10000} \in (0,1)$
+
+4. **Iterate:** For $i = 1, 2, 3, \ldots$
+
+   ::: {style="margin-left: 2em; border-left: 3px solid #4a9eff; padding-left: 1em;"}
+
+   $$Z_i \;=\; \text{middle four digits of } Z_{i-1}^{\,2}$$
+
+   $$U_i \;=\; \frac{Z_i}{10000}$$
+  
+   :::
+   
+## Linear Congruential Generator (LCG){style="text-align: justify;" .scrollable}   
+
+Introduced by Lehmer (1951), LCGs are the most widely used class of pseudo-random number generators. They produce a sequence of integers via a simple linear recursion modulo a large integer $m$.
+
+**Procedure:**
+
+::: {.callout-note appearance="minimal"}
+
+**Input:** Seed $Z_0$, multiplier $a$, increment $c$, modulus $m$
+
+:::
+
+The recursive formula is:
+
+::: {style="border-left: 3px solid #4a9eff; padding-left: 1em; margin: 0.5em 0;"}
+
+$$Z_i = (a \cdot Z_{i-1} + c) \pmod{m}$$
+
+:::
+
+The $U(0,1)$ output is $U_i = Z_i / m \in [0,1)$.
+
+
+## Period of a Generator{style="text-align: justify;" .scrollable}
+
+The looping behavior of the LCG is inevitable. Whenever $Z_i$ takes on a value it has had previously, exactly the same
+sequence of values is generated, and this cycle repeats itself endlessly.
+
+::: {style="border-left: 5px solid #311B92; background-color: #f9f9fb; padding: 1em 1.5em; margin: 1.5em 0; border-radius: 0 6px 6px 0;"}
+
+
+The length of such cycle is called period of a generator. For LCGs, the maximum attainable period is at most $m$. If the period of a generator is $m$, then the generator is said to have full period
+
+:::
+
+## Choosing LCG with full period{.scrollable}
+
+::: {style="border-left: 5px solid #311B92; background-color: #f9f9fb; padding: 1em 1.5em; margin: 1.5em 0; border-radius: 0 6px 6px 0;"}
+
+**Hull-Dobell Theorem (1962)**
+
+The LCG has full period if and only if the following three conditions hold:
+
+1. $\gcd(c, m) = 1$
+
+2. $p \mid m \implies p \mid (a - 1) \quad \text{for all prime } p$
+
+
+3. $4 \mid m \implies 4 \mid (a - 1)$
+
+:::
+
+Choose a higher value of $m \ge 10^9$
+
+## Variants of the LCG {style="text-align: justify;" .scrollable}
+
+The general **Linear Congruential Generator** recursion is:
+
+::: {style="border-left: 3px solid #4a9eff; padding-left: 1em; margin: 0.5em 0;"}
+$$Z_i = (a \cdot Z_{i-1} + c) \pmod{m}$$
+:::
+
+This is called the **Mixed Congruential Generator** — it uses both a multiplier $a$ and a non-zero increment $c$.
+
+By restricting the parameters, two important special cases arise:
+
+::: {.callout-note icon=false}
+## Multiplicative Congruential Generator
+Set $c = 0$:
+$$Z_i = a \cdot Z_{i-1} \pmod{m}$$
+
+- Simpler and faster; widely used in practice
+- Cannot achieve full period (since $Z_i = 0$ is absorbing when $c = 0$)
+- Seed $Z_0 \neq 0$ is required
+
+:::
+
+::: {.callout-warning icon=false}
+## Additive Congruential Generator  
+Set $a = 1$:
+$$Z_i = (Z_{i-1} + c) \pmod{m}$$
+
+- Equivalent to repeatedly adding a constant increment $c$
+- Poor statistical properties; rarely used alone
+
+:::

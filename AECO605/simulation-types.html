@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Types of Simulation Models</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 28px 16px 28px;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Caveat', cursive;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, #aaa 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+#center-node {
+  position: relative;
+  z-index: 5;
+  background: #ececec;
+  border: 3px solid #111;
+  border-radius: 50%;
+  box-shadow: 4px 4px 0 #111;
+  padding: 10px 36px;
+  text-align: center;
+}
+#center-node span {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #111;
+}
+
+#conn-svg {
+  display: block;
+  width: 100%;
+  height: 52px;
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+}
+
+.conn-line {
+  fill: none;
+  stroke: #333;
+  stroke-width: 2.6;
+  stroke-dasharray: 6 4;
+  stroke-linecap: round;
+}
+
+#cards-row {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+  width: 100%;
+  flex: 1;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+}
+
+.card {
+  flex: 1;
+  background: #f0efeb;
+  border: 3px solid #111;
+  border-radius: 10px;
+  padding: 16px 18px 14px 18px;
+  box-shadow: 5px 5px 0 #111;
+  min-width: 0;
+}
+
+.vs-badge {
+  display: inline-block;
+  background: #111;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 1px 9px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.card-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  border-bottom: 2px dashed #aaa;
+  padding-bottom: 5px;
+  font-style: italic;
+}
+
+.type-block { margin-bottom: 10px; }
+
+.type-label {
+  font-size: 23px;
+  font-weight: 700;
+  color: #222;
+  font-style: italic;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.type-desc {
+  font-size: 20px;
+  color: #333;
+  line-height: 1.3;
+}
+
+.example-box {
+  background: #e2e1dc;
+  border: 2px solid #bbb;
+  border-radius: 6px;
+  padding: 5px 11px;
+  margin-top: 6px;
+  font-size: 19px;
+  color: #444;
+  line-height: 1.3;
+}
+.example-box::before {
+  content: '✎ e.g. ';
+  font-weight: 700;
+  color: #111;
+}
+</style>
+</head>
+<body>
+
+<div id="center-node">
+  <span>Types of<br>Simulation</span>
+</div>
+
+<svg id="conn-svg">
+  <defs>
+    <filter id="line-wob" x="-5%" y="-20%" width="110%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="cards-row">
+  <div class="card" id="card-sd">
+    <div class="vs-badge">1 of 3</div>
+    <div class="card-title">Static vs. Dynamic</div>
+    <div class="type-block">
+      <span class="type-label">Static:</span>
+      <div class="type-desc">Represents a system at a fixed point in time — time plays no role.</div>
+      <div class="example-box">Monte Carlo models (e.g., estimating π by random sampling)</div>
+    </div>
+    <div class="type-block">
+      <span class="type-label">Dynamic:</span>
+      <div class="type-desc">Represents a system as it evolves over time.</div>
+      <div class="example-box">Conveyor belt system in a factory</div>
+    </div>
+  </div>
+
+  <div class="card" id="card-det">
+    <div class="vs-badge">2 of 3</div>
+    <div class="card-title">Deterministic vs. Stochastic</div>
+    <div class="type-block">
+      <span class="type-label">Deterministic:</span>
+      <div class="type-desc">No random components; output is fully determined by inputs.</div>
+      <div class="example-box">System of differential equations for a chemical reaction</div>
+    </div>
+    <div class="type-block">
+      <span class="type-label">Stochastic:</span>
+      <div class="type-desc">Contains random inputs; output is itself random — an estimate only.</div>
+      <div class="example-box">Queueing &amp; inventory systems</div>
+    </div>
+  </div>
+
+  <div class="card" id="card-cd">
+    <div class="vs-badge">3 of 3</div>
+    <div class="card-title">Continuous vs. Discrete</div>
+    <div class="type-block">
+      <span class="type-label">Discrete:</span>
+      <div class="type-desc">State changes at specific event times.</div>
+      <div class="example-box">Traffic flow tracking individual cars</div>
+    </div>
+    <div class="type-block">
+      <span class="type-label">Continuous:</span>
+      <div class="type-desc">State changes continuously; described by differential equations.</div>
+      <div class="example-box">Aggregate traffic flow model</div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', () => {
+  const svg = document.getElementById('conn-svg');
+  const svgRect = svg.getBoundingClientRect();
+  const nodeRect = document.getElementById('center-node').getBoundingClientRect();
+  const nodeBottomX = nodeRect.left + nodeRect.width / 2 - svgRect.left;
+  const svgH = svgRect.height;
+  const my = svgH * 0.38;
+
+  ['card-sd', 'card-det', 'card-cd'].forEach(id => {
+    const cr = document.getElementById(id).getBoundingClientRect();
+    const tx = cr.left + cr.width / 2 - svgRect.left;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${nodeBottomX},0 L${nodeBottomX},${my} L${tx},${my} L${tx},${svgH}`);
+    path.setAttribute('class', 'conn-line');
+    path.setAttribute('filter', 'url(#line-wob)');
+    svg.appendChild(path);
+  });
+});
+</script>
+</body>
+</html>
