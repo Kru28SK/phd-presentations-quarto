@@ -10,7 +10,8 @@ format:
     navigation-mode: vertical
     width: 1280
     height: 720
-    embed-resources: true 
+    embed-resources: true
+    self-contained: true
     controls: true
 mainfont: "Cambria Math"
 ---
