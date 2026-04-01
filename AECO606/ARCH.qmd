@@ -7,7 +7,7 @@ format:
     margin: 0.05
     slide-number: true
     transition: slide
-    navigation-mode: vertical
+    navigation-mode: linear
     width: 1280
     height: 720
     embed-resources: true
