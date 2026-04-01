@@ -11,8 +11,7 @@ format:
     width: 1280
     height: 720
     embed-resources: true 
-    self-contained: true
-    controls: false
+    controls: true
 mainfont: "Cambria Math"
 ---
 

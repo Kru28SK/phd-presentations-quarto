@@ -614,5 +614,250 @@
     "title": "PhD Presentations",
     "section": "Variants of the LCG",
     "text": "Variants of the LCG\nThe general Linear Congruential Generator recursion is:\n\n\\[Z_i = (a \\cdot Z_{i-1} + c) \\pmod{m}\\]\n\nThis is called the Mixed Congruential Generator — it uses both a multiplier \\(a\\) and a non-zero increment \\(c\\).\nBy restricting the parameters, two important special cases arise:\n\n\n\nMultiplicative Congruential Generator\n\n\nSet \\(c = 0\\): \\[Z_i = a \\cdot Z_{i-1} \\pmod{m}\\]\n\nSimpler and faster; widely used in practice\nCannot achieve full period (since \\(Z_i = 0\\) is absorbing when \\(c = 0\\))\nSeed \\(Z_0 \\neq 0\\) is required\n\n\n\n\n\n\n\nAdditive Congruential Generator\n\n\nSet \\(a = 1\\): \\[Z_i = (Z_{i-1} + c) \\pmod{m}\\]\n\nEquivalent to repeatedly adding a constant increment \\(c\\)\nPoor statistical properties; rarely used alone"
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#what-is-response-surface-methodology",
+    "href": "STAT604/RSM_CCD.html#what-is-response-surface-methodology",
+    "title": "PhD Presentations",
+    "section": "What is Response Surface Methodology?",
+    "text": "What is Response Surface Methodology?\nResponse surface methodology (RSM) is a collection of statistical and mathematical techniques useful for developing, improving, and optimizing processes.\nIn general, suppose the experimenter is concerned with a system involving a response \\(y\\) that depends on controllable input variables \\(\\xi_1, \\xi_2, \\ldots, \\xi_k\\). The true relationship is:\n\\[y = f(\\xi_1, \\xi_2, \\ldots, \\xi_k) + \\varepsilon \\tag{1}\\]\nwhere \\(f\\) is an unknown function and \\(\\varepsilon\\) is a random error term with \\(E(\\varepsilon) = 0\\) and \\(\\text{Var}(\\varepsilon) = \\sigma^2\\).\nTaking the expectation:\n\\[E(y) \\equiv \\eta = f(\\xi_1, \\xi_2, \\ldots, \\xi_k)\\]\nThe surface represented by \\(\\eta = f(\\xi_1, \\xi_2, \\ldots, \\xi_k)\\) is called the response surface."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#natural-and-coded-variables",
+    "href": "STAT604/RSM_CCD.html#natural-and-coded-variables",
+    "title": "PhD Presentations",
+    "section": "Natural and Coded Variables",
+    "text": "Natural and Coded Variables\nThe natural variables \\(\\xi_1, \\xi_2, \\ldots, \\xi_k\\) are expressed in natural units of measurement (°C, psi, g/L, etc.).\nIn RSM, it is convenient to transform to coded variables \\(x_1, x_2, \\ldots, x_k\\), defined to be dimensionless with mean zero:\n\\[x_i = \\frac{\\xi_i - \\bar{\\xi}_i}{\\Delta\\xi_i}, \\quad i = 1, 2, \\ldots, k\\]\nwhere \\(\\bar{\\xi}_i\\) is the center point and \\(\\Delta\\xi_i\\) is the step size in the \\(i\\)-th natural variable.\nThe response function in coded variables becomes:\n\\[\\eta = f(x_1, x_2, \\ldots, x_k)\\]"
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#approximating-response-functions",
+    "href": "STAT604/RSM_CCD.html#approximating-response-functions",
+    "title": "PhD Presentations",
+    "section": "Approximating Response Functions",
+    "text": "Approximating Response Functions\nSince \\(f\\) is unknown, we approximate it with low-order polynomials.\nFirst-Order Model (for \\(k\\) variables): \\[\\eta = \\beta_0 + \\sum_{i=1}^k \\beta_i x_i \\tag{2}\\]\nFirst-Order Model with Interaction (for \\(k = 2\\)): \\[\\eta = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + \\beta_{12} x_1 x_2 \\tag{3}\\]\nSecond-Order Model (for \\(k\\) variables): \\[\\eta = \\beta_0 + \\sum_{i=1}^k \\beta_i x_i + \\sum_{i=1}^k \\beta_{ii} x_i^2 + \\sum\\sum_{i &lt; j} \\beta_{ij} x_i x_j \\tag{4}\\]\nThe second-order model is widely used because it is very flexible, easy to estimate via least squares, and there is considerable practical experience indicating that it works well for real response surface problems."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#the-sequential-nature-of-rsm",
+    "href": "STAT604/RSM_CCD.html#the-sequential-nature-of-rsm",
+    "title": "PhD Presentations",
+    "section": "The Sequential Nature of RSM",
+    "text": "The Sequential Nature of RSM\nRSM is inherently sequential:\nPhase 0 — Screening: Identify which factors truly influence the response. Use \\(2^{k-p}\\) fractional factorials or Plackett–Burman designs.\nPhase I — First-Order Exploration: Fit a first-order model. If adequate, use the method of steepest ascent (or descent) to move toward the optimum region.\nPhase II — Second-Order Modeling: When curvature becomes important, fit a second-order model using designs such as the Central Composite Design (CCD) or Box–Behnken design. Perform optimization via canonical or ridge analysis.\n\n\n\n\n\n\nThe RSM Philosophy\n\n\nNever undertake a response surface analysis until a screening experiment has identified the important factors. Budget for all phases — screening, steepest ascent, and second-order optimization."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#objectives-of-rsm",
+    "href": "STAT604/RSM_CCD.html#objectives-of-rsm",
+    "title": "PhD Presentations",
+    "section": "Objectives of RSM",
+    "text": "Objectives of RSM\nResponse surface methodology is useful in solving three broad categories of industrial problems:\nMapping: Approximate the response surface over a region of interest so that the experimenter can predict the response for any set of operating conditions within that region.\nOptimization: Determine the conditions that optimize the response — finding the maximum yield, minimum defect rate, or the settings that bring a response closest to a target value.\nRobustness: Select operating conditions so that the response is insensitive to hard-to-control noise variables. This connects RSM to the broader field of robust parameter design."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#the-linear-regression-model",
+    "href": "STAT604/RSM_CCD.html#the-linear-regression-model",
+    "title": "PhD Presentations",
+    "section": "The Linear Regression Model",
+    "text": "The Linear Regression Model\nThe general linear regression model relates the response \\(y\\) to \\(p\\) regressors:\n\\[y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + \\cdots + \\beta_p x_p + \\varepsilon\\]\nIn matrix form with \\(N\\) observations:\n\\[\\mathbf{y} = \\mathbf{X}\\boldsymbol{\\beta} + \\boldsymbol{\\varepsilon} \\tag{5}\\]\nwhere \\(\\mathbf{y}\\) is \\(N \\times 1\\), \\(\\mathbf{X}\\) is \\(N \\times p'\\) (with \\(p' = p + 1\\)), \\(\\boldsymbol{\\beta}\\) is \\(p' \\times 1\\), and \\(\\boldsymbol{\\varepsilon}\\) is \\(N \\times 1\\).\nThe least squares estimator is: \\[\\hat{\\boldsymbol{\\beta}} = (\\mathbf{X}'\\mathbf{X})^{-1}\\mathbf{X}'\\mathbf{y} \\tag{6}\\]\nwith the covariance matrix: \\[\\text{Cov}(\\hat{\\boldsymbol{\\beta}}) = \\sigma^2 (\\mathbf{X}'\\mathbf{X})^{-1}\\]"
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#hypothesis-testing",
+    "href": "STAT604/RSM_CCD.html#hypothesis-testing",
+    "title": "PhD Presentations",
+    "section": "Hypothesis Testing",
+    "text": "Hypothesis Testing\nTest for Significance of Regression:\n\\(H_0: \\beta_1 = \\beta_2 = \\cdots = \\beta_p = 0\\)\n\\[F_0 = \\frac{SS_{\\text{Regression}} / p}{SS_{\\text{Residual}} / (N - p - 1)} = \\frac{MS_R}{MS_E}\\]\nUnder \\(H_0\\), \\(F_0 \\sim F_{p,\\, N-p-1}\\).\nTest on Individual Coefficients:\n\\[t_0 = \\frac{\\hat{\\beta}_j}{\\text{se}(\\hat{\\beta}_j)} = \\frac{\\hat{\\beta}_j}{\\sqrt{\\hat{\\sigma}^2 C_{jj}}}\\]\nwhere \\(C_{jj}\\) is the \\(j\\)-th diagonal element of \\((\\mathbf{X}'\\mathbf{X})^{-1}\\).\nUnder \\(H_0: \\beta_j = 0\\), \\(\\; t_0 \\sim t_{N-p-1}\\)."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#model-adequacy-residual-analysis-and-lack-of-fit",
+    "href": "STAT604/RSM_CCD.html#model-adequacy-residual-analysis-and-lack-of-fit",
+    "title": "PhD Presentations",
+    "section": "Model Adequacy: Residual Analysis and Lack of Fit",
+    "text": "Model Adequacy: Residual Analysis and Lack of Fit\nResiduals: \\(e_i = y_i - \\hat{y}_i\\)\nInternally Studentized Residuals: \\(r_i = \\dfrac{e_i}{\\sqrt{\\hat{\\sigma}^2(1 - h_{ii})}}\\)\nwhere \\(h_{ii}\\) is the \\(i\\)-th diagonal element of the hat matrix \\(\\mathbf{H} = \\mathbf{X}(\\mathbf{X}'\\mathbf{X})^{-1}\\mathbf{X}'\\).\nTesting for Lack of Fit: Partition \\(SS_E\\) into pure error (\\(SS_{PE}\\)) and lack of fit (\\(SS_{LOF}\\)):\n\\[F_{\\text{LOF}} = \\frac{SS_{LOF} / (m - p - 1)}{SS_{PE} / (N - m)}\\]\nwhere \\(m\\) is the number of distinct design points.\n\n\n\n\n\n\nDiagnostics Matter\n\n\nA significant lack-of-fit test is a strong signal that the current model is inadequate and a higher-order model (or a transformation) should be considered."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#fitting-a-second-order-model",
+    "href": "STAT604/RSM_CCD.html#fitting-a-second-order-model",
+    "title": "PhD Presentations",
+    "section": "Fitting a Second-Order Model",
+    "text": "Fitting a Second-Order Model\nThe second-order model for \\(k\\) factors is:\n\\[y = \\beta_0 + \\sum_{i=1}^k \\beta_i x_i + \\sum_{i=1}^k \\beta_{ii} x_i^2 + \\sum\\sum_{i&lt;j} \\beta_{ij} x_i x_j + \\varepsilon\\]\nIn matrix notation: \\(\\quad \\hat{y}(\\mathbf{x}) = \\hat{\\beta}_0 + \\mathbf{x}'\\hat{\\mathbf{b}} + \\mathbf{x}'\\hat{\\mathbf{B}}\\mathbf{x}\\)\nwhere:\n\n\\(\\hat{\\mathbf{b}}\\) is the \\(k \\times 1\\) vector of estimated first-order coefficients\n\\(\\hat{\\mathbf{B}}\\) is the \\(k \\times k\\) symmetric matrix with \\(\\hat{\\beta}_{ii}\\) on the diagonal and \\(\\hat{\\beta}_{ij}/2\\) off-diagonal\n\nThe number of parameters is \\(p = 1 + 2k + k(k-1)/2\\), so at least this many distinct design points are needed with at least three levels per factor."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#the-2k-factorial-design",
+    "href": "STAT604/RSM_CCD.html#the-2k-factorial-design",
+    "title": "PhD Presentations",
+    "section": "The \\(2^k\\) Factorial Design",
+    "text": "The \\(2^k\\) Factorial Design\nIn a \\(2^k\\) factorial design, each of \\(k\\) factors is investigated at two levels (coded as \\(-1\\) and \\(+1\\)). The design has \\(2^k\\) treatment combinations.\nFor the \\(2^2\\) design with factors \\(A\\) and \\(B\\):\n\n\n\nRun\nx1\nx2\nLabel\n\n\n\n\n1\n−1\n−1\n(1)\n\n\n2\n+1\n−1\na\n\n\n3\n−1\n+1\nb\n\n\n4\n+1\n+1\nab\n\n\n\nThe regression model is \\(y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + \\beta_{12} x_1 x_2 + \\varepsilon\\), and the \\(\\mathbf{X}'\\mathbf{X}\\) matrix is \\(4\\mathbf{I}_4\\). Hence all regression coefficients have equal variance \\(\\sigma^2 / 4\\)."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#properties-of-2k-designs",
+    "href": "STAT604/RSM_CCD.html#properties-of-2k-designs",
+    "title": "PhD Presentations",
+    "section": "Properties of \\(2^k\\) Designs",
+    "text": "Properties of \\(2^k\\) Designs\nThe \\(2^k\\) design is D-optimal for fitting the first-order model (with or without interactions). This means:\n\nIt maximizes \\(|\\mathbf{X}'\\mathbf{X}|\\), minimizing the joint confidence region for all coefficients.\nThe variance of any coefficient is \\(\\text{Var}(\\hat{\\beta}) = \\sigma^2 / N\\), where \\(N\\) is the total number of runs.\nAll regression coefficients are uncorrelated.\n\nThese properties make \\(2^k\\) designs the ideal building blocks for RSM — they are used directly in screening, and they form the factorial portion of the Central Composite Design."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#adding-center-points-to-the-2k-design",
+    "href": "STAT604/RSM_CCD.html#adding-center-points-to-the-2k-design",
+    "title": "PhD Presentations",
+    "section": "Adding Center Points to the \\(2^k\\) Design",
+    "text": "Adding Center Points to the \\(2^k\\) Design\nAdding \\(n_c\\) center runs (all factors at 0) to a \\(2^k\\) design enables a test for curvature without affecting the estimation of main effects or interactions.\nThe test statistic is:\n\\[F_0 = \\frac{SS_{\\text{curvature}}}{MS_E} = \\frac{n_F\\, n_c\\, (\\bar{y}_F - \\bar{y}_C)^2 / (n_F + n_c)}{MS_E}\\]\nwhere \\(\\bar{y}_F\\) is the average of the factorial runs and \\(\\bar{y}_C\\) is the average of the center runs.\nUnder \\(H_0\\) (no pure quadratic curvature): \\(F_0 \\sim F_{1, \\, N - p - 1}\\).\n\n\n\n\n\n\nWhy Center Points?\n\n\nA significant \\(F_0\\) signals that the first-order model is inadequate and quadratic terms are needed — this is the trigger for augmenting to a CCD."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#the-2k-p-fractional-factorial",
+    "href": "STAT604/RSM_CCD.html#the-2k-p-fractional-factorial",
+    "title": "PhD Presentations",
+    "section": "The \\(2^{k-p}\\) Fractional Factorial",
+    "text": "The \\(2^{k-p}\\) Fractional Factorial\nWhen \\(k\\) is large, a full \\(2^k\\) factorial is too expensive. A \\(2^{k-p}\\) fractional factorial runs only \\(2^{k-p}\\) treatment combinations — a \\(1/2^p\\) fraction of the full design.\nKey concepts:\n\nDefining relation: \\(I = \\text{generators}\\) — specifies which effects are aliased.\nResolution: The minimum word length in the defining relation.\n\nResolution III: Main effects aliased with two-factor interactions.\nResolution IV: Main effects clear of two-factor interactions, but two-factor interactions aliased with each other.\nResolution V: Main effects and two-factor interactions estimable independently.\n\nSparsity of effects principle: Most systems are dominated by main effects and low-order interactions.\n\nThe factorial portion of a CCD must have resolution V or higher to independently estimate all linear and interaction terms."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#design-resolution-and-aliasing",
+    "href": "STAT604/RSM_CCD.html#design-resolution-and-aliasing",
+    "title": "PhD Presentations",
+    "section": "Design Resolution and Aliasing",
+    "text": "Design Resolution and Aliasing\n\n\n\nResolution\nAlias Structure\nUse in RSM\n\n\n\n\nIII\nMain effects aliased with 2FI\nScreening only\n\n\nIV\n2FI aliased with other 2FI\nScreening with caution\n\n\nV\nMain & 2FI estimable; 2FI aliased with 3FI\nFactorial portion of CCD\n\n\n\nThe projection property of fractional factorials means that every \\(2^{k-p}\\) design contains complete factorials in certain subsets of the original factors — this is valuable for discovering which factors matter most."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#the-method-of-steepest-ascent",
+    "href": "STAT604/RSM_CCD.html#the-method-of-steepest-ascent",
+    "title": "PhD Presentations",
+    "section": "The Method of Steepest Ascent",
+    "text": "The Method of Steepest Ascent\nWhen the first-order model \\(\\hat{y} = b_0 + b_1 x_1 + b_2 x_2 + \\cdots + b_k x_k\\) is adequate, the path of steepest ascent moves the experimenter toward improved response values.\nThe procedure maximizes \\(\\hat{y}\\) subject to the constraint \\(\\sum_{i=1}^k x_i^2 = r^2\\). Using Lagrange multipliers:\n\\[L = b_0 + \\sum_{i=1}^k b_i x_i - \\lambda\\left(\\sum_{i=1}^k x_i^2 - r^2\\right)\\]\nSetting \\(\\partial L / \\partial x_j = 0\\):\n\\[x_j = \\frac{b_j}{2\\lambda} = \\rho\\, b_j, \\quad j = 1, 2, \\ldots, k \\tag{7}\\]\nThe coordinates along the path are proportional to the regression coefficients. The direction matches the sign of each coefficient; the movement in \\(x_j\\) is proportional to \\(|b_j|\\)."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#practical-steps-in-steepest-ascent",
+    "href": "STAT604/RSM_CCD.html#practical-steps-in-steepest-ascent",
+    "title": "PhD Presentations",
+    "section": "Practical Steps in Steepest Ascent",
+    "text": "Practical Steps in Steepest Ascent\n\nFit a first-order model using a \\(2^k\\) (or \\(2^{k-p}\\)) design with center runs.\nCompute the path of steepest ascent from Equation 7 — choose a base step size in the most important variable and scale the others proportionally.\nConduct experimental runs along the path. Improvement should be observed initially but will eventually diminish.\nWhen two consecutive runs show declining response, select that region as the base for a new first-order experiment — a mid-course correction.\nIf curvature is detected (significant center-point test), augment the design with axial points to form a Central Composite Design and fit a second-order model."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#the-second-order-response-surface",
+    "href": "STAT604/RSM_CCD.html#the-second-order-response-surface",
+    "title": "PhD Presentations",
+    "section": "The Second-Order Response Surface",
+    "text": "The Second-Order Response Surface\nThe fitted second-order model in matrix form is:\n\\[\\hat{y}(\\mathbf{x}) = \\hat{\\beta}_0 + \\mathbf{x}'\\hat{\\mathbf{b}} + \\mathbf{x}'\\hat{\\mathbf{B}}\\mathbf{x} \\tag{8}\\]\nwhere \\(\\hat{\\mathbf{B}}\\) is the \\(k \\times k\\) matrix of estimated second-order coefficients.\nFinding the Stationary Point: Differentiating Equation 8 with respect to \\(\\mathbf{x}\\) and setting to zero:\n\\[\\frac{\\partial \\hat{y}}{\\partial \\mathbf{x}} = \\hat{\\mathbf{b}} + 2\\hat{\\mathbf{B}}\\mathbf{x} = \\mathbf{0}\\]\n\\[\\therefore \\quad \\mathbf{x}_s = -\\frac{1}{2}\\hat{\\mathbf{B}}^{-1}\\hat{\\mathbf{b}} \\tag{9}\\]\nThe predicted response at the stationary point is \\(\\hat{y}_s = \\hat{\\beta}_0 + \\frac{1}{2}\\mathbf{x}_s'\\hat{\\mathbf{b}}\\)."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#canonical-analysis",
+    "href": "STAT604/RSM_CCD.html#canonical-analysis",
+    "title": "PhD Presentations",
+    "section": "Canonical Analysis",
+    "text": "Canonical Analysis\nThe nature of the stationary point is determined by the eigenvalues of \\(\\hat{\\mathbf{B}}\\).\nThe canonical form of the second-order model is obtained by the transformation \\(\\mathbf{x} - \\mathbf{x}_s = \\mathbf{M}\\mathbf{w}\\), where \\(\\mathbf{M}\\) is the orthogonal matrix of eigenvectors:\n\\[\\hat{y} = \\hat{y}_s + \\sum_{i=1}^k \\lambda_i w_i^2 \\tag{10}\\]\nwhere \\(\\lambda_1, \\lambda_2, \\ldots, \\lambda_k\\) are the eigenvalues of \\(\\hat{\\mathbf{B}}\\).\n\n\n\nEigenvalues\nNature of Stationary Point\nSurface Shape\n\n\n\n\nAll λi &lt; 0\nMaximum\nMound / Hill\n\n\nAll λi &gt; 0\nMinimum\nValley / Bowl\n\n\nMixed signs\nSaddle Point\nMountain pass\n\n\nSome λi ≈ 0\nRidge / Flat\nStationary / Rising ridge"
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#ridge-analysis",
+    "href": "STAT604/RSM_CCD.html#ridge-analysis",
+    "title": "PhD Presentations",
+    "section": "Ridge Analysis",
+    "text": "Ridge Analysis\nWhen the stationary point lies far from the design region, or the surface is a saddle, ridge analysis is more informative than the stationary point alone.\nRidge analysis maximizes (or minimizes) \\(\\hat{y}\\) on spheres of increasing radius \\(R\\) from the design center:\n\\[\\text{Maximize } \\hat{y}(\\mathbf{x}) \\quad \\text{subject to } \\mathbf{x}'\\mathbf{x} = R^2\\]\nUsing Lagrange multipliers:\n\\[(\\hat{\\mathbf{B}} - \\mu\\mathbf{I})\\mathbf{x} = -\\frac{1}{2}\\hat{\\mathbf{b}} \\tag{11}\\]\nFor each value of \\(\\mu\\), solve for \\(\\mathbf{x}\\) and find \\(R = \\|\\mathbf{x}\\|\\) and \\(\\hat{y}\\). This traces the ridge of maximum response as a function of distance from the origin.\n\n\n\n\n\n\nPractical Benefit\n\n\nRidge analysis reveals the best achievable response at each distance, the factor coordinates needed to achieve it, and which variables are most influential — providing guidance for further experimentation."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#structure-of-the-ccd",
+    "href": "STAT604/RSM_CCD.html#structure-of-the-ccd",
+    "title": "PhD Presentations",
+    "section": "Structure of the CCD",
+    "text": "Structure of the CCD\nThe Central Composite Design (CCD) was introduced by Box and Wilson (1951). It is the most popular class of second-order designs.\nThe CCD consists of three components:\n1. Factorial portion: A \\(2^k\\) full factorial (or a resolution V fraction), providing \\(F\\) runs at the \\((\\pm 1, \\pm 1, \\ldots, \\pm 1)\\) corners.\n2. Axial (star) points: \\(2k\\) points of the form \\((\\pm\\alpha, 0, \\ldots, 0),\\; (0, \\pm\\alpha, \\ldots, 0),\\; \\ldots,\\; (0, 0, \\ldots, \\pm\\alpha)\\).\n3. Center runs: \\(n_c\\) replicated runs at the origin \\((0, 0, \\ldots, 0)\\).\nTotal runs: \\(N = F + 2k + n_c\\)\nThe sequential nature is key: the factorial portion may already exist from an earlier screening phase. Adding axial and center points augments it to a second-order design."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#roles-of-the-three-components",
+    "href": "STAT604/RSM_CCD.html#roles-of-the-three-components",
+    "title": "PhD Presentations",
+    "section": "Roles of the Three Components",
+    "text": "Roles of the Three Components\nEach component of the CCD serves a distinct estimation purpose:\nFactorial points (\\(\\pm 1\\) corners): Contribute substantially to estimation of linear terms and two-factor interactions. They are variance-optimal for these terms, and they are the only points that estimate interaction effects.\nAxial points (\\(\\pm\\alpha\\) along each axis): Contribute to the estimation of pure quadratic terms \\(\\beta_{ii}\\). Without axial points, only the sum \\(\\sum \\beta_{ii}\\) can be estimated. They do not contribute to interaction estimation.\nCenter runs (origin): Provide an internal estimate of pure error and contribute toward estimation of quadratic terms. Crucial for prediction variance stability."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#ccd-for-k-2",
+    "href": "STAT604/RSM_CCD.html#ccd-for-k-2",
+    "title": "PhD Presentations",
+    "section": "CCD for \\(k = 2\\)",
+    "text": "CCD for \\(k = 2\\)\n\n\n\nComponent\nx1\nx2\nRuns\n\n\n\n\nFactorial\n−1\n−1\n4\n\n\n+1\n−1\n\n\n−1\n+1\n\n\n+1\n+1\n\n\nAxial\n−α\n0\n4\n\n\n+α\n0\n\n\n0\n−α\n\n\n0\n+α\n\n\nCenter\n0\n0\nnc\n\n\n\nFor \\(k = 2\\) with \\(\\alpha = \\sqrt{2}\\): the 8 non-center points are equally spaced on a circle of radius \\(\\sqrt{2}\\) — a spherical design."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#choice-of-alpha-the-axial-distance",
+    "href": "STAT604/RSM_CCD.html#choice-of-alpha-the-axial-distance",
+    "title": "PhD Presentations",
+    "section": "Choice of \\(\\alpha\\): The Axial Distance",
+    "text": "Choice of \\(\\alpha\\): The Axial Distance\nThe value of \\(\\alpha\\) ranges from \\(1.0\\) to \\(\\sqrt{k}\\):\n\n\\(\\alpha = 1\\) — Face-Centered Cube (FCC): All points lie on the faces of the unit cube. Only three levels per factor. Design region is cuboidal.\n\\(\\alpha = \\sqrt[4]{F}\\) — Rotatable CCD: Ensures constant prediction variance on spheres centered at the origin.\n\\(\\alpha = \\sqrt{k}\\) — Spherical CCD: All non-center points lie on a common sphere. Recommended when the design region is spherical.\n\n\n\n\nk\nF\nα (rotatable)\nα (spherical)\nN (excl. center)\n\n\n\n\n2\n4\n1.414\n1.414\n8\n\n\n3\n8\n1.682\n1.732\n14\n\n\n4\n16\n2.000\n2.000\n24\n\n\n5\n32\n2.378\n2.236\n42\n\n\n5 (½ rep)\n16\n2.000\n2.236\n26"
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#rotatability-of-the-ccd",
+    "href": "STAT604/RSM_CCD.html#rotatability-of-the-ccd",
+    "title": "PhD Presentations",
+    "section": "Rotatability of the CCD",
+    "text": "Rotatability of the CCD\nA design is rotatable if the prediction variance \\(\\text{Var}[\\hat{y}(\\mathbf{x})]\\) is constant at all points equidistant from the design center.\nFor a second-order model, rotatability requires:\n\nAll odd design moments through order four are zero.\nThe ratio of moments satisfies: \\(\\dfrac{[iiii]}{[iijj]} = 3, \\quad i \\neq j\\)\n\nFor the CCD, condition 1 holds automatically (with a resolution V factorial). Condition 2 requires:\n\\[\\frac{F + 2\\alpha^4}{F} = 3 \\implies \\boxed{\\alpha = \\sqrt[4]{F}} \\tag{12}\\]\n\n\n\n\n\n\nPractical Guidance\n\n\nExact rotatability is helpful but not essential. If the design region is spherical, using \\(\\alpha = \\sqrt{k}\\) with 3–5 center runs gives excellent prediction variance stability throughout the region, even if the design is only near-rotatable."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#scaled-prediction-variance",
+    "href": "STAT604/RSM_CCD.html#scaled-prediction-variance",
+    "title": "PhD Presentations",
+    "section": "Scaled Prediction Variance",
+    "text": "Scaled Prediction Variance\nThe Scaled Prediction Variance (SPV) is defined as:\n\\[\\text{SPV}(\\mathbf{x}) = \\frac{N\\, \\text{Var}[\\hat{y}(\\mathbf{x})]}{\\sigma^2} = N\\, \\mathbf{x}_{(m)}' (\\mathbf{X}'\\mathbf{X})^{-1} \\mathbf{x}_{(m)}\\]\nThis standardized quantity allows fair comparison across designs of different sizes. The SPV should ideally be small and relatively constant over the design region — a rotatable CCD with adequate center runs achieves this.\nA CCD with too few center runs will have an imbalanced SPV: the variance at the center can be several times larger than at the perimeter. Adding 3–5 center runs remedies this substantially."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#orthogonal-blocking-in-the-ccd",
+    "href": "STAT604/RSM_CCD.html#orthogonal-blocking-in-the-ccd",
+    "title": "PhD Presentations",
+    "section": "Orthogonal Blocking in the CCD",
+    "text": "Orthogonal Blocking in the CCD\nMany experiments cannot be completed in a single batch. The CCD naturally accommodates blocking:\n\nBlock 1: Factorial points + some center runs\nBlock 2: Axial points + some center runs\n\nConditions for orthogonal blocking:\n\nEach block must be a first-order orthogonal design (first moments and mixed second moments are zero within each block).\nFor each design variable, the sum of squares contribution from each block is proportional to the block size.\n\nFor a \\(k = 2\\) rotatable CCD (\\(\\alpha = \\sqrt{2}\\)), any even split of center runs between the two blocks achieves orthogonal blocking. This ensures that the block effects do not bias the estimated response surface coefficients.\n\n\n\n\n\n\nSequential Blocking\n\n\nThis blocking structure aligns perfectly with sequential RSM: the factorial block (from Phase I screening) is run first, and the axial block is added later when curvature is detected."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#face-centered-vs.-spherical-ccd",
+    "href": "STAT604/RSM_CCD.html#face-centered-vs.-spherical-ccd",
+    "title": "PhD Presentations",
+    "section": "Face-Centered vs. Spherical CCD",
+    "text": "Face-Centered vs. Spherical CCD\n\n\n\nProperty\nFace-Centered (α = 1)\nSpherical (α = √k)\n\n\n\n\nLevels per factor\n3\n5\n\n\nDesign region\nCuboidal\nSpherical\n\n\nRotatability\nNot rotatable\nNear-rotatable\n\n\nOrthogonal blocking\nRequires replicated axial points\nEasily achieved\n\n\nBest for\nFactor ranges are hard limits\nFactors can extend beyond ±1\n\n\n\nThe choice depends on whether the design region is naturally cuboidal (factor ranges are strict physical limits) or spherical (the region of interest is defined by distance from the center)."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#step-1-problem-definition-and-factor-selection",
+    "href": "STAT604/RSM_CCD.html#step-1-problem-definition-and-factor-selection",
+    "title": "PhD Presentations",
+    "section": "Step 1: Problem Definition and Factor Selection",
+    "text": "Step 1: Problem Definition and Factor Selection\nBefore designing the CCD, the experimenter must:\nDefine the objective — Is the goal to maximize yield? Minimize defects? Hit a target value? Optimize multiple responses simultaneously?\nSelect factors — Through prior screening experiments (Phase 0), identify the \\(k\\) most important quantitative factors.\nChoose factor ranges — Define the center point \\(\\bar{\\xi}_i\\) and step size \\(\\Delta\\xi_i\\) for each natural variable. The coded range \\([-1, +1]\\) should span a meaningful operating range, and \\([-\\alpha, +\\alpha]\\) should remain within the region of operability.\nDetermine \\(\\alpha\\) and \\(n_c\\) — Choose \\(\\alpha\\) based on rotatability (\\(\\alpha = \\sqrt[4]{F}\\)) or sphericity (\\(\\alpha = \\sqrt{k}\\)). Use 3–5 center runs for variance stability."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#step-2-generating-the-design",
+    "href": "STAT604/RSM_CCD.html#step-2-generating-the-design",
+    "title": "PhD Presentations",
+    "section": "Step 2: Generating the Design",
+    "text": "Step 2: Generating the Design\nFor \\(k = 3\\) factors with \\(\\alpha = 1.682\\) (rotatable):\n\nFactorial portion: \\(2^3 = 8\\) runs at corners \\((\\pm 1, \\pm 1, \\pm 1)\\)\nAxial points: \\(2 \\times 3 = 6\\) runs along axes at distance \\(\\alpha\\)\nCenter runs: \\(n_c = 6\\) (recommended)\nTotal: \\(N = 8 + 6 + 6 = 20\\) runs\n\nIn R, using the rsm package:\nlibrary(rsm)\nccd_design &lt;- ccd(\n  basis = 3,        # k = 3 factors\n  n0   = c(4, 2),   # 4 center in factorial block, 2 in axial\n  alpha = \"rotatable\",\n  randomize = FALSE\n)\nEach run is decoded back to natural variables using \\(\\xi_i = \\bar{\\xi}_i + \\Delta\\xi_i \\cdot x_i\\)."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#step-3-data-collection",
+    "href": "STAT604/RSM_CCD.html#step-3-data-collection",
+    "title": "PhD Presentations",
+    "section": "Step 3: Data Collection",
+    "text": "Step 3: Data Collection\nRandomization: Run the experiment in random order to guard against lurking variables and time trends.\nBlocking: If the experiment spans multiple days or batches, use orthogonal blocking. Assign factorial + center runs to Block 1, axial + center runs to Block 2.\nReplication: Center runs serve as replicates. They provide pure error degrees of freedom and allow testing for lack of fit without replicating the full design.\nRecording: Carefully record the response \\(y\\) at each design point along with any covariates or nuisance variables."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#step-4-fitting-the-second-order-model",
+    "href": "STAT604/RSM_CCD.html#step-4-fitting-the-second-order-model",
+    "title": "PhD Presentations",
+    "section": "Step 4: Fitting the Second-Order Model",
+    "text": "Step 4: Fitting the Second-Order Model\nOnce data are collected, fit the full second-order model:\n\\[y = \\beta_0 + \\sum_{i=1}^k \\beta_i x_i + \\sum_{i=1}^k \\beta_{ii} x_i^2 + \\sum\\sum_{i&lt;j} \\beta_{ij} x_i x_j + \\varepsilon\\]\nIn R:\nlibrary(rsm)\nfit &lt;- rsm(y ~ Block + SO(x1, x2, x3), data = ccd_data)\nsummary(fit)\nThe summary output provides:\n\nCoefficient estimates and \\(t\\)-tests\nANOVA table with lack-of-fit test\nCanonical analysis: stationary point, eigenvalues, eigenvectors\nNature of the stationary point (maximum, minimum, saddle)"
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#step-5-diagnostic-checking",
+    "href": "STAT604/RSM_CCD.html#step-5-diagnostic-checking",
+    "title": "PhD Presentations",
+    "section": "Step 5: Diagnostic Checking",
+    "text": "Step 5: Diagnostic Checking\nBefore interpreting results, check model adequacy:\nResidual plots: Plot residuals vs. fitted values, vs. each factor, and in normal probability plots. Look for non-constant variance, outliers, or systematic patterns.\nLack-of-fit test: The pure error from center-run replicates tests whether the second-order model captures all systematic variation: \\[F_{\\text{LOF}} = \\frac{MS_{LOF}}{MS_{PE}}\\]\nA non-significant \\(F_{\\text{LOF}}\\) supports model adequacy.\n\\(R^2\\) and Adjusted \\(R^2\\): Evaluate the proportion of variance explained. The adjusted \\(R^2\\) penalizes unnecessary terms.\nInfluence diagnostics: Check Cook’s distance and leverage values (\\(h_{ii}\\)) for influential points."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#step-6-response-surface-analysis",
+    "href": "STAT604/RSM_CCD.html#step-6-response-surface-analysis",
+    "title": "PhD Presentations",
+    "section": "Step 6: Response Surface Analysis",
+    "text": "Step 6: Response Surface Analysis\nContour and Surface Plots: Visualize \\(\\hat{y}\\) as a function of two factors at a time (holding others at center levels).\nIn R:\npar(mfrow = c(1, 3))\ncontour(fit, ~ x1 + x2 + x3,\n        at = summary(fit)$canonical$xs)\nCanonical Analysis: Examine eigenvalues from Equation 10.\n\nIf all eigenvalues are negative → maximum found. Report \\(\\mathbf{x}_s\\) and \\(\\hat{y}_s\\).\nIf mixed signs → saddle point. Use ridge analysis to find the best conditions within the design region.\nIf any eigenvalue is near zero → ridge system. Ridge analysis along the near-stationary direction.\n\nRidge Analysis: Trace the optimum response on spheres from the center — identify the best achievable response at each radius and the corresponding factor settings."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#step-7-optimization-and-confirmation",
+    "href": "STAT604/RSM_CCD.html#step-7-optimization-and-confirmation",
+    "title": "PhD Presentations",
+    "section": "Step 7: Optimization and Confirmation",
+    "text": "Step 7: Optimization and Confirmation\nSingle-response optimization: Use the stationary point from canonical analysis, or the ridge analysis coordinates.\nMultiple-response optimization: When several responses must be optimized simultaneously, use the desirability function approach:\n\\[D = \\left(\\prod_{i=1}^m d_i^{r_i}\\right)^{1/\\sum r_i}\\]\nwhere \\(d_i\\) is the individual desirability for the \\(i\\)-th response and \\(r_i\\) is its importance weight.\nConfirmation runs: Always conduct confirmation experiments at the predicted optimum conditions. Compare observed responses to predicted values — if they agree, the optimization is successful. If they disagree, further experimentation is needed.\n\n\n\n\n\n\nImportant Caveat\n\n\nEstimated optimum conditions are just that — estimates. The next experiment may find the optimum at slightly different coordinates. What often matters more than the exact optimum is the understanding of how factors influence the response."
+  },
+  {
+    "objectID": "STAT604/RSM_CCD.html#section",
+    "href": "STAT604/RSM_CCD.html#section",
+    "title": "PhD Presentations",
+    "section": "",
+    "text": "1. Myers, R. H., Montgomery, D. C., & Anderson-Cook, C. M. (2016). Response Surface Methodology: Process and Product Optimization Using Designed Experiments (4th ed.). John Wiley & Sons.\n\n\n\n2. Box, G. E. P., & Wilson, K. B. (1951). On the experimental attainment of optimum conditions. Journal of the Royal Statistical Society, Series B, 13(1), 1–45.\n\n\n\n3. Box, G. E. P., & Hunter, J. S. (1957). Multi-factor experimental designs for exploring response surfaces. Annals of Mathematical Statistics, 28, 195–241.\n\n\n\n4. Lenth, R. V. (2009). Response-surface methods in R, using rsm. Journal of Statistical Software, 32(7), 1–17.\n\n\n\n5. Box, G. E. P., Hunter, W. G., & Hunter, J. S. (2005). Statistics for Experimenters: Design, Innovation, and Discovery (2nd ed.). John Wiley & Sons."
   }
 ]

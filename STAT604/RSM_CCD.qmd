@@ -1,0 +1,860 @@
+---
+format:
+  revealjs:
+    title-slide-attributes:
+      data-visibility: hidden 
+    theme: [default, title_ccd.scss]
+    margin: 0.05
+    slide-number: true
+    transition: slide
+    navigation-mode: vertical
+    width: 1280
+    height: 720
+    embed-resources: true 
+    self-contained: true
+    controls: false
+mainfont: "Cambria Math"
+---
+
+```{=html}
+<section class="title-slide">
+
+  <div class="header-band">
+    <div class="logo-box">
+      <img src="angrau_logo.jpeg" alt="ANGRAU Logo">
+    </div>
+    <div class="inst-block">
+      <div class="university-name">
+        Acharya N.G. Ranga Agricultural University
+      </div>
+      <div class="college-name">
+        Agricultural College, Bapatla
+      </div>
+      <div class="dept-name">
+        Department of Statistics and Computer Applications
+      </div>
+    </div>
+  </div>
+
+  <div class="mid-content">
+    <div class="course-label">
+      AECO 606 ADVANCED STATISTICAL METHODS (2+1)
+    </div>
+    <div class="main-title">
+      Response Surface Methodology - Central Composite Design
+    </div>
+  </div>
+
+  <div class="footer-band">
+    <div class="presenter-block">
+      <span class="role-label">Presenter</span>
+      <span class="person-name">Krupesh S (BAD/2025-25)</span>
+      <span class="person-detail">I Ph.D.(Ag.) Agricultural Statistics</span>
+    </div>
+  </div>
+
+</section>
+```
+
+# INTRODUCTION TO RSM
+
+## What is Response Surface Methodology?{.scrollable}
+
+Response surface methodology (RSM) is a collection of statistical and mathematical techniques useful for **developing, improving, and optimizing processes**.
+
+In general, suppose the experimenter is concerned with a system involving a response $y$ that depends on controllable input variables $\xi_1, \xi_2, \ldots, \xi_k$. The true relationship is:
+
+$$y = f(\xi_1, \xi_2, \ldots, \xi_k) + \varepsilon$${#eq-true-response}
+
+where $f$ is an unknown function and $\varepsilon$ is a random error term with $E(\varepsilon) = 0$ and $\text{Var}(\varepsilon) = \sigma^2$.
+
+Taking the expectation:
+
+$$E(y) \equiv \eta = f(\xi_1, \xi_2, \ldots, \xi_k)$$
+
+The surface represented by $\eta = f(\xi_1, \xi_2, \ldots, \xi_k)$ is called the **response surface**.
+
+
+## Natural and Coded Variables{.scrollable}
+
+The natural variables $\xi_1, \xi_2, \ldots, \xi_k$ are expressed in natural units of measurement (°C, psi, g/L, etc.).
+
+In RSM, it is convenient to transform to **coded variables** $x_1, x_2, \ldots, x_k$, defined to be dimensionless with mean zero:
+
+$$x_i = \frac{\xi_i - \bar{\xi}_i}{\Delta\xi_i}, \quad i = 1, 2, \ldots, k$$
+
+where $\bar{\xi}_i$ is the center point and $\Delta\xi_i$ is the step size in the $i$-th natural variable.
+
+The response function in coded variables becomes:
+
+$$\eta = f(x_1, x_2, \ldots, x_k)$$
+
+
+## Approximating Response Functions{.scrollable}
+
+Since $f$ is unknown, we approximate it with low-order polynomials.
+
+**First-Order Model** (for $k$ variables):
+$$\eta = \beta_0 + \sum_{i=1}^k \beta_i x_i$${#eq-fo-model}
+
+**First-Order Model with Interaction** (for $k = 2$):
+$$\eta = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2$${#eq-fo-interaction}
+
+**Second-Order Model** (for $k$ variables):
+$$\eta = \beta_0 + \sum_{i=1}^k \beta_i x_i + \sum_{i=1}^k \beta_{ii} x_i^2 + \sum\sum_{i < j} \beta_{ij} x_i x_j$${#eq-so-model}
+
+The second-order model is widely used because it is very flexible, easy to estimate via least squares, and there is considerable practical experience indicating that it works well for real response surface problems.
+
+
+## The Sequential Nature of RSM{.scrollable}
+
+RSM is inherently **sequential**:
+
+**Phase 0 — Screening**: Identify which factors truly influence the response. Use $2^{k-p}$ fractional factorials or Plackett–Burman designs.
+
+**Phase I — First-Order Exploration**: Fit a first-order model. If adequate, use the **method of steepest ascent** (or descent) to move toward the optimum region.
+
+**Phase II — Second-Order Modeling**: When curvature becomes important, fit a second-order model using designs such as the **Central Composite Design** (CCD) or Box–Behnken design. Perform optimization via canonical or ridge analysis.
+
+::: {.callout-note}
+## The RSM Philosophy
+Never undertake a response surface analysis until a screening experiment has identified the important factors. Budget for all phases — screening, steepest ascent, and second-order optimization.
+:::
+
+
+## Objectives of RSM{.scrollable}
+
+Response surface methodology is useful in solving three broad categories of industrial problems:
+
+**Mapping**: Approximate the response surface over a region of interest so that the experimenter can predict the response for any set of operating conditions within that region.
+
+**Optimization**: Determine the conditions that optimize the response — finding the maximum yield, minimum defect rate, or the settings that bring a response closest to a target value.
+
+**Robustness**: Select operating conditions so that the response is insensitive to hard-to-control noise variables. This connects RSM to the broader field of robust parameter design.
+
+
+# BUILDING EMPIRICAL MODELS
+
+## The Linear Regression Model{.scrollable}
+
+The general linear regression model relates the response $y$ to $p$ regressors:
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_p x_p + \varepsilon$$
+
+In matrix form with $N$ observations:
+
+$$\mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}$${#eq-matrix-model}
+
+where $\mathbf{y}$ is $N \times 1$, $\mathbf{X}$ is $N \times p'$ (with $p' = p + 1$), $\boldsymbol{\beta}$ is $p' \times 1$, and $\boldsymbol{\varepsilon}$ is $N \times 1$.
+
+The **least squares estimator** is:
+$$\hat{\boldsymbol{\beta}} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}$${#eq-ols}
+
+with the covariance matrix:
+$$\text{Cov}(\hat{\boldsymbol{\beta}}) = \sigma^2 (\mathbf{X}'\mathbf{X})^{-1}$$
+
+
+## Hypothesis Testing{.scrollable}
+
+**Test for Significance of Regression**:
+
+$H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$
+
+$$F_0 = \frac{SS_{\text{Regression}} / p}{SS_{\text{Residual}} / (N - p - 1)} = \frac{MS_R}{MS_E}$$
+
+Under $H_0$, $F_0 \sim F_{p,\, N-p-1}$.
+
+**Test on Individual Coefficients**:
+
+$$t_0 = \frac{\hat{\beta}_j}{\text{se}(\hat{\beta}_j)} = \frac{\hat{\beta}_j}{\sqrt{\hat{\sigma}^2 C_{jj}}}$$
+
+where $C_{jj}$ is the $j$-th diagonal element of $(\mathbf{X}'\mathbf{X})^{-1}$.
+
+Under $H_0: \beta_j = 0$, $\; t_0 \sim t_{N-p-1}$.
+
+
+## Model Adequacy: Residual Analysis and Lack of Fit{.scrollable}
+
+**Residuals**: $e_i = y_i - \hat{y}_i$
+
+**Internally Studentized Residuals**: $r_i = \dfrac{e_i}{\sqrt{\hat{\sigma}^2(1 - h_{ii})}}$
+
+where $h_{ii}$ is the $i$-th diagonal element of the hat matrix $\mathbf{H} = \mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'$.
+
+**Testing for Lack of Fit**: Partition $SS_E$ into pure error ($SS_{PE}$) and lack of fit ($SS_{LOF}$):
+
+$$F_{\text{LOF}} = \frac{SS_{LOF} / (m - p - 1)}{SS_{PE} / (N - m)}$$
+
+where $m$ is the number of distinct design points.
+
+::: {.callout-warning}
+## Diagnostics Matter
+A significant lack-of-fit test is a strong signal that the current model is inadequate and a higher-order model (or a transformation) should be considered.
+:::
+
+
+## Fitting a Second-Order Model{.scrollable}
+
+The second-order model for $k$ factors is:
+
+$$y = \beta_0 + \sum_{i=1}^k \beta_i x_i + \sum_{i=1}^k \beta_{ii} x_i^2 + \sum\sum_{i<j} \beta_{ij} x_i x_j + \varepsilon$$
+
+In matrix notation: $\quad \hat{y}(\mathbf{x}) = \hat{\beta}_0 + \mathbf{x}'\hat{\mathbf{b}} + \mathbf{x}'\hat{\mathbf{B}}\mathbf{x}$
+
+where:
+
+- $\hat{\mathbf{b}}$ is the $k \times 1$ vector of estimated first-order coefficients
+- $\hat{\mathbf{B}}$ is the $k \times k$ symmetric matrix with $\hat{\beta}_{ii}$ on the diagonal and $\hat{\beta}_{ij}/2$ off-diagonal
+
+The number of parameters is $p = 1 + 2k + k(k-1)/2$, so at least this many distinct design points are needed with at least **three levels** per factor.
+
+
+# TWO-LEVEL FACTORIAL DESIGNS
+
+## The $2^k$ Factorial Design{.scrollable}
+
+In a $2^k$ factorial design, each of $k$ factors is investigated at two levels (coded as $-1$ and $+1$). The design has $2^k$ treatment combinations.
+
+For the $2^2$ design with factors $A$ and $B$:
+
+```{=html}
+<table style="width:70%; border-collapse:collapse; font-size:0.85em; margin:auto;">
+  <thead>
+    <tr style="background-color:#333333; color:white;">
+      <th style="border:1px solid #888; padding:8px 12px; text-align:center;">Run</th>
+      <th style="border:1px solid #888; padding:8px 12px; text-align:center;">x<sub>1</sub></th>
+      <th style="border:1px solid #888; padding:8px 12px; text-align:center;">x<sub>2</sub></th>
+      <th style="border:1px solid #888; padding:8px 12px; text-align:center;">Label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">&minus;1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">&minus;1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">(1)</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">+1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">&minus;1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">a</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">3</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">&minus;1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">+1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">b</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">4</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">+1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">+1</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">ab</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+The regression model is $y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1 x_2 + \varepsilon$, and the $\mathbf{X}'\mathbf{X}$ matrix is $4\mathbf{I}_4$. Hence all regression coefficients have equal variance $\sigma^2 / 4$.
+
+
+## Properties of $2^k$ Designs{.scrollable}
+
+The $2^k$ design is **D-optimal** for fitting the first-order model (with or without interactions). This means:
+
+- It maximizes $|\mathbf{X}'\mathbf{X}|$, minimizing the joint confidence region for all coefficients.
+
+- The variance of any coefficient is $\text{Var}(\hat{\beta}) = \sigma^2 / N$, where $N$ is the total number of runs.
+
+- All regression coefficients are **uncorrelated**.
+
+These properties make $2^k$ designs the ideal building blocks for RSM — they are used directly in screening, and they form the **factorial portion** of the Central Composite Design.
+
+
+## Adding Center Points to the $2^k$ Design{.scrollable}
+
+Adding $n_c$ center runs (all factors at 0) to a $2^k$ design enables a test for **curvature** without affecting the estimation of main effects or interactions.
+
+The test statistic is:
+
+$$F_0 = \frac{SS_{\text{curvature}}}{MS_E} = \frac{n_F\, n_c\, (\bar{y}_F - \bar{y}_C)^2 / (n_F + n_c)}{MS_E}$$
+
+where $\bar{y}_F$ is the average of the factorial runs and $\bar{y}_C$ is the average of the center runs.
+
+Under $H_0$ (no pure quadratic curvature): $F_0 \sim F_{1, \, N - p - 1}$.
+
+::: {.callout-note}
+## Why Center Points?
+A significant $F_0$ signals that the first-order model is inadequate and quadratic terms are needed — this is the trigger for augmenting to a CCD.
+:::
+
+
+# FRACTIONAL FACTORIAL DESIGNS
+
+## The $2^{k-p}$ Fractional Factorial{.scrollable}
+
+When $k$ is large, a full $2^k$ factorial is too expensive. A $2^{k-p}$ fractional factorial runs only $2^{k-p}$ treatment combinations — a $1/2^p$ fraction of the full design.
+
+**Key concepts**:
+
+- **Defining relation**: $I = \text{generators}$ — specifies which effects are aliased.
+- **Resolution**: The minimum word length in the defining relation.
+    - Resolution III: Main effects aliased with two-factor interactions.
+    - Resolution IV: Main effects clear of two-factor interactions, but two-factor interactions aliased with each other.
+    - Resolution V: Main effects and two-factor interactions estimable independently.
+- **Sparsity of effects principle**: Most systems are dominated by main effects and low-order interactions.
+
+The factorial portion of a CCD must have resolution V or higher to independently estimate all linear and interaction terms.
+
+
+## Design Resolution and Aliasing{.scrollable}
+
+```{=html}
+<table style="width:95%; border-collapse:collapse; font-size:0.82em;">
+  <thead>
+    <tr style="background-color:#333; color:white;">
+      <th style="border:1px solid #888; padding:10px;">Resolution</th>
+      <th style="border:1px solid #888; padding:10px;">Alias Structure</th>
+      <th style="border:1px solid #888; padding:10px;">Use in RSM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:10px; font-weight:bold;">III</td>
+      <td style="border:1px solid #888; padding:10px;">Main effects aliased with 2FI</td>
+      <td style="border:1px solid #888; padding:10px;">Screening only</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:10px; font-weight:bold;">IV</td>
+      <td style="border:1px solid #888; padding:10px;">2FI aliased with other 2FI</td>
+      <td style="border:1px solid #888; padding:10px;">Screening with caution</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:10px; font-weight:bold;">V</td>
+      <td style="border:1px solid #888; padding:10px;">Main &amp; 2FI estimable; 2FI aliased with 3FI</td>
+      <td style="border:1px solid #888; padding:10px;">Factorial portion of CCD</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+The projection property of fractional factorials means that every $2^{k-p}$ design contains complete factorials in certain subsets of the original factors — this is valuable for discovering which factors matter most.
+
+
+# STEEPEST ASCENT
+
+## The Method of Steepest Ascent{.scrollable}
+
+When the first-order model $\hat{y} = b_0 + b_1 x_1 + b_2 x_2 + \cdots + b_k x_k$ is adequate, the **path of steepest ascent** moves the experimenter toward improved response values.
+
+The procedure maximizes $\hat{y}$ subject to the constraint $\sum_{i=1}^k x_i^2 = r^2$. Using Lagrange multipliers:
+
+$$L = b_0 + \sum_{i=1}^k b_i x_i - \lambda\left(\sum_{i=1}^k x_i^2 - r^2\right)$$
+
+Setting $\partial L / \partial x_j = 0$:
+
+$$x_j = \frac{b_j}{2\lambda} = \rho\, b_j, \quad j = 1, 2, \ldots, k$${#eq-steepest}
+
+The coordinates along the path are **proportional to the regression coefficients**. The direction matches the sign of each coefficient; the movement in $x_j$ is proportional to $|b_j|$.
+
+
+## Practical Steps in Steepest Ascent{.scrollable}
+
+1. Fit a first-order model using a $2^k$ (or $2^{k-p}$) design with center runs.
+
+2. Compute the path of steepest ascent from @eq-steepest — choose a base step size in the most important variable and scale the others proportionally.
+
+3. Conduct experimental runs along the path. Improvement should be observed initially but will eventually diminish.
+
+4. When two consecutive runs show declining response, select that region as the base for a new first-order experiment — a **mid-course correction**.
+
+5. If curvature is detected (significant center-point test), augment the design with axial points to form a **Central Composite Design** and fit a second-order model.
+
+
+# ANALYSIS OF SECOND-ORDER SURFACES
+
+## The Second-Order Response Surface{.scrollable}
+
+The fitted second-order model in matrix form is:
+
+$$\hat{y}(\mathbf{x}) = \hat{\beta}_0 + \mathbf{x}'\hat{\mathbf{b}} + \mathbf{x}'\hat{\mathbf{B}}\mathbf{x}$${#eq-so-fitted}
+
+where $\hat{\mathbf{B}}$ is the $k \times k$ matrix of estimated second-order coefficients.
+
+**Finding the Stationary Point**: Differentiating @eq-so-fitted with respect to $\mathbf{x}$ and setting to zero:
+
+$$\frac{\partial \hat{y}}{\partial \mathbf{x}} = \hat{\mathbf{b}} + 2\hat{\mathbf{B}}\mathbf{x} = \mathbf{0}$$
+
+$$\therefore \quad \mathbf{x}_s = -\frac{1}{2}\hat{\mathbf{B}}^{-1}\hat{\mathbf{b}}$${#eq-stationary}
+
+The predicted response at the stationary point is $\hat{y}_s = \hat{\beta}_0 + \frac{1}{2}\mathbf{x}_s'\hat{\mathbf{b}}$.
+
+
+## Canonical Analysis{.scrollable}
+
+The nature of the stationary point is determined by the **eigenvalues** of $\hat{\mathbf{B}}$.
+
+The canonical form of the second-order model is obtained by the transformation $\mathbf{x} - \mathbf{x}_s = \mathbf{M}\mathbf{w}$, where $\mathbf{M}$ is the orthogonal matrix of eigenvectors:
+
+$$\hat{y} = \hat{y}_s + \sum_{i=1}^k \lambda_i w_i^2$${#eq-canonical}
+
+where $\lambda_1, \lambda_2, \ldots, \lambda_k$ are the eigenvalues of $\hat{\mathbf{B}}$.
+
+```{=html}
+<table style="width:90%; border-collapse:collapse; font-size:0.85em; margin:auto;">
+  <thead>
+    <tr style="background-color:#333; color:white;">
+      <th style="border:1px solid #888; padding:8px;">Eigenvalues</th>
+      <th style="border:1px solid #888; padding:8px;">Nature of Stationary Point</th>
+      <th style="border:1px solid #888; padding:8px;">Surface Shape</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px;">All &lambda;<sub>i</sub> &lt; 0</td>
+      <td style="border:1px solid #888; padding:8px; font-weight:bold;">Maximum</td>
+      <td style="border:1px solid #888; padding:8px;">Mound / Hill</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:8px;">All &lambda;<sub>i</sub> &gt; 0</td>
+      <td style="border:1px solid #888; padding:8px; font-weight:bold;">Minimum</td>
+      <td style="border:1px solid #888; padding:8px;">Valley / Bowl</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px;">Mixed signs</td>
+      <td style="border:1px solid #888; padding:8px; font-weight:bold;">Saddle Point</td>
+      <td style="border:1px solid #888; padding:8px;">Mountain pass</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:8px;">Some &lambda;<sub>i</sub> &asymp; 0</td>
+      <td style="border:1px solid #888; padding:8px; font-weight:bold;">Ridge / Flat</td>
+      <td style="border:1px solid #888; padding:8px;">Stationary / Rising ridge</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+
+## Ridge Analysis{.scrollable}
+
+When the stationary point lies far from the design region, or the surface is a saddle, **ridge analysis** is more informative than the stationary point alone.
+
+Ridge analysis maximizes (or minimizes) $\hat{y}$ on spheres of increasing radius $R$ from the design center:
+
+$$\text{Maximize } \hat{y}(\mathbf{x}) \quad \text{subject to } \mathbf{x}'\mathbf{x} = R^2$$
+
+Using Lagrange multipliers:
+
+$$(\hat{\mathbf{B}} - \mu\mathbf{I})\mathbf{x} = -\frac{1}{2}\hat{\mathbf{b}}$${#eq-ridge}
+
+For each value of $\mu$, solve for $\mathbf{x}$ and find $R = \|\mathbf{x}\|$ and $\hat{y}$. This traces the **ridge of maximum response** as a function of distance from the origin.
+
+::: {.callout-note}
+## Practical Benefit
+Ridge analysis reveals the best achievable response at each distance, the factor coordinates needed to achieve it, and which variables are most influential — providing guidance for further experimentation.
+:::
+
+
+# CENTRAL COMPOSITE DESIGN
+
+## Structure of the CCD{.scrollable}
+
+The **Central Composite Design** (CCD) was introduced by Box and Wilson (1951). It is the most popular class of second-order designs.
+
+The CCD consists of three components:
+
+**1. Factorial portion**: A $2^k$ full factorial (or a resolution V fraction), providing $F$ runs at the $(\pm 1, \pm 1, \ldots, \pm 1)$ corners.
+
+**2. Axial (star) points**: $2k$ points of the form $(\pm\alpha, 0, \ldots, 0),\; (0, \pm\alpha, \ldots, 0),\; \ldots,\; (0, 0, \ldots, \pm\alpha)$.
+
+**3. Center runs**: $n_c$ replicated runs at the origin $(0, 0, \ldots, 0)$.
+
+Total runs: $N = F + 2k + n_c$
+
+The sequential nature is key: the factorial portion may already exist from an earlier screening phase. Adding axial and center points augments it to a second-order design.
+
+
+## Roles of the Three Components{.scrollable}
+
+Each component of the CCD serves a distinct estimation purpose:
+
+**Factorial points** ($\pm 1$ corners): Contribute substantially to estimation of **linear terms** and **two-factor interactions**. They are variance-optimal for these terms, and they are the *only* points that estimate interaction effects.
+
+**Axial points** ($\pm\alpha$ along each axis): Contribute to the estimation of **pure quadratic terms** $\beta_{ii}$. Without axial points, only the sum $\sum \beta_{ii}$ can be estimated. They do *not* contribute to interaction estimation.
+
+**Center runs** (origin): Provide an internal estimate of **pure error** and contribute toward estimation of quadratic terms. Crucial for prediction variance stability.
+
+## CCD for $k = 2${.scrollable}
+
+```{=html}
+<table style="width:80%; border-collapse:collapse; font-size:0.78em; margin:auto;">
+  <thead>
+    <tr style="background:#333; color:white;">
+      <th style="border:1px solid #888; padding:6px 10px;">Component</th>
+      <th style="border:1px solid #888; padding:6px 10px; text-align:center;">x<sub>1</sub></th>
+      <th style="border:1px solid #888; padding:6px 10px; text-align:center;">x<sub>2</sub></th>
+      <th style="border:1px solid #888; padding:6px 10px; text-align:center;">Runs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:6px 10px;" rowspan="4"><b>Factorial</b></td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">&minus;1</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">&minus;1</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;" rowspan="4">4</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:6px; text-align:center;">+1</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">&minus;1</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:6px; text-align:center;">&minus;1</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">+1</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:6px; text-align:center;">+1</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">+1</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:6px 10px;" rowspan="4"><b>Axial</b></td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">&minus;&alpha;</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">0</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;" rowspan="4">4</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:6px; text-align:center;">+&alpha;</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">0</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:6px; text-align:center;">0</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">&minus;&alpha;</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:6px; text-align:center;">0</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">+&alpha;</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:6px 10px;"><b>Center</b></td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">0</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">0</td>
+      <td style="border:1px solid #888; padding:6px; text-align:center;">n<sub>c</sub></td>
+    </tr>
+  </tbody>
+</table>
+```
+
+For $k = 2$ with $\alpha = \sqrt{2}$: the 8 non-center points are equally spaced on a circle of radius $\sqrt{2}$ — a **spherical design**.
+
+
+## Choice of $\alpha$: The Axial Distance{.scrollable}
+
+The value of $\alpha$ ranges from $1.0$ to $\sqrt{k}$:
+
+- $\alpha = 1$ — **Face-Centered Cube** (FCC): All points lie on the faces of the unit cube. Only three levels per factor. Design region is cuboidal.
+
+- $\alpha = \sqrt[4]{F}$ — **Rotatable CCD**: Ensures constant prediction variance on spheres centered at the origin.
+
+- $\alpha = \sqrt{k}$ — **Spherical CCD**: All non-center points lie on a common sphere. Recommended when the design region is spherical.
+
+```{=html}
+<table style="width:85%; border-collapse:collapse; font-size:0.82em; margin:auto;">
+  <thead>
+    <tr style="background:#333; color:white;">
+      <th style="border:1px solid #888; padding:8px; text-align:center;">k</th>
+      <th style="border:1px solid #888; padding:8px; text-align:center;">F</th>
+      <th style="border:1px solid #888; padding:8px; text-align:center;">&alpha; (rotatable)</th>
+      <th style="border:1px solid #888; padding:8px; text-align:center;">&alpha; (spherical)</th>
+      <th style="border:1px solid #888; padding:8px; text-align:center;">N (excl. center)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">4</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">1.414</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">1.414</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">8</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">3</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">8</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">1.682</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">1.732</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">14</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">4</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">16</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2.000</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2.000</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">24</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">5</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">32</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2.378</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2.236</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">42</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px; text-align:center;">5 (&frac12; rep)</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">16</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2.000</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">2.236</td>
+      <td style="border:1px solid #888; padding:8px; text-align:center;">26</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+
+## Rotatability of the CCD{.scrollable}
+
+A design is **rotatable** if the prediction variance $\text{Var}[\hat{y}(\mathbf{x})]$ is constant at all points equidistant from the design center.
+
+For a second-order model, rotatability requires:
+
+1. All odd design moments through order four are zero.
+2. The ratio of moments satisfies: $\dfrac{[iiii]}{[iijj]} = 3, \quad i \neq j$
+
+For the CCD, condition 1 holds automatically (with a resolution V factorial). Condition 2 requires:
+
+$$\frac{F + 2\alpha^4}{F} = 3 \implies \boxed{\alpha = \sqrt[4]{F}}$${#eq-rotatable}
+
+::: {.callout-note}
+## Practical Guidance
+Exact rotatability is helpful but not essential. If the design region is spherical, using $\alpha = \sqrt{k}$ with 3–5 center runs gives excellent prediction variance stability throughout the region, even if the design is only *near*-rotatable.
+:::
+
+
+## Scaled Prediction Variance{.scrollable}
+
+The **Scaled Prediction Variance** (SPV) is defined as:
+
+$$\text{SPV}(\mathbf{x}) = \frac{N\, \text{Var}[\hat{y}(\mathbf{x})]}{\sigma^2} = N\, \mathbf{x}_{(m)}' (\mathbf{X}'\mathbf{X})^{-1} \mathbf{x}_{(m)}$$
+
+This standardized quantity allows fair comparison across designs of different sizes. The SPV should ideally be small and relatively constant over the design region — a rotatable CCD with adequate center runs achieves this.
+
+A CCD with too few center runs will have an imbalanced SPV: the variance at the center can be several times larger than at the perimeter. Adding 3–5 center runs remedies this substantially.
+
+
+## Orthogonal Blocking in the CCD{.scrollable}
+
+Many experiments cannot be completed in a single batch. The CCD naturally accommodates **blocking**:
+
+- **Block 1**: Factorial points + some center runs
+- **Block 2**: Axial points + some center runs
+
+Conditions for orthogonal blocking:
+
+1. Each block must be a first-order orthogonal design (first moments and mixed second moments are zero within each block).
+2. For each design variable, the sum of squares contribution from each block is proportional to the block size.
+
+For a $k = 2$ rotatable CCD ($\alpha = \sqrt{2}$), any even split of center runs between the two blocks achieves orthogonal blocking. This ensures that the block effects do not bias the estimated response surface coefficients.
+
+::: {.callout-note}
+## Sequential Blocking
+This blocking structure aligns perfectly with sequential RSM: the factorial block (from Phase I screening) is run first, and the axial block is added later when curvature is detected.
+:::
+
+
+## Face-Centered vs. Spherical CCD{.scrollable}
+
+```{=html}
+<table style="width:95%; border-collapse:collapse; font-size:0.82em;">
+  <thead>
+    <tr style="background:#333; color:white;">
+      <th style="border:1px solid #888; padding:8px;">Property</th>
+      <th style="border:1px solid #888; padding:8px;">Face-Centered (&alpha; = 1)</th>
+      <th style="border:1px solid #888; padding:8px;">Spherical (&alpha; = &radic;k)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px;">Levels per factor</td>
+      <td style="border:1px solid #888; padding:8px;">3</td>
+      <td style="border:1px solid #888; padding:8px;">5</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:8px;">Design region</td>
+      <td style="border:1px solid #888; padding:8px;">Cuboidal</td>
+      <td style="border:1px solid #888; padding:8px;">Spherical</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px;">Rotatability</td>
+      <td style="border:1px solid #888; padding:8px;">Not rotatable</td>
+      <td style="border:1px solid #888; padding:8px;">Near-rotatable</td>
+    </tr>
+    <tr style="background:#fff;">
+      <td style="border:1px solid #888; padding:8px;">Orthogonal blocking</td>
+      <td style="border:1px solid #888; padding:8px;">Requires replicated axial points</td>
+      <td style="border:1px solid #888; padding:8px;">Easily achieved</td>
+    </tr>
+    <tr style="background:#e8e8e8;">
+      <td style="border:1px solid #888; padding:8px;">Best for</td>
+      <td style="border:1px solid #888; padding:8px;">Factor ranges are hard limits</td>
+      <td style="border:1px solid #888; padding:8px;">Factors can extend beyond &plusmn;1</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+The choice depends on whether the design region is naturally cuboidal (factor ranges are strict physical limits) or spherical (the region of interest is defined by distance from the center).
+
+
+# IMPLEMENTING A CCD EXPERIMENT
+
+## Step 1: Problem Definition and Factor Selection{.scrollable}
+
+Before designing the CCD, the experimenter must:
+
+**Define the objective** — Is the goal to maximize yield? Minimize defects? Hit a target value? Optimize multiple responses simultaneously?
+
+**Select factors** — Through prior screening experiments (Phase 0), identify the $k$ most important quantitative factors.
+
+**Choose factor ranges** — Define the center point $\bar{\xi}_i$ and step size $\Delta\xi_i$ for each natural variable. The coded range $[-1, +1]$ should span a meaningful operating range, and $[-\alpha, +\alpha]$ should remain within the region of operability.
+
+**Determine $\alpha$ and $n_c$** — Choose $\alpha$ based on rotatability ($\alpha = \sqrt[4]{F}$) or sphericity ($\alpha = \sqrt{k}$). Use 3–5 center runs for variance stability.
+
+
+## Step 2: Generating the Design{.scrollable}
+
+For $k = 3$ factors with $\alpha = 1.682$ (rotatable):
+
+- **Factorial portion**: $2^3 = 8$ runs at corners $(\pm 1, \pm 1, \pm 1)$
+- **Axial points**: $2 \times 3 = 6$ runs along axes at distance $\alpha$
+- **Center runs**: $n_c = 6$ (recommended)
+- **Total**: $N = 8 + 6 + 6 = 20$ runs
+
+In R, using the `rsm` package:
+
+```r
+library(rsm)
+ccd_design <- ccd(
+  basis = 3,        # k = 3 factors
+  n0   = c(4, 2),   # 4 center in factorial block, 2 in axial
+  alpha = "rotatable",
+  randomize = FALSE
+)
+```
+
+Each run is decoded back to natural variables using $\xi_i = \bar{\xi}_i + \Delta\xi_i \cdot x_i$.
+
+
+## Step 3: Data Collection{.scrollable}
+
+**Randomization**: Run the experiment in random order to guard against lurking variables and time trends.
+
+**Blocking**: If the experiment spans multiple days or batches, use orthogonal blocking. Assign factorial + center runs to Block 1, axial + center runs to Block 2.
+
+**Replication**: Center runs serve as replicates. They provide pure error degrees of freedom and allow testing for lack of fit *without* replicating the full design.
+
+**Recording**: Carefully record the response $y$ at each design point along with any covariates or nuisance variables.
+
+
+## Step 4: Fitting the Second-Order Model{.scrollable}
+
+Once data are collected, fit the full second-order model:
+
+$$y = \beta_0 + \sum_{i=1}^k \beta_i x_i + \sum_{i=1}^k \beta_{ii} x_i^2 + \sum\sum_{i<j} \beta_{ij} x_i x_j + \varepsilon$$
+
+In R:
+
+```r
+library(rsm)
+fit <- rsm(y ~ Block + SO(x1, x2, x3), data = ccd_data)
+summary(fit)
+```
+
+The `summary` output provides:
+
+- Coefficient estimates and $t$-tests
+- ANOVA table with lack-of-fit test
+- Canonical analysis: stationary point, eigenvalues, eigenvectors
+- Nature of the stationary point (maximum, minimum, saddle)
+
+
+## Step 5: Diagnostic Checking{.scrollable}
+
+Before interpreting results, check model adequacy:
+
+**Residual plots**: Plot residuals vs. fitted values, vs. each factor, and in normal probability plots. Look for non-constant variance, outliers, or systematic patterns.
+
+**Lack-of-fit test**: The pure error from center-run replicates tests whether the second-order model captures all systematic variation:
+$$F_{\text{LOF}} = \frac{MS_{LOF}}{MS_{PE}}$$
+
+A non-significant $F_{\text{LOF}}$ supports model adequacy.
+
+**$R^2$ and Adjusted $R^2$**: Evaluate the proportion of variance explained. The adjusted $R^2$ penalizes unnecessary terms.
+
+**Influence diagnostics**: Check Cook's distance and leverage values ($h_{ii}$) for influential points.
+
+
+## Step 6: Response Surface Analysis{.scrollable}
+
+**Contour and Surface Plots**: Visualize $\hat{y}$ as a function of two factors at a time (holding others at center levels).
+
+In R:
+
+```r
+par(mfrow = c(1, 3))
+contour(fit, ~ x1 + x2 + x3,
+        at = summary(fit)$canonical$xs)
+```
+
+**Canonical Analysis**: Examine eigenvalues from @eq-canonical.
+
+- If all eigenvalues are negative → maximum found. Report $\mathbf{x}_s$ and $\hat{y}_s$.
+- If mixed signs → saddle point. Use ridge analysis to find the best conditions within the design region.
+- If any eigenvalue is near zero → ridge system. Ridge analysis along the near-stationary direction.
+
+**Ridge Analysis**: Trace the optimum response on spheres from the center — identify the best achievable response at each radius and the corresponding factor settings.
+
+
+## Step 7: Optimization and Confirmation{.scrollable}
+
+**Single-response optimization**: Use the stationary point from canonical analysis, or the ridge analysis coordinates.
+
+**Multiple-response optimization**: When several responses must be optimized simultaneously, use the **desirability function** approach:
+
+$$D = \left(\prod_{i=1}^m d_i^{r_i}\right)^{1/\sum r_i}$$
+
+where $d_i$ is the individual desirability for the $i$-th response and $r_i$ is its importance weight.
+
+**Confirmation runs**: Always conduct confirmation experiments at the predicted optimum conditions. Compare observed responses to predicted values — if they agree, the optimization is successful. If they disagree, further experimentation is needed.
+
+::: {.callout-warning}
+## Important Caveat
+Estimated optimum conditions are just that — *estimates*. The next experiment may find the optimum at slightly different coordinates. What often matters more than the exact optimum is the **understanding of how factors influence the response**.
+:::
+
+
+# REFERENCES
+
+## {.scrollable}
+```{=html}
+<div style="font-size: 0.82em; line-height: 2.2; font-family: 'Cambria Math', serif;">
+
+<p style="padding-left: 2em; text-indent: -2em;">
+1. Myers, R. H., Montgomery, D. C., &amp; Anderson-Cook, C. M. (2016). <em>Response Surface Methodology: Process and Product Optimization Using Designed Experiments</em> (4th ed.). John Wiley &amp; Sons.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+2. Box, G. E. P., &amp; Wilson, K. B. (1951). On the experimental attainment of optimum conditions. <em>Journal of the Royal Statistical Society, Series B, 13</em>(1), 1–45.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+3. Box, G. E. P., &amp; Hunter, J. S. (1957). Multi-factor experimental designs for exploring response surfaces. <em>Annals of Mathematical Statistics, 28</em>, 195–241.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+4. Lenth, R. V. (2009). Response-surface methods in R, using rsm. <em>Journal of Statistical Software, 32</em>(7), 1–17.
+</p>
+
+<p style="padding-left: 2em; text-indent: -2em;">
+5. Box, G. E. P., Hunter, W. G., &amp; Hunter, J. S. (2005). <em>Statistics for Experimenters: Design, Innovation, and Discovery</em> (2nd ed.). John Wiley &amp; Sons.
+</p>
+
+</div>
+```
