@@ -1435,7 +1435,7 @@ grid.arrange(p1, p2, p3, p4, ncol = 2, nrow = 2)
 
 # REFERENCES
 
-## 
+## REFERENCES
 ```{=html}
 <div style="font-size: 0.82em; line-height: 2.2; font-family: 'Cambria Math', serif;">
 
